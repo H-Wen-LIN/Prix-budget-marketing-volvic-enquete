@@ -24,20 +24,24 @@ button.sec{background:transparent;color:var(--accent);border:1px solid var(--acc
 .concept{font-style:italic;border-left:3px solid var(--accent);padding-left:12px}
 .muted{color:var(--muted);font-size:.85rem}
 /* Gauges (Q5-Q8 and Q11-Q15): white track and white thumb on a blue panel */
-.gauge{background:linear-gradient(135deg,#1f7ae0,#41b6e6);border-radius:12px;padding:12px 16px;color:#fff}
-.gauge .val{font-size:1.4rem;font-weight:700;text-align:center}
-.gauge .val.unset{opacity:.8;font-size:1rem;font-weight:400}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:4px;margin:12px 0 6px;cursor:pointer;background:#fff}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #fff;box-shadow:0 2px 6px #0005}
-input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid #fff;box-shadow:0 2px 6px #0005}
-input[type=range].unset::-webkit-slider-thumb{opacity:.6}
-input[type=range].unset::-moz-range-thumb{opacity:.6}
-.gauge .scale{color:#fff;opacity:.9}
+.gauge{background:#fff;border:1px solid #e6ebf1;border-radius:12px;padding:18px 20px 14px;box-shadow:0 1px 3px #0000000d;color:#1d2733}
+.gauge .val{font-size:1.25rem;font-weight:700;color:#1b2a55}
+.gauge .val.unset{color:#6b7480;font-size:1rem;font-weight:400}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;margin:16px 0 10px;cursor:pointer;
+  background:linear-gradient(90deg,#b9dcf2,#4a90d9 45%,#1b2a55)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;cursor:grab;
+  background:radial-gradient(circle,#1b2a55 0 4px,#fff 5px);border:1px solid #cfd6de;box-shadow:0 2px 6px #0002}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;cursor:grab;
+  background:radial-gradient(circle,#1b2a55 0 4px,#fff 5px);border:1px solid #cfd6de;box-shadow:0 2px 6px #0002}
+.gauge .scale{color:#6b7480;font-size:.85rem}
 .scale{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
 /* Likert */
 .lk{border-top:1px solid var(--line);padding:16px 0 4px}
 .lk:first-of-type{border-top:0}
 .lk .stmt{font-weight:600;margin-bottom:4px}
+.ggrow .q{font-weight:500;margin:14px 0 6px}
+.ggrow label.opt{display:inline-block;margin:3px 4px 3px 0;padding:6px 10px;font-size:.9rem}
+.ggrow label.opt input{display:none}
 .end{text-align:center;padding:12px 0}
 .end .big{font-size:2.4rem}
 </style>
@@ -50,6 +54,7 @@ const CONCEPT = {
   A: "Eau minérale naturelle enrichie en actifs végétaux qui soutiennent la production naturelle de collagène (vitamine C, silicium…), sans ingrédient d’origine animale. 50 cl.",
   B: "Eau minérale naturelle enrichie en collagène d’origine bovine (peptides de collagène). 50 cl."
 };
+const GG_PRICES = [3.50, 2.90, 2.40, 1.90, 1.50];
 const GG_SCALE = ["Certainement", "Probablement", "Je ne sais pas", "Probablement pas", "Certainement pas"];
 const LIKERT = ["Pas du tout d’accord", "Plutôt pas d’accord", "Ni d’accord ni pas d’accord", "Plutôt d’accord", "Tout à fait d’accord"];
 const LIKERT_ITEMS = [
@@ -98,9 +103,24 @@ function load() { try { return JSON.parse(localStorage.getItem(STORE)) || []; } 
 function save(list) { try { localStorage.setItem(STORE, JSON.stringify(list)); } catch {} }
 const euro = (v, d = 3) => Number(v).toFixed(d).replace(".", ",") + " €";
 
+// Unbiased random integer in [0, n) from the crypto RNG.
+function randInt(n) { const a = new Uint32Array(1), lim = Math.floor(2 ** 32 / n) * n;
+  do crypto.getRandomValues(a); while (a[0] >= lim); return a[0] % n; }
+// Block randomisation: each block of 4 openings holds 2 A and 2 B in random order,
+// so on a given device the split never drifts by more than 2. Falls back to a coin flip.
+function assignVersion() {
+  const KEY = "enquete_collagene_bloc";
+  try {
+    let bloc = JSON.parse(localStorage.getItem(KEY) || "[]");
+    if (!bloc.length) { bloc = ["A", "A", "B", "B"];
+      for (let i = bloc.length - 1; i > 0; i--) { const j = randInt(i + 1); [bloc[i], bloc[j]] = [bloc[j], bloc[i]]; } }
+    const v = bloc.shift(); localStorage.setItem(KEY, JSON.stringify(bloc)); return v;
+  } catch { return randInt(2) ? "A" : "B"; }
+}
+
 function start() {
   r = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-        version: crypto.getRandomValues(new Uint8Array(1))[0] < 128 ? "A" : "B", debut: new Date().toISOString(), statut: "en cours" };
+        version: assignVersion(), debut: new Date().toISOString(), statut: "en cours" };
   history = [];
   go("accueil", false);
 }
@@ -144,6 +164,13 @@ function likertGauge(k, text, n) {
       ${set ? 'data-set="1"' : ""}>
     <div class="scale"><span>Pas du tout d’accord</span><span>Tout à fait d’accord</span></div></div></div>`;
 }
+const ggKey = p => "G_" + p.toFixed(2);
+const positive = v => v === "Certainement" || v === "Probablement";
+function ggRefresh() {
+  let show = true;
+  GG_PRICES.forEach((p, i) => { document.getElementById("gg" + i).hidden = !show;
+    const v = val(ggKey(p)); show = show && !!v && !positive(v); });
+}
 function slider(name) { const e = document.querySelector(`input[name="${name}"]`); return e.dataset.set ? Number(e.value) : null; }
 
 function go(name, push = true) {
@@ -152,6 +179,7 @@ function go(name, push = true) {
   const s = screens[name];
   render(s.html() + `<div class="err" id="err"></div><div class="nav">
     ${history.length ? `<button class="sec" id="prev">← Précédent</button>` : "<span></span>"}<button id="next">Suivant →</button></div>`);
+  if (s.after) s.after();
   document.getElementById("next").onclick = () => { const e = s.next(); if (e) document.getElementById("err").textContent = e; };
   const prev = document.getElementById("prev");
   if (prev) prev.onclick = () => { keep(); go(history.pop(), false); };
@@ -159,7 +187,7 @@ function go(name, push = true) {
 let current;
 
 // Store whatever is filled on the current screen (no validation) so "Précédent" never loses an answer.
-const KEYS = { consent: "consentement", gg: "GG_reponse", genre: "genre", regime: "regime", depense: "depense_50cl" };
+const KEYS = { consent: "consentement", genre: "genre", regime: "regime", depense: "depense_50cl" };
 function keep() {
   document.querySelectorAll("input[type=radio]:checked").forEach(e => r[KEYS[e.name] || e.name] = e.value);
   document.querySelectorAll("input[type=range][data-set]").forEach(e => r[e.name] = Number(e.value));
@@ -196,12 +224,16 @@ const screens = {
       [r.P1, r.P2, r.P3, r.P4] = p; go("gg"); }
   },
   gg: {
-    // Single question, price = mean of the respondent's own Q5-Q8 answers.
-    html: () => { r.GG_prix = Math.round((r.P1 + r.P2 + r.P3 + r.P4) / 4 * 100) / 100;
-      return `<p class="concept">« ${CONCEPT[r.version]} »</p>
-      ${Q(9, `Si ce produit coûtait ${euro(r.GG_prix, 2)}, l’achèteriez-vous ?`)}${radios("gg", GG_SCALE, r.GG_reponse)}`; },
-    next: () => { const v = val("gg"); if (!v) return "Merci de répondre.";
-      r.GG_reponse = v; r.GG_achat = (v === "Certainement" || v === "Probablement") ? 1 : 0; go("controle"); }
+    // Gabor-Granger on one page: next (lower) price appears only while the answer is not positive.
+    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p>${Q(9, "Achèteriez-vous ce produit aux prix suivants ?")}
+      ${GG_PRICES.map((p, i) => `<div class="ggrow" id="gg${i}"><div class="q">${String.fromCharCode(97 + i)}) Si ce produit coûtait ${euro(p, 2)}, l’achèteriez-vous ?</div>
+        ${radios(ggKey(p), GG_SCALE, r[ggKey(p)])}</div>`).join("")}`,
+    after: () => { document.querySelectorAll(".ggrow input").forEach(e => e.onchange = ggRefresh); ggRefresh(); },
+    next: () => { const shown = GG_PRICES.filter((p, i) => !document.getElementById("gg" + i).hidden);
+      const last = shown[shown.length - 1], v = val(ggKey(last));
+      if (!v) return "Merci de répondre.";
+      GG_PRICES.forEach(p => r[ggKey(p)] = shown.includes(p) ? val(ggKey(p)) : "");
+      r.GG_prix_accepte = positive(v) ? last : ""; go("controle"); }
   },
   controle: {
     html: () => `${Q(10, "D’après la description, d’où provenait le collagène, ou ce qui le soutient, dans ce produit ?")}
@@ -234,7 +266,7 @@ function exportCSV() {
     .sort((a, b) => rank(a) - rank(b));
   if (!list.length) return;
   const cols = ["id", "version", "statut", "debut", "fin", "consentement", "F1", "F2", "F3", "P1", "P2", "P3", "P4",
-    "GG_prix", "GG_reponse", "GG_achat", "C1", "controle_ok", "groupe_controle", "L1", "L2", "L3", "L4", "L5",
+    ...GG_PRICES.map(ggKey), "GG_prix_accepte", "C1", "controle_ok", "groupe_controle", "L1", "L2", "L3", "L4", "L5",
     "genre", "regime", "depense_50cl"];
   const esc = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const csv = "﻿" + [cols.join(";"), ...list.map(x => cols.map(c => esc(x[c])).join(";"))].join("\n");

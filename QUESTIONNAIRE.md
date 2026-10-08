@@ -1,6 +1,6 @@
 # Questionnaire A/B : eau au collagène vegan (A) ou bovin (B)
 
-**Principe** : chaque répondant voit une seule version, attribuée au hasard. Le texte, l'image, le format et la marque sont les mêmes dans les deux versions. Seule l'origine du collagène change, ce qui permet d'attribuer à cette seule différence l'écart de prix accepté.
+**Principe** : chaque répondant voit une seule version, attribuée au hasard (randomisation par blocs de 4 : 2 A et 2 B dans un ordre aléatoire). Le texte, l'image, le format et la marque sont les mêmes dans les deux versions. Seule l'origine du collagène change, ce qui permet d'attribuer à cette seule différence l'écart de prix accepté.
 
 ## 1. Accueil
 « Cette enquête porte sur les boissons. Elle dure environ 5 minutes. Vos réponses sont anonymes et utilisées uniquement à des fins d'étude. Acceptez-vous de participer ? » ☐ Oui ☐ Non (fin)
@@ -27,8 +27,9 @@
 - **P3.** À quel prix le trouveriez-vous bon marché, une bonne affaire ?
 - **P4.** À partir de quel prix le trouveriez-vous trop bon marché au point de douter de sa qualité ?
 
-**Question d'achat (Q9)** : une seule question, au prix égal à la moyenne des 4 prix donnés par le répondant en P1–P4.
-- « Si ce produit coûtait [moyenne] €, l'achèteriez-vous ? » ☐ Certainement ☐ Probablement ☐ Je ne sais pas ☐ Probablement pas ☐ Certainement pas
+**Gabor-Granger (Q9, sur une seule page)** : les prix sont montrés du plus élevé au plus bas ; le prix suivant n'apparaît que si la réponse n'est pas positive (arrêt au premier « Certainement » ou « Probablement »).
+- « Si ce produit coûtait 3,50 €, l'achèteriez-vous ? » ☐ Certainement ☐ Probablement ☐ Je ne sais pas ☐ Probablement pas ☐ Certainement pas
+- puis 2,90 € → 2,40 € → 1,90 € → 1,50 €.
 
 ## 5. Contrôle de manipulation
 - **C1.** « D'après la description, d'où provenait le collagène, ou ce qui le soutient, dans ce produit ? » ☐ Origine végétale ☐ Origine animale (bovine) ☐ Origine marine ☐ Je ne sais pas
@@ -49,6 +50,6 @@
 
 ## Analyse
 - Van Westendorp : point de prix optimal (OPP), plage de prix acceptable, par version.
-- Q9 : taux d'intention d'achat (Certainement + Probablement) au prix moyen déclaré, par version.
+- Gabor-Granger : courbe de demande et prix maximisant le revenu, par version.
 - Comparaison A vs B : test t ou Mann-Whitney ; croisement par régime alimentaire.
 - Échantillon cible : 100 à 150 répondants par version.
