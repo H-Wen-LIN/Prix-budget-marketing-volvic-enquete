@@ -10,7 +10,7 @@
 ## 2. Filtre
 - **F1.** Au cours des 3 derniers mois, avez-vous acheté de l'eau en bouteille ? ☐ Oui ☐ Non (fin)
 - **F2.** Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément « fonctionnel » (vitamines, protéines, collagène…) ? ☐ Oui ☐ Non
-- **F3.** Votre âge : ☐ moins de 18 ans (fin) ☐ 18-24 ☐ 25-34 ☐ 35-49 ☐ 50 ans et plus
+- **F3.** Votre âge : ☐ moins de 18 ans ☐ 18-24 ☐ 25-34 ☐ 35-49 ☐ 50 ans et plus
 
 ## 3. L'offre (seule partie qui change) — même visuel de bouteille 50 cl
 
@@ -35,9 +35,9 @@
 - **C1.** « D'après la description, d'où provenait le collagène, ou ce qui le soutient, dans ce produit ? » ☐ Origine végétale ☐ Origine animale (bovine) ☐ Origine marine ☐ Je ne sais pas
 - Les répondants qui se trompent sont analysés à part ou retirés.
 
-## 6. Perception (optionnelle, Likert 5 points, « pas du tout d'accord » → « tout à fait d'accord »)
+## 6. Perception (Likert 5 points, « pas du tout d'accord » → « tout à fait d'accord »)
 - **L1.** Ce produit est de bonne qualité.
-- **L2.** Ce produit vaut son prix.
+- **L2.** Ce produit est bon pour ma santé.
 - **L3.** Je fais confiance à l'efficacité de ce produit.
 - **L4.** Ce produit correspond à mes valeurs (éthique, environnement).
 - **L5.** Ce produit me paraît naturel.

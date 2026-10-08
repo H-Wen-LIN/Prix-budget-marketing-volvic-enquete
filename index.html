@@ -5,26 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enquête boissons</title>
 <style>
-:root{--bg:#f6f8fa;--card:#fff;--ink:#1d2733;--muted:#5b6876;--accent:#0b6bcb;--line:#d8dee4}
-@media (prefers-color-scheme:dark){:root{--bg:#11161c;--card:#1a2129;--ink:#e6edf3;--muted:#9aa7b4;--accent:#4ea1ff;--line:#2d3742}}
+:root{--bg:#f4f7fb;--card:#fff;--ink:#1d2733;--muted:#5b6876;--accent:#0b6bcb;--line:#dde3ea;--soft:#eef4fb}
+@media (prefers-color-scheme:dark){:root{--bg:#11161c;--card:#1a2129;--ink:#e6edf3;--muted:#9aa7b4;--accent:#4ea1ff;--line:#2d3742;--soft:#1f2a36}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
 main{max-width:640px;margin:0 auto;padding:24px 16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
 h1{font-size:1.3rem;margin:0 0 12px}
-.q{font-weight:600;margin:16px 0 8px}
-label.opt{display:block;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer}
-label.opt:has(input:checked){border-color:var(--accent)}
-input[type=number]{width:120px;padding:8px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
-button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 18px;font:inherit;cursor:pointer;margin-top:16px}
+.q{font-weight:600;margin:20px 0 8px}
+.q b{color:var(--accent)}
+label.opt{display:block;padding:9px 12px;border:1px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer}
+label.opt:has(input:checked){border-color:var(--accent);background:var(--soft)}
+.nav{display:flex;justify-content:space-between;gap:8px;margin-top:20px}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 18px;font:inherit;cursor:pointer}
 button.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
-.err{color:#d1242f;margin-top:8px;min-height:1.2em}
+.err{color:#d1242f;margin-top:10px;min-height:1.2em}
 .bottle{display:flex;justify-content:center;margin:12px 0}
 .concept{font-style:italic;border-left:3px solid var(--accent);padding-left:12px}
-.likert{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-size:.8rem;text-align:center}
-.likert label{border:1px solid var(--line);border-radius:6px;padding:6px 2px;cursor:pointer}
-.likert label:has(input:checked){border-color:var(--accent)}
 .muted{color:var(--muted);font-size:.85rem}
+/* Price gauges */
+.gauge{background:var(--soft);border-radius:10px;padding:12px 14px}
+.gauge .val{font-size:1.4rem;font-weight:700;text-align:center;color:var(--accent)}
+.gauge .val.unset{color:var(--muted);font-size:1rem;font-weight:400}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:5px;margin:10px 0 4px;cursor:pointer;
+  background:linear-gradient(90deg,#2da44e,#f2c94c 50%,#e5534b)}
+input[type=range].likert-range{background:linear-gradient(90deg,#e5534b,#f2c94c 50%,#2da44e)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 1px 4px #0004}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--accent)}
+input[type=range].unset::-webkit-slider-thumb{opacity:.45}
+input[type=range].unset::-moz-range-thumb{opacity:.45}
+.scale{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+/* Likert */
+.lk{border-top:1px solid var(--line);padding:16px 0 4px}
+.lk:first-of-type{border-top:0}
+.lk .stmt{font-weight:600;margin-bottom:4px}
+.lk .chosen{text-align:center;font-size:.9rem;color:var(--accent);min-height:1.3em;font-weight:600}
+.lk .chosen.unset{color:var(--muted);font-weight:400}
+.end{text-align:center;padding:12px 0}
+.end .big{font-size:2.4rem}
 </style>
 </head>
 <body>
@@ -37,8 +55,23 @@ const CONCEPT = {
 };
 const GG_PRICES = [3.50, 2.90, 2.40, 1.90, 1.50];
 const GG_SCALE = ["Certainement", "Probablement", "Je ne sais pas", "Probablement pas", "Certainement pas"];
-const LIKERT = ["Pas du tout d’accord", "Plutôt pas d’accord", "Ni l’un ni l’autre", "Plutôt d’accord", "Tout à fait d’accord"];
+const LIKERT = ["Pas du tout d’accord", "Plutôt pas d’accord", "Ni d’accord ni pas d’accord", "Plutôt d’accord", "Tout à fait d’accord"];
+const LIKERT_ITEMS = [
+  ["L1", "Ce produit est de bonne qualité."],
+  ["L2", "Ce produit est bon pour ma santé."],
+  ["L3", "Je fais confiance à l’efficacité de ce produit."],
+  ["L4", "Ce produit correspond à mes valeurs (éthique, environnement)."],
+  ["L5", "Ce produit me paraît naturel."]
+];
+const VW_ITEMS = [
+  ["P1", "À partir de quel prix trouveriez-vous ce produit trop cher au point de ne pas l’acheter ?"],
+  ["P2", "À partir de quel prix le trouveriez-vous cher, tout en envisageant de l’acheter ?"],
+  ["P3", "À quel prix le trouveriez-vous bon marché, une bonne affaire ?"],
+  ["P4", "À partir de quel prix le trouveriez-vous trop bon marché au point de douter de sa qualité ?"]
+];
 const STORE = "enquete_collagene_reponses";
+// Admin tools (export CSV, counter, new respondent) only shown with #admin in the URL.
+const ADMIN = location.hash === "#admin";
 
 const BOTTLE = `<svg width="70" height="170" viewBox="0 0 70 170" aria-label="Bouteille 50 cl">
 <rect x="27" y="4" width="16" height="14" rx="2" fill="#5b8fd6"/>
@@ -46,109 +79,131 @@ const BOTTLE = `<svg width="70" height="170" viewBox="0 0 70 170" aria-label="Bo
 <rect x="15" y="70" width="40" height="44" fill="#fff" stroke="#5b8fd6"/>
 <text x="35" y="96" font-size="11" text-anchor="middle" fill="#1d2733">50 cl</text></svg>`;
 
-let r, ggIndex;
+let r, ggIndex, history;
 
 function load() { try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch { return []; } }
 function save(list) { try { localStorage.setItem(STORE, JSON.stringify(list)); } catch {} }
+const euro = (v, d = 3) => Number(v).toFixed(d).replace(".", ",") + " €";
 
 function start() {
   r = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
         version: Math.random() < 0.5 ? "A" : "B", debut: new Date().toISOString(), statut: "en cours" };
-  ggIndex = 0;
-  show(screens.accueil);
+  ggIndex = 0; history = [];
+  go("accueil", false);
 }
 
 function finish(statut) {
   r.statut = statut; r.fin = new Date().toISOString();
   const list = load(); list.push(r); save(list);
-  render(`<h1>${statut === "complet" ? "Merci pour votre participation !" : "Merci, l’enquête s’arrête ici."}</h1>
-    <button onclick="start()">Nouveau répondant</button>
-    <button class="sec" onclick="exportCSV()">Exporter les réponses (CSV)</button>
-    <p class="muted">${load().length} réponse(s) enregistrée(s) sur cet appareil.</p>`);
+  const msg = statut === "complet"
+    ? `<div class="big">🙏</div><h1>Merci infiniment !</h1>
+       <p>Vos réponses sont précieuses : elles vont directement nourrir notre étude et nous aider à mieux comprendre ce qui compte vraiment pour les consommateurs.</p>
+       <p>Merci d’avoir pris ces quelques minutes, c’est grâce à des participants comme vous que cette enquête peut aboutir. Belle journée ! 💧</p>`
+    : `<div class="big">💧</div><h1>Merci pour votre intérêt !</h1>
+       <p>Cette enquête s’adresse à un profil un peu différent, elle s’arrête donc ici. Merci beaucoup pour le temps que vous nous avez accordé.</p>`;
+  render(`<div class="end">${msg}</div>` + (ADMIN ? `<div class="nav"><button onclick="start()">Nouveau répondant</button>
+    <button class="sec" onclick="exportCSV()">Exporter (CSV)</button></div>
+    <p class="muted">${load().length} réponse(s) enregistrée(s) sur cet appareil.</p>` : ""));
 }
 
 function render(html) { document.getElementById("app").innerHTML = `<div class="card">${html}</div>`; window.scrollTo(0, 0); }
 
-function radios(name, opts) {
-  return opts.map(o => `<label class="opt"><input type="radio" name="${name}" value="${o}"> ${o}</label>`).join("");
-}
-function likert(name, text) {
-  return `<div class="q">${text}</div><div class="likert">${LIKERT.map((l, i) =>
-    `<label><input type="radio" name="${name}" value="${i + 1}"><br>${l}</label>`).join("")}</div>`;
+function radios(name, opts, sel) {
+  return opts.map(o => `<label class="opt"><input type="radio" name="${name}" value="${o}"${o === sel ? " checked" : ""}> ${o}</label>`).join("");
 }
 function val(name) { const e = document.querySelector(`input[name="${name}"]:checked`); return e ? e.value : null; }
-function num(name) { const v = document.querySelector(`input[name="${name}"]`).value.replace(",", "."); return v === "" ? null : Number(v); }
+const Q = (n, t) => `<div class="q"><b>Q${n}.</b> ${t}</div>`;
 
-// Each screen: html() + next() returning error string or undefined.
-function show(s) {
-  render(s.html() + `<div class="err" id="err"></div><button id="next">Suivant</button>`);
-  document.getElementById("next").onclick = () => {
-    const e = s.next(); if (e) document.getElementById("err").textContent = e;
-  };
+// A slider starts "unset" until moved; previously given answers are restored.
+function priceGauge(k) {
+  const set = r[k] != null;
+  return `<div class="gauge"><div class="val${set ? "" : " unset"}" id="v_${k}">${set ? euro(r[k]) : "Déplacez le curseur"}</div>
+    <input type="range" name="${k}" min="0" max="10" step="0.001" value="${set ? r[k] : 0}" class="${set ? "" : "unset"}"
+      oninput="this.classList.remove('unset');this.dataset.set=1;const v=document.getElementById('v_${k}');v.classList.remove('unset');v.textContent=euro(this.value)"
+      ${set ? 'data-set="1"' : ""}>
+    <div class="scale"><span>0 €</span><span>2,5 €</span><span>5 €</span><span>7,5 €</span><span>10 €</span></div></div>`;
 }
+function likertGauge(k, text, n) {
+  const set = r[k] != null && r[k] !== "";
+  return `<div class="lk">${Q(n, text)}<div class="chosen${set ? "" : " unset"}" id="v_${k}">${set ? LIKERT[r[k] - 1] : "Déplacez le curseur"}</div>
+    <input type="range" class="likert-range${set ? "" : " unset"}" name="${k}" min="1" max="5" step="1" value="${set ? r[k] : 3}"
+      oninput="this.classList.remove('unset');this.dataset.set=1;const v=document.getElementById('v_${k}');v.classList.remove('unset');v.textContent=LIKERT[this.value-1]"
+      ${set ? 'data-set="1"' : ""}>
+    <div class="scale"><span>Pas du tout d’accord</span><span>Tout à fait d’accord</span></div></div>`;
+}
+function slider(name) { const e = document.querySelector(`input[name="${name}"]`); return e.dataset.set ? Number(e.value) : null; }
+
+function go(name, push = true) {
+  if (push) history.push({ name: current, ggIndex });
+  current = name;
+  const s = screens[name];
+  render(s.html() + `<div class="err" id="err"></div><div class="nav">
+    ${history.length ? `<button class="sec" id="prev">← Précédent</button>` : "<span></span>"}<button id="next">Suivant →</button></div>`);
+  document.getElementById("next").onclick = () => { const e = s.next(); if (e) document.getElementById("err").textContent = e; };
+  const prev = document.getElementById("prev");
+  if (prev) prev.onclick = () => { const h = history.pop(); ggIndex = h.ggIndex; go(h.name, false); };
+}
+let current;
 
 const screens = {
   accueil: {
     html: () => `<h1>Enquête</h1><p>Cette enquête porte sur les boissons. Elle dure environ 5 minutes. Vos réponses sont anonymes et utilisées uniquement à des fins d’étude.</p>
-      <div class="q">Acceptez-vous de participer ?</div>${radios("consent", ["Oui", "Non"])}`,
+      ${Q(1, "Acceptez-vous de participer ?")}${radios("consent", ["Oui", "Non"], r.consentement)}`,
     next: () => { const v = val("consent"); if (!v) return "Merci de répondre.";
-      r.consentement = v; v === "Non" ? finish("refus") : show(screens.filtre); }
+      r.consentement = v; v === "Non" ? finish("refus") : go("filtre"); }
   },
   filtre: {
-    html: () => `<div class="q">F1. Au cours des 3 derniers mois, avez-vous acheté de l’eau en bouteille ?</div>${radios("F1", ["Oui", "Non"])}
-      <div class="q">F2. Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément « fonctionnel » (vitamines, protéines, collagène…) ?</div>${radios("F2", ["Oui", "Non"])}
-      <div class="q">F3. Votre âge :</div>${radios("F3", ["Moins de 18 ans", "18-24", "25-34", "35-49", "50 ans et plus"])}`,
+    html: () => `${Q(2, "Au cours des 3 derniers mois, avez-vous acheté de l’eau en bouteille ?")}${radios("F1", ["Oui", "Non"], r.F1)}
+      ${Q(3, "Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément « fonctionnel » (vitamines, protéines, collagène…) ?")}${radios("F2", ["Oui", "Non"], r.F2)}
+      ${Q(4, "Votre âge :")}${radios("F3", ["Moins de 18 ans", "18-24", "25-34", "35-49", "50 ans et plus"], r.F3)}`,
     next: () => { const f1 = val("F1"), f2 = val("F2"), f3 = val("F3");
       if (!f1 || !f2 || !f3) return "Merci de répondre à toutes les questions.";
       Object.assign(r, { F1: f1, F2: f2, F3: f3 });
-      (f1 === "Non" || f3 === "Moins de 18 ans") ? finish("hors cible") : show(screens.offre); }
+      f1 === "Non" ? finish("hors cible") : go("offre"); }
   },
   offre: {
-    html: () => `<p>Voici un nouveau produit. Merci de lire attentivement sa description.</p>
+    html: () => `<p>Voici un nouveau produit. <strong>Voici sa description, merci de la lire attentivement :</strong></p>
       <div class="bottle">${BOTTLE}</div><p class="concept">« ${CONCEPT[r.version]} »</p>`,
-    next: () => show(screens.vw)
+    next: () => go("vw")
   },
   vw: {
-    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p><p class="muted">Indiquez un prix en euros (ex. 1,80).</p>
-      ${[["P1", "À partir de quel prix trouveriez-vous ce produit trop cher au point de ne pas l’acheter ?"],
-         ["P2", "À partir de quel prix le trouveriez-vous cher, tout en envisageant de l’acheter ?"],
-         ["P3", "À quel prix le trouveriez-vous bon marché, une bonne affaire ?"],
-         ["P4", "À partir de quel prix le trouveriez-vous trop bon marché au point de douter de sa qualité ?"]]
-        .map(([k, t]) => `<div class="q">${k}. ${t}</div><input type="number" name="${k}" min="0" step="0.01" inputmode="decimal"> €`).join("")}`,
-    next: () => { const p = ["P1", "P2", "P3", "P4"].map(num);
-      if (p.some(x => x === null || isNaN(x) || x < 0)) return "Merci d’indiquer un prix pour chaque question.";
+    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p><p class="muted">Faites glisser chaque curseur jusqu’au prix qui vous correspond (de 0 à 10 €). Les flèches du clavier permettent un réglage fin.</p>
+      ${VW_ITEMS.map(([k, t], i) => Q(5 + i, t) + priceGauge(k)).join("")}`,
+    next: () => { const p = VW_ITEMS.map(([k]) => slider(k));
+      if (p.some(x => x === null)) return "Merci de placer chaque curseur sur un prix.";
       if (!(p[0] >= p[1] && p[1] >= p[2] && p[2] >= p[3]))
         return "Vos prix semblent incohérents : « trop cher » ≥ « cher » ≥ « bonne affaire » ≥ « trop bon marché ».";
-      [r.P1, r.P2, r.P3, r.P4] = p; show(screens.gg); }
+      [r.P1, r.P2, r.P3, r.P4] = p; go("gg"); }
   },
   gg: {
     html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p>
-      <div class="q">G${ggIndex + 1}. Si ce produit coûtait ${GG_PRICES[ggIndex].toFixed(2).replace(".", ",")} €, l’achèteriez-vous ?</div>${radios("gg", GG_SCALE)}`,
+      ${Q(9, `Si ce produit coûtait ${euro(GG_PRICES[ggIndex], 2)}, l’achèteriez-vous ?`)}${radios("gg", GG_SCALE, r["G_" + GG_PRICES[ggIndex].toFixed(2)])}`,
     next: () => { const v = val("gg"); if (!v) return "Merci de répondre.";
+      // Answers at lower prices may be stale after going back: clear them.
+      GG_PRICES.slice(ggIndex + 1).forEach(p => delete r["G_" + p.toFixed(2)]);
       r["G_" + GG_PRICES[ggIndex].toFixed(2)] = v;
-      const positive = v === "Certainement" || v === "Probablement";
-      if (positive) { r.GG_prix_accepte = GG_PRICES[ggIndex]; show(screens.controle); }
-      else if (++ggIndex < GG_PRICES.length) show(screens.gg);
-      else { r.GG_prix_accepte = ""; show(screens.controle); } }
+      if (v === "Certainement" || v === "Probablement") { r.GG_prix_accepte = GG_PRICES[ggIndex]; go("controle"); }
+      else if (ggIndex + 1 < GG_PRICES.length) { history.push({ name: "gg", ggIndex }); ggIndex++; go("gg", false); }
+      else { r.GG_prix_accepte = ""; go("controle"); } }
   },
   controle: {
-    html: () => `<div class="q">C1. D’après la description, d’où provenait le collagène, ou ce qui le soutient, dans ce produit ?</div>
-      ${radios("C1", ["Origine végétale", "Origine animale (bovine)", "Origine marine", "Je ne sais pas"])}`,
+    html: () => `${Q(10, "D’après la description, d’où provenait le collagène, ou ce qui le soutient, dans ce produit ?")}
+      ${radios("C1", ["Origine végétale", "Origine animale (bovine)", "Origine marine", "Je ne sais pas"], r.C1)}`,
     next: () => { const v = val("C1"); if (!v) return "Merci de répondre.";
       r.C1 = v; r.controle_ok = (r.version === "A" ? v === "Origine végétale" : v === "Origine animale (bovine)") ? 1 : 0;
-      show(screens.perception); }
+      go("perception"); }
   },
   perception: {
-    html: () => `<p>Dans quelle mesure êtes-vous d’accord avec les affirmations suivantes ? <span class="muted">(facultatif)</span></p>
-      ${likert("L1", "L1. Ce produit est de bonne qualité.")}${likert("L2", "L2. Ce produit vaut son prix.")}
-      ${likert("L3", "L3. Je fais confiance à l’efficacité de ce produit.")}${likert("L4", "L4. Ce produit correspond à mes valeurs (éthique, environnement).")}
-      ${likert("L5", "L5. Ce produit me paraît naturel.")}`,
-    next: () => { ["L1", "L2", "L3", "L4", "L5"].forEach(k => r[k] = val(k) || ""); show(screens.profil); }
+    html: () => `<p>Dans quelle mesure êtes-vous d’accord avec les affirmations suivantes ?</p>
+      ${LIKERT_ITEMS.map(([k, t], i) => likertGauge(k, t, 11 + i)).join("")}`,
+    next: () => { const v = LIKERT_ITEMS.map(([k]) => slider(k));
+      if (v.some(x => x === null)) return "Merci de placer chaque curseur.";
+      LIKERT_ITEMS.forEach(([k], i) => r[k] = v[i]); go("profil"); }
   },
   profil: {
-    html: () => `<div class="q">Genre</div>${radios("genre", ["Femme", "Homme", "Autre", "Je préfère ne pas répondre"])}
-      <div class="q">Régime alimentaire</div>${radios("regime", ["Omnivore", "Flexitarien", "Végétarien", "Végan"])}
-      <div class="q">Dépense habituelle pour une bouteille d’eau de 50 cl</div>${radios("depense", ["< 0,50 €", "0,50–1 €", "1–2 €", "> 2 €"])}`,
+    html: () => `${Q(16, "Vous êtes :")}${radios("genre", ["Une femme", "Un homme", "Autre", "Je préfère ne pas répondre"], r.genre)}
+      ${Q(17, "Quel est votre régime alimentaire ?")}${radios("regime", ["Omnivore", "Flexitarien", "Végétarien", "Végan"], r.regime)}
+      ${Q(18, "Combien dépensez-vous habituellement pour une bouteille d’eau de 50 cl ?")}${radios("depense", ["< 0,50 €", "0,50–1 €", "1–2 €", "> 2 €"], r.depense_50cl)}`,
     next: () => { const g = val("genre"), d = val("regime"), e = val("depense");
       if (!g || !d || !e) return "Merci de répondre à toutes les questions.";
       Object.assign(r, { genre: g, regime: d, depense_50cl: e }); finish("complet"); }
