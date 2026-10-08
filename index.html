@@ -23,24 +23,21 @@ button.sec{background:transparent;color:var(--accent);border:1px solid var(--acc
 .bottle{display:flex;justify-content:center;margin:12px 0}
 .concept{font-style:italic;border-left:3px solid var(--accent);padding-left:12px}
 .muted{color:var(--muted);font-size:.85rem}
-/* Price gauges */
-.gauge{background:var(--soft);border-radius:10px;padding:12px 14px}
-.gauge .val{font-size:1.4rem;font-weight:700;text-align:center;color:var(--accent)}
-.gauge .val.unset{color:var(--muted);font-size:1rem;font-weight:400}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:5px;margin:10px 0 4px;cursor:pointer;
-  background:linear-gradient(90deg,#2da44e,#f2c94c 50%,#e5534b)}
-input[type=range].likert-range{background:linear-gradient(90deg,#e5534b,#f2c94c 50%,#2da44e)}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 1px 4px #0004}
-input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--accent)}
-input[type=range].unset::-webkit-slider-thumb{opacity:.45}
-input[type=range].unset::-moz-range-thumb{opacity:.45}
+/* Gauges (Q5-Q8 and Q11-Q15): white track and white thumb on a blue panel */
+.gauge{background:linear-gradient(135deg,#1f7ae0,#41b6e6);border-radius:12px;padding:12px 16px;color:#fff}
+.gauge .val{font-size:1.4rem;font-weight:700;text-align:center}
+.gauge .val.unset{opacity:.8;font-size:1rem;font-weight:400}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:4px;margin:12px 0 6px;cursor:pointer;background:#fff}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #fff;box-shadow:0 2px 6px #0005}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid #fff;box-shadow:0 2px 6px #0005}
+input[type=range].unset::-webkit-slider-thumb{opacity:.6}
+input[type=range].unset::-moz-range-thumb{opacity:.6}
+.gauge .scale{color:#fff;opacity:.9}
 .scale{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
 /* Likert */
 .lk{border-top:1px solid var(--line);padding:16px 0 4px}
 .lk:first-of-type{border-top:0}
 .lk .stmt{font-weight:600;margin-bottom:4px}
-.lk .chosen{text-align:center;font-size:.9rem;color:var(--accent);min-height:1.3em;font-weight:600}
-.lk .chosen.unset{color:var(--muted);font-weight:400}
 .end{text-align:center;padding:12px 0}
 .end .big{font-size:2.4rem}
 </style>
@@ -53,7 +50,6 @@ const CONCEPT = {
   A: "Eau minérale naturelle enrichie en actifs végétaux qui soutiennent la production naturelle de collagène (vitamine C, silicium…), sans ingrédient d’origine animale. 50 cl.",
   B: "Eau minérale naturelle enrichie en collagène d’origine bovine (peptides de collagène). 50 cl."
 };
-const GG_PRICES = [3.50, 2.90, 2.40, 1.90, 1.50];
 const GG_SCALE = ["Certainement", "Probablement", "Je ne sais pas", "Probablement pas", "Certainement pas"];
 const LIKERT = ["Pas du tout d’accord", "Plutôt pas d’accord", "Ni d’accord ni pas d’accord", "Plutôt d’accord", "Tout à fait d’accord"];
 const LIKERT_ITEMS = [
@@ -73,13 +69,30 @@ const STORE = "enquete_collagene_reponses";
 // Admin tools (export CSV, counter, new respondent) only shown with #admin in the URL.
 const ADMIN = location.hash === "#admin";
 
-const BOTTLE = `<svg width="70" height="170" viewBox="0 0 70 170" aria-label="Bouteille 50 cl">
-<rect x="27" y="4" width="16" height="14" rx="2" fill="#5b8fd6"/>
-<path d="M27 18 h16 v12 q12 10 12 26 v100 q0 10 -10 10 h-20 q-10 0 -10 -10 v-100 q0 -16 12 -26z" fill="#cfe5ff" stroke="#5b8fd6" stroke-width="2"/>
-<rect x="15" y="70" width="40" height="44" fill="#fff" stroke="#5b8fd6"/>
-<text x="35" y="96" font-size="11" text-anchor="middle" fill="#1d2733">50 cl</text></svg>`;
+const BOTTLE = `<svg width="130" height="260" viewBox="0 0 130 260" aria-label="Bouteille 50 cl">
+<defs>
+  <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset=".45" stop-color="#e8f7ff"/><stop offset="1" stop-color="#6cc0f5"/></linearGradient>
+  <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd0ff" stop-opacity=".55"/><stop offset="1" stop-color="#1f8be0" stop-opacity=".75"/></linearGradient>
+  <linearGradient id="cap" x1="0" x2="1"><stop offset="0" stop-color="#0d5fb8"/><stop offset=".5" stop-color="#3d93ec"/><stop offset="1" stop-color="#0d5fb8"/></linearGradient>
+  <linearGradient id="label" x1="0" x2="1"><stop offset="0" stop-color="#fdf7ff"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#f1e9fb"/></linearGradient>
+  <clipPath id="body"><path d="M50 30 h30 v16 q22 16 22 44 v138 q0 20 -20 20 h-34 q-20 0 -20 -20 v-138 q0 -28 22 -44z"/></clipPath>
+</defs>
+<ellipse cx="65" cy="252" rx="42" ry="6" fill="#0003"/>
+<rect x="47" y="6" width="36" height="26" rx="5" fill="url(#cap)"/>
+<g fill="#ffffff55"><rect x="52" y="9" width="2" height="20"/><rect x="58" y="9" width="2" height="20"/><rect x="64" y="9" width="2" height="20"/><rect x="70" y="9" width="2" height="20"/><rect x="76" y="9" width="2" height="20"/></g>
+<path d="M50 30 h30 v16 q22 16 22 44 v138 q0 20 -20 20 h-34 q-20 0 -20 -20 v-138 q0 -28 22 -44z" fill="url(#glass)" stroke="#4aa8ea" stroke-width="2"/>
+<g clip-path="url(#body)">
+  <path d="M20 96 q15 -8 30 0 t30 0 t30 0 v170 h-90z" fill="url(#water)"/>
+  <g fill="#fff" opacity=".7"><circle cx="45" cy="210" r="3"/><circle cx="80" cy="190" r="2"/><circle cx="55" cy="170" r="2.5"/><circle cx="85" cy="225" r="3.5"/><circle cx="40" cy="140" r="1.8"/></g>
+  <rect x="28" y="60" width="7" height="170" rx="3.5" fill="#fff" opacity=".55"/>
+</g>
+<rect x="22" y="118" width="86" height="70" rx="6" fill="url(#label)" stroke="#c9b6ea"/>
+<path d="M65 127 q-10 12 -10 18 a10 10 0 0 0 20 0 q0 -6 -10 -18z" fill="#3d93ec"/><path d="M60 146 a5 5 0 0 0 5 5" stroke="#fff" stroke-width="1.5" fill="none"/>
+<text x="65" y="166" font-family="Georgia,serif" font-size="12" font-style="italic" text-anchor="middle" fill="#3a2a5d">Collagène</text>
+<text x="65" y="180" font-family="system-ui,sans-serif" font-size="7" text-anchor="middle" fill="#7a6a9a">EAU MINÉRALE · 50 CL</text>
+</svg>`;
 
-let r, ggIndex, history;
+let r, history;
 
 function load() { try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch { return []; } }
 function save(list) { try { localStorage.setItem(STORE, JSON.stringify(list)); } catch {} }
@@ -87,8 +100,8 @@ const euro = (v, d = 3) => Number(v).toFixed(d).replace(".", ",") + " €";
 
 function start() {
   r = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-        version: Math.random() < 0.5 ? "A" : "B", debut: new Date().toISOString(), statut: "en cours" };
-  ggIndex = 0; history = [];
+        version: crypto.getRandomValues(new Uint8Array(1))[0] < 128 ? "A" : "B", debut: new Date().toISOString(), statut: "en cours" };
+  history = [];
   go("accueil", false);
 }
 
@@ -98,8 +111,8 @@ function finish(statut) {
   const msg = statut === "complet"
     ? `<div class="big">🙏</div><h1>Merci infiniment !</h1>
        <p>Vos réponses sont précieuses : elles vont directement nourrir notre étude et nous aider à mieux comprendre ce qui compte vraiment pour les consommateurs.</p>
-       <p>Merci d’avoir pris ces quelques minutes, c’est grâce à des participants comme vous que cette enquête peut aboutir. Belle journée ! 💧</p>`
-    : `<div class="big">💧</div><h1>Merci pour votre intérêt !</h1>
+       <p>Merci d’avoir pris ces quelques minutes, c’est grâce à des participants comme vous que cette enquête peut aboutir. Belle journée !</p>`
+    : `<div class="big">🙏</div><h1>Merci pour votre intérêt !</h1>
        <p>Cette enquête s’adresse à un profil un peu différent, elle s’arrête donc ici. Merci beaucoup pour le temps que vous nous avez accordé.</p>`;
   render(`<div class="end">${msg}</div>` + (ADMIN ? `<div class="nav"><button onclick="start()">Nouveau répondant</button>
     <button class="sec" onclick="exportCSV()">Exporter (CSV)</button></div>
@@ -117,33 +130,40 @@ const Q = (n, t) => `<div class="q"><b>Q${n}.</b> ${t}</div>`;
 // A slider starts "unset" until moved; previously given answers are restored.
 function priceGauge(k) {
   const set = r[k] != null;
-  return `<div class="gauge"><div class="val${set ? "" : " unset"}" id="v_${k}">${set ? euro(r[k]) : "Déplacez le curseur"}</div>
-    <input type="range" name="${k}" min="0" max="10" step="0.001" value="${set ? r[k] : 0}" class="${set ? "" : "unset"}"
-      oninput="this.classList.remove('unset');this.dataset.set=1;const v=document.getElementById('v_${k}');v.classList.remove('unset');v.textContent=euro(this.value)"
+  return `<div class="gauge"><div class="val${set ? "" : " unset"}" id="v_${k}">${set ? euro(r[k], 2) : "Déplacez le curseur"}</div>
+    <input type="range" name="${k}" min="0" max="5" step="0.1" value="${set ? r[k] : 0}" class="${set ? "" : "unset"}"
+      oninput="this.classList.remove('unset');this.dataset.set=1;const v=document.getElementById('v_${k}');v.classList.remove('unset');v.textContent=euro(this.value, 2)"
       ${set ? 'data-set="1"' : ""}>
-    <div class="scale"><span>0 €</span><span>2,5 €</span><span>5 €</span><span>7,5 €</span><span>10 €</span></div></div>`;
+    <div class="scale"><span>0 €</span><span>1 €</span><span>2 €</span><span>3 €</span><span>4 €</span><span>5 €</span></div></div>`;
 }
 function likertGauge(k, text, n) {
   const set = r[k] != null && r[k] !== "";
-  return `<div class="lk">${Q(n, text)}<div class="chosen${set ? "" : " unset"}" id="v_${k}">${set ? LIKERT[r[k] - 1] : "Déplacez le curseur"}</div>
-    <input type="range" class="likert-range${set ? "" : " unset"}" name="${k}" min="1" max="5" step="1" value="${set ? r[k] : 3}"
+  return `<div class="lk">${Q(n, text)}<div class="gauge"><div class="val${set ? "" : " unset"}" id="v_${k}">${set ? LIKERT[r[k] - 1] : "Déplacez le curseur"}</div>
+    <input type="range" class="${set ? "" : "unset"}" name="${k}" min="1" max="5" step="1" value="${set ? r[k] : 3}"
       oninput="this.classList.remove('unset');this.dataset.set=1;const v=document.getElementById('v_${k}');v.classList.remove('unset');v.textContent=LIKERT[this.value-1]"
       ${set ? 'data-set="1"' : ""}>
-    <div class="scale"><span>Pas du tout d’accord</span><span>Tout à fait d’accord</span></div></div>`;
+    <div class="scale"><span>Pas du tout d’accord</span><span>Tout à fait d’accord</span></div></div></div>`;
 }
 function slider(name) { const e = document.querySelector(`input[name="${name}"]`); return e.dataset.set ? Number(e.value) : null; }
 
 function go(name, push = true) {
-  if (push) history.push({ name: current, ggIndex });
+  if (push) history.push(current);
   current = name;
   const s = screens[name];
   render(s.html() + `<div class="err" id="err"></div><div class="nav">
     ${history.length ? `<button class="sec" id="prev">← Précédent</button>` : "<span></span>"}<button id="next">Suivant →</button></div>`);
   document.getElementById("next").onclick = () => { const e = s.next(); if (e) document.getElementById("err").textContent = e; };
   const prev = document.getElementById("prev");
-  if (prev) prev.onclick = () => { const h = history.pop(); ggIndex = h.ggIndex; go(h.name, false); };
+  if (prev) prev.onclick = () => { keep(); go(history.pop(), false); };
 }
 let current;
+
+// Store whatever is filled on the current screen (no validation) so "Précédent" never loses an answer.
+const KEYS = { consent: "consentement", gg: "GG_reponse", genre: "genre", regime: "regime", depense: "depense_50cl" };
+function keep() {
+  document.querySelectorAll("input[type=radio]:checked").forEach(e => r[KEYS[e.name] || e.name] = e.value);
+  document.querySelectorAll("input[type=range][data-set]").forEach(e => r[e.name] = Number(e.value));
+}
 
 const screens = {
   accueil: {
@@ -154,7 +174,7 @@ const screens = {
   },
   filtre: {
     html: () => `${Q(2, "Au cours des 3 derniers mois, avez-vous acheté de l’eau en bouteille ?")}${radios("F1", ["Oui", "Non"], r.F1)}
-      ${Q(3, "Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément « fonctionnel » (vitamines, protéines, collagène…) ?")}${radios("F2", ["Oui", "Non"], r.F2)}
+      ${Q(3, "Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément enrichi (vitamines, protéines, collagène…) ? <span class='muted'>Les boissons énergisantes (type Red Bull, Monster) ne sont pas concernées.</span>")}${radios("F2", ["Oui", "Non"], r.F2)}
       ${Q(4, "Votre âge :")}${radios("F3", ["Moins de 18 ans", "18-24", "25-34", "35-49", "50 ans et plus"], r.F3)}`,
     next: () => { const f1 = val("F1"), f2 = val("F2"), f3 = val("F3");
       if (!f1 || !f2 || !f3) return "Merci de répondre à toutes les questions.";
@@ -167,7 +187,7 @@ const screens = {
     next: () => go("vw")
   },
   vw: {
-    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p><p class="muted">Faites glisser chaque curseur jusqu’au prix qui vous correspond (de 0 à 10 €). Les flèches du clavier permettent un réglage fin.</p>
+    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p><p class="muted">Faites glisser chaque curseur jusqu’au prix qui vous correspond (de 0 à 5 €, par pas de 10 centimes).</p>
       ${VW_ITEMS.map(([k, t], i) => Q(5 + i, t) + priceGauge(k)).join("")}`,
     next: () => { const p = VW_ITEMS.map(([k]) => slider(k));
       if (p.some(x => x === null)) return "Merci de placer chaque curseur sur un prix.";
@@ -176,15 +196,12 @@ const screens = {
       [r.P1, r.P2, r.P3, r.P4] = p; go("gg"); }
   },
   gg: {
-    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p>
-      ${Q(9, `Si ce produit coûtait ${euro(GG_PRICES[ggIndex], 2)}, l’achèteriez-vous ?`)}${radios("gg", GG_SCALE, r["G_" + GG_PRICES[ggIndex].toFixed(2)])}`,
+    // Single question, price = mean of the respondent's own Q5-Q8 answers.
+    html: () => { r.GG_prix = Math.round((r.P1 + r.P2 + r.P3 + r.P4) / 4 * 100) / 100;
+      return `<p class="concept">« ${CONCEPT[r.version]} »</p>
+      ${Q(9, `Si ce produit coûtait ${euro(r.GG_prix, 2)}, l’achèteriez-vous ?`)}${radios("gg", GG_SCALE, r.GG_reponse)}`; },
     next: () => { const v = val("gg"); if (!v) return "Merci de répondre.";
-      // Answers at lower prices may be stale after going back: clear them.
-      GG_PRICES.slice(ggIndex + 1).forEach(p => delete r["G_" + p.toFixed(2)]);
-      r["G_" + GG_PRICES[ggIndex].toFixed(2)] = v;
-      if (v === "Certainement" || v === "Probablement") { r.GG_prix_accepte = GG_PRICES[ggIndex]; go("controle"); }
-      else if (ggIndex + 1 < GG_PRICES.length) { history.push({ name: "gg", ggIndex }); ggIndex++; go("gg", false); }
-      else { r.GG_prix_accepte = ""; go("controle"); } }
+      r.GG_reponse = v; r.GG_achat = (v === "Certainement" || v === "Probablement") ? 1 : 0; go("controle"); }
   },
   controle: {
     html: () => `${Q(10, "D’après la description, d’où provenait le collagène, ou ce qui le soutient, dans ce produit ?")}
@@ -211,9 +228,13 @@ const screens = {
 };
 
 function exportCSV() {
-  const list = load(); if (!list.length) return;
+  // Q10: correct answers first, then wrong ones, then incomplete questionnaires.
+  const rank = x => x.controle_ok === 1 ? 0 : x.controle_ok === 0 ? 1 : 2;
+  const list = load().map(x => ({ ...x, groupe_controle: ["Bonne réponse Q10", "Erreur Q10", "Non atteint"][rank(x)] }))
+    .sort((a, b) => rank(a) - rank(b));
+  if (!list.length) return;
   const cols = ["id", "version", "statut", "debut", "fin", "consentement", "F1", "F2", "F3", "P1", "P2", "P3", "P4",
-    ...GG_PRICES.map(p => "G_" + p.toFixed(2)), "GG_prix_accepte", "C1", "controle_ok", "L1", "L2", "L3", "L4", "L5",
+    "GG_prix", "GG_reponse", "GG_achat", "C1", "controle_ok", "groupe_controle", "L1", "L2", "L3", "L4", "L5",
     "genre", "regime", "depense_50cl"];
   const esc = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const csv = "﻿" + [cols.join(";"), ...list.map(x => cols.map(c => esc(x[c])).join(";"))].join("\n");

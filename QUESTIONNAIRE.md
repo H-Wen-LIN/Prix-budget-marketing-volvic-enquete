@@ -9,7 +9,7 @@
 
 ## 2. Filtre
 - **F1.** Au cours des 3 derniers mois, avez-vous acheté de l'eau en bouteille ? ☐ Oui ☐ Non (fin)
-- **F2.** Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément « fonctionnel » (vitamines, protéines, collagène…) ? ☐ Oui ☐ Non
+- **F2.** Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément enrichi (vitamines, protéines, collagène…) ? Les boissons énergisantes ne sont pas concernées. ☐ Oui ☐ Non
 - **F3.** Votre âge : ☐ moins de 18 ans ☐ 18-24 ☐ 25-34 ☐ 35-49 ☐ 50 ans et plus
 
 ## 3. L'offre (seule partie qui change) — même visuel de bouteille 50 cl
@@ -21,15 +21,14 @@
 > Vigilance : le collagène vegan n'existe pas à proprement parler → on parle de « soutien au collagène ». Formulations honnêtes, de longueur et de ton comparables.
 
 ## 4. Mesure du prix
-**Van Westendorp** (réponse ouverte en €)
+**Van Westendorp** (curseur de 0 à 5 €, par pas de 0,10 €)
 - **P1.** À partir de quel prix trouveriez-vous ce produit trop cher au point de ne pas l'acheter ?
 - **P2.** À partir de quel prix le trouveriez-vous cher, tout en envisageant de l'acheter ?
 - **P3.** À quel prix le trouveriez-vous bon marché, une bonne affaire ?
 - **P4.** À partir de quel prix le trouveriez-vous trop bon marché au point de douter de sa qualité ?
 
-**Gabor-Granger** (du plus élevé au plus bas, arrêt au premier « oui »)
-- **G1.** « Si ce produit coûtait 3,50 €, l'achèteriez-vous ? » ☐ Certainement ☐ Probablement ☐ Je ne sais pas ☐ Probablement pas ☐ Certainement pas
-- Si la réponse n'est pas positive : 2,90 € → 2,40 € → 1,90 € → 1,50 €.
+**Question d'achat (Q9)** : une seule question, au prix égal à la moyenne des 4 prix donnés par le répondant en P1–P4.
+- « Si ce produit coûtait [moyenne] €, l'achèteriez-vous ? » ☐ Certainement ☐ Probablement ☐ Je ne sais pas ☐ Probablement pas ☐ Certainement pas
 
 ## 5. Contrôle de manipulation
 - **C1.** « D'après la description, d'où provenait le collagène, ou ce qui le soutient, dans ce produit ? » ☐ Origine végétale ☐ Origine animale (bovine) ☐ Origine marine ☐ Je ne sais pas
@@ -50,6 +49,6 @@
 
 ## Analyse
 - Van Westendorp : point de prix optimal (OPP), plage de prix acceptable, par version.
-- Gabor-Granger : courbe de demande et prix maximisant le revenu, par version.
+- Q9 : taux d'intention d'achat (Certainement + Probablement) au prix moyen déclaré, par version.
 - Comparaison A vs B : test t ou Mann-Whitney ; croisement par régime alimentaire.
 - Échantillon cible : 100 à 150 répondants par version.
