@@ -39,6 +39,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;cur
 .lk{border-top:1px solid var(--line);padding:16px 0 4px}
 .lk:first-of-type{border-top:0}
 .lk .stmt{font-weight:600;margin-bottom:4px}
+.egg{margin-top:14px;padding:12px 14px;border-radius:10px;background:#fff8e1;color:#5c4400;border:1px dashed #e6c35c;font-size:.92rem}
 .ggrow .q{font-weight:500;margin:14px 0 6px}
 .ggrow label.opt{display:inline-block;margin:3px 4px 3px 0;padding:6px 10px;font-size:.9rem}
 .ggrow label.opt input{display:none}
@@ -125,15 +126,21 @@ function start() {
   go("accueil", false);
 }
 
+// Uses the device clock, i.e. the respondent's own time zone.
+function greeting() {
+  const h = new Date().getHours();
+  return h >= 5 && h < 12 ? "Bonne matinée" : h >= 12 && h < 21 ? "Bonne journée" : "Bonne nuit";
+}
+
 function finish(statut) {
   r.statut = statut; r.fin = new Date().toISOString();
   const list = load(); list.push(r); save(list);
   const msg = statut === "complet"
     ? `<div class="big">🙏</div><h1>Merci infiniment !</h1>
        <p>Vos réponses sont précieuses : elles vont directement nourrir notre étude et nous aider à mieux comprendre ce qui compte vraiment pour les consommateurs.</p>
-       <p>Merci d’avoir pris ces quelques minutes, c’est grâce à des participants comme vous que cette enquête peut aboutir. Belle journée !</p>`
+       <p>Merci d’avoir pris ces quelques minutes, c’est grâce à des participants comme vous que cette enquête peut aboutir. ${greeting()} !</p>`
     : `<div class="big">🙏</div><h1>Merci pour votre intérêt !</h1>
-       <p>Cette enquête s’adresse à un profil un peu différent, elle s’arrête donc ici. Merci beaucoup pour le temps que vous nous avez accordé.</p>`;
+       <p>Cette enquête s’adresse à un profil un peu différent, elle s’arrête donc ici. Merci beaucoup pour le temps que vous nous avez accordé. ${greeting()} !</p>`;
   render(`<div class="end">${msg}</div>` + (ADMIN ? `<div class="nav"><button onclick="start()">Nouveau répondant</button>
     <button class="sec" onclick="exportCSV()">Exporter (CSV)</button></div>
     <p class="muted">${load().length} réponse(s) enregistrée(s) sur cet appareil.</p>` : ""));
@@ -170,6 +177,9 @@ function ggRefresh() {
   let show = true;
   GG_PRICES.forEach((p, i) => { document.getElementById("gg" + i).hidden = !show;
     const v = val(ggKey(p)); show = show && !!v && !positive(v); });
+  // Easter egg: still not convinced at the lowest price. Friendly nudge, not blocking.
+  const last = val(ggKey(GG_PRICES[GG_PRICES.length - 1]));
+  document.getElementById("egg").hidden = !(last && !positive(last) && !document.getElementById("gg" + (GG_PRICES.length - 1)).hidden);
 }
 function slider(name) { const e = document.querySelector(`input[name="${name}"]`); return e.dataset.set ? Number(e.value) : null; }
 
@@ -227,7 +237,9 @@ const screens = {
     // Gabor-Granger on one page: next (lower) price appears only while the answer is not positive.
     html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p>${Q(9, "Achèteriez-vous ce produit aux prix suivants ?")}
       ${GG_PRICES.map((p, i) => `<div class="ggrow" id="gg${i}"><div class="q">${String.fromCharCode(97 + i)}) Si ce produit coûtait ${euro(p, 2)}, l’achèteriez-vous ?</div>
-        ${radios(ggKey(p), GG_SCALE, r[ggKey(p)])}</div>`).join("")}`,
+        ${radios(ggKey(p), GG_SCALE, r[ggKey(p)])}</div>`).join("")}
+      <div class="egg" id="egg" hidden>🕵️ Hmm… même à 1,50 €, le prix d’un petit café ? On commence à se demander si vous ne testez pas notre questionnaire 😄
+        Si c’est vraiment votre avis, aucun souci, vous pouvez continuer. Sinon, prenez une seconde pour répondre le plus sincèrement possible, ça nous aide beaucoup !</div>`,
     after: () => { document.querySelectorAll(".ggrow input").forEach(e => e.onchange = ggRefresh); ggRefresh(); },
     next: () => { const shown = GG_PRICES.filter((p, i) => !document.getElementById("gg" + i).hidden);
       const last = shown[shown.length - 1], v = val(ggKey(last));
