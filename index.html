@@ -19,6 +19,8 @@ label.opt:has(input:checked){border-color:var(--accent);background:var(--soft)}
 .nav{display:flex;justify-content:space-between;gap:8px;margin-top:20px}
 button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 18px;font:inherit;cursor:pointer}
 button.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+input.age{width:90px;padding:9px 12px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);margin-right:6px}
+input.age:focus{outline:none;border-color:var(--accent)}
 .err{color:#d1242f;margin-top:10px;min-height:1.2em}
 .bottle{display:flex;justify-content:center;margin:12px 0}
 .concept{font-style:italic;border-left:3px solid var(--accent);padding-left:12px}
@@ -206,6 +208,7 @@ let current;
 const KEYS = { consent: "consentement", genre: "genre", regime: "regime", depense: "depense_50cl" };
 function keep() {
   document.querySelectorAll("input[type=radio]:checked").forEach(e => r[KEYS[e.name] || e.name] = e.value);
+  document.querySelectorAll("input[type=number]").forEach(e => { if (e.value !== "") r[e.name] = Number(e.value); });
   document.querySelectorAll("input[type=range][data-set]").forEach(e => r[e.name] = Number(e.value));
 }
 
@@ -219,11 +222,12 @@ const screens = {
   filtre: {
     html: () => `${Q(2, "Au cours des 3 derniers mois, avez-vous acheté de l’eau en bouteille ?")}${radios("F1", ["Oui", "Non"], r.F1)}
       ${Q(3, "Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément enrichi (vitamines, protéines, collagène…) ? <span class='muted'>Les boissons énergisantes (type Red Bull, Monster) ne sont pas concernées.</span>")}${radios("F2", ["Oui", "Non"], r.F2)}
-      ${Q(4, "Votre âge :")}${radios("F3", ["Moins de 18 ans", "18-24", "25-34", "35-49", "50 ans et plus"], r.F3)}`,
-    next: () => { const f1 = val("F1"), f2 = val("F2"), f3 = val("F3");
-      if (!f1 || !f2 || !f3) return "Merci de répondre à toutes les questions.";
+      ${Q(4, "Quel est votre âge ?")}<input type="number" class="age" name="F3" min="1" max="120" step="1" inputmode="numeric" value="${r.F3 ?? ""}"> ans`,
+    next: () => { const f1 = val("F1"), f2 = val("F2"), f3 = Number(document.querySelector("input[name=F3]").value);
+      if (!f1 || !f2 || !document.querySelector("input[name=F3]").value) return "Merci de répondre à toutes les questions.";
+      if (!Number.isInteger(f3) || f3 < 1 || f3 > 120) return "Merci d’indiquer un âge valide (en années).";
       Object.assign(r, { F1: f1, F2: f2, F3: f3 });
-      f3 === "Moins de 18 ans" ? finish("mineur") : f1 === "Non" ? finish("hors cible") : go("offre"); }
+      f3 < 18 ? finish("mineur") : f1 === "Non" ? finish("hors cible") : go("offre"); }
   },
   offre: {
     html: () => `<p>Voici un nouveau produit. <strong>Voici sa description, merci de la lire attentivement :</strong></p>

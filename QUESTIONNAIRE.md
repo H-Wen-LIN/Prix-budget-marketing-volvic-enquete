@@ -8,7 +8,7 @@
 ## Filtre
 - **Q2.** Au cours des 3 derniers mois, avez-vous acheté de l'eau en bouteille ? ☐ Oui ☐ Non (fin)
 - **Q3.** Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément enrichi (vitamines, protéines, collagène…) ? Les boissons énergisantes ne sont pas concernées. ☐ Oui ☐ Non
-- **Q4.** Votre âge : ☐ moins de 18 ans (fin : « Cette étude est réservée aux personnes âgées de 18 ans et plus. ») ☐ 18-24 ☐ 25-34 ☐ 35-49 ☐ 50 ans et plus
+- **Q4.** Quel est votre âge ? ____ ans (moins de 18 ans → fin : « Cette étude est réservée aux personnes âgées de 18 ans et plus. »)
 
 ## L'offre (seule partie qui change), même visuel de bouteille 50 cl
 
