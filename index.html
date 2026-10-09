@@ -40,7 +40,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;cur
 .lk:first-of-type{border-top:0}
 .lk .stmt{font-weight:600;margin-bottom:4px}
 .ggrow .q{font-weight:500;margin:14px 0 6px}
-.ggrow label.opt{display:inline-block;margin:3px 4px 3px 0;padding:6px 10px;font-size:.9rem}
+.ggrow label.opt{display:inline-block;margin:4px 8px 4px 0;padding:10px 24px;font-size:1.05rem;font-weight:600;min-width:80px;text-align:center}
 .ggrow label.opt input{display:none}
 .end{text-align:center;padding:12px 0}
 .end .big{font-size:2.4rem}
@@ -58,8 +58,8 @@ const GG_PRICES = [3.50, 2.90, 2.40, 1.90, 1.50];
 const GG_SCALE = ["Oui", "Non"];
 // Each item has its own 5-point scale (from most negative to most positive).
 const LIKERT_ITEMS = [
-  ["L1", "Ce produit est-il de qualité ?",
-    ["Très insatisfait", "Insatisfait", "Ni satisfait ni insatisfait", "Satisfait", "Très satisfait"]],
+  ["L1", "Comment jugez-vous la qualité de ce produit ?",
+    ["Très mauvaise", "Mauvaise", "Ni bonne ni mauvaise", "Bonne", "Très bonne"]],
   ["L2", "Selon vous, quel est l’effet de ce produit sur la santé ?",
     ["Très négatif", "Plutôt négatif", "Ni négatif ni positif", "Plutôt positif", "Très positif"]],
   ["L3", "Quel degré de confiance accordez-vous à l’efficacité de ce produit ?",
@@ -145,6 +145,9 @@ function finish(statut) {
     ? `<div class="big">🙏</div><h1>Merci infiniment !</h1>
        <p>Vos réponses sont précieuses : elles vont directement nourrir notre étude et nous aider à mieux comprendre ce qui compte vraiment pour les consommateurs.</p>
        <p>Merci d’avoir pris ces quelques minutes, c’est grâce à des participants comme vous que cette enquête peut aboutir. ${greeting()} !</p>`
+    : statut === "mineur"
+    ? `<h1>Merci de votre intérêt</h1>
+       <p>Cette étude est réservée aux personnes âgées de 18 ans et plus. Nous vous remercions de votre compréhension.</p>`
     : `<div class="big">🙏</div><h1>Merci pour votre intérêt !</h1>
        <p>Cette enquête s’adresse à un profil un peu différent, elle s’arrête donc ici. Merci beaucoup pour le temps que vous nous avez accordé. ${greeting()} !</p>`;
   render(`<div class="end">${msg}</div>` + (ADMIN ? `<div class="nav"><button onclick="start()">Nouveau répondant</button>
@@ -220,7 +223,7 @@ const screens = {
     next: () => { const f1 = val("F1"), f2 = val("F2"), f3 = val("F3");
       if (!f1 || !f2 || !f3) return "Merci de répondre à toutes les questions.";
       Object.assign(r, { F1: f1, F2: f2, F3: f3 });
-      (f1 === "Non" || f3 === "Moins de 18 ans") ? finish("hors cible") : go("offre"); }
+      f3 === "Moins de 18 ans" ? finish("mineur") : f1 === "Non" ? finish("hors cible") : go("offre"); }
   },
   offre: {
     html: () => `<p>Voici un nouveau produit. <strong>Voici sa description, merci de la lire attentivement :</strong></p>

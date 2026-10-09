@@ -8,7 +8,7 @@
 ## Filtre
 - **Q2.** Au cours des 3 derniers mois, avez-vous acheté de l'eau en bouteille ? ☐ Oui ☐ Non (fin)
 - **Q3.** Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément enrichi (vitamines, protéines, collagène…) ? Les boissons énergisantes ne sont pas concernées. ☐ Oui ☐ Non
-- **Q4.** Votre âge : ☐ moins de 18 ans (fin) ☐ 18-24 ☐ 25-34 ☐ 35-49 ☐ 50 ans et plus
+- **Q4.** Votre âge : ☐ moins de 18 ans (fin : « Cette étude est réservée aux personnes âgées de 18 ans et plus. ») ☐ 18-24 ☐ 25-34 ☐ 35-49 ☐ 50 ans et plus
 
 ## L'offre (seule partie qui change), même visuel de bouteille 50 cl
 
@@ -33,7 +33,7 @@ Prix du plus élevé au plus bas : 3,50 € → 2,90 € → 2,40 € → 1,90 �
 ## Perception (Likert 5 points, une échelle propre à chaque question)
 | | Question | Échelle (1 → 5) |
 |---|---|---|
-| Q11 | Ce produit est-il de qualité ? | Très insatisfait → Très satisfait |
+| Q11 | Comment jugez-vous la qualité de ce produit ? | Très mauvaise → Très bonne |
 | Q12 | Selon vous, quel est l'effet de ce produit sur la santé ? | Très négatif → Très positif |
 | Q13 | Quel degré de confiance accordez-vous à l'efficacité de ce produit ? | Aucune confiance → Totale confiance |
 | Q14 | Ce produit correspond-il à vos valeurs (éthique, environnement) ? | Pas du tout → Tout à fait |
