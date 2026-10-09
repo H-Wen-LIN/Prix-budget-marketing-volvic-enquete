@@ -39,7 +39,6 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;cur
 .lk{border-top:1px solid var(--line);padding:16px 0 4px}
 .lk:first-of-type{border-top:0}
 .lk .stmt{font-weight:600;margin-bottom:4px}
-.egg{margin-top:14px;padding:12px 14px;border-radius:10px;background:#fff8e1;color:#5c4400;border:1px dashed #e6c35c;font-size:.92rem}
 .ggrow .q{font-weight:500;margin:14px 0 6px}
 .ggrow label.opt{display:inline-block;margin:3px 4px 3px 0;padding:6px 10px;font-size:.9rem}
 .ggrow label.opt input{display:none}
@@ -52,18 +51,23 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;cur
 <script>
 // Concept texts: only the collagen origin differs between A and B.
 const CONCEPT = {
-  A: "Eau minérale naturelle enrichie en actifs végétaux qui soutiennent la production naturelle de collagène (vitamine C, silicium…), sans ingrédient d’origine animale. 50 cl.",
-  B: "Eau minérale naturelle enrichie en collagène d’origine bovine (peptides de collagène). 50 cl."
+  A: "Eau minérale naturelle enrichie en collagène d’origine végétale. 50 cl.",
+  B: "Eau minérale naturelle enrichie en collagène d’origine animale. 50 cl."
 };
 const GG_PRICES = [3.50, 2.90, 2.40, 1.90, 1.50];
-const GG_SCALE = ["Certainement", "Probablement", "Je ne sais pas", "Probablement pas", "Certainement pas"];
-const LIKERT = ["Pas du tout d’accord", "Plutôt pas d’accord", "Ni d’accord ni pas d’accord", "Plutôt d’accord", "Tout à fait d’accord"];
+const GG_SCALE = ["Oui", "Non"];
+// Each item has its own 5-point scale (from most negative to most positive).
 const LIKERT_ITEMS = [
-  ["L1", "Ce produit est de bonne qualité."],
-  ["L2", "Ce produit est bon pour ma santé."],
-  ["L3", "Je fais confiance à l’efficacité de ce produit."],
-  ["L4", "Ce produit correspond à mes valeurs (éthique, environnement)."],
-  ["L5", "Ce produit me paraît naturel."]
+  ["L1", "Ce produit est-il de qualité ?",
+    ["Très insatisfait", "Insatisfait", "Ni satisfait ni insatisfait", "Satisfait", "Très satisfait"]],
+  ["L2", "Selon vous, quel est l’effet de ce produit sur la santé ?",
+    ["Très négatif", "Plutôt négatif", "Ni négatif ni positif", "Plutôt positif", "Très positif"]],
+  ["L3", "Quel degré de confiance accordez-vous à l’efficacité de ce produit ?",
+    ["Aucune confiance", "Peu de confiance", "Confiance moyenne", "Assez confiance", "Totale confiance"]],
+  ["L4", "Ce produit correspond-il à vos valeurs (éthique, environnement) ?",
+    ["Pas du tout", "Un peu", "Moyennement", "Beaucoup", "Tout à fait"]],
+  ["L5", "Ce produit vous paraît-il naturel ?",
+    ["Pas du tout naturel", "Peu naturel", "Moyennement naturel", "Plutôt naturel", "Très naturel"]]
 ];
 const VW_ITEMS = [
   ["P1", "À partir de quel prix trouveriez-vous ce produit trop cher au point de ne pas l’acheter ?"],
@@ -71,6 +75,8 @@ const VW_ITEMS = [
   ["P3", "À quel prix le trouveriez-vous bon marché, une bonne affaire ?"],
   ["P4", "À partir de quel prix le trouveriez-vous trop bon marché au point de douter de sa qualité ?"]
 ];
+// Estimated production cost of one 50 cl bottle: lower bound of the Q6-Q9 gauges. Adjust if needed.
+const COUT_REVIENT = 0.50;
 const STORE = "enquete_collagene_reponses";
 // Admin tools (export CSV, counter, new respondent) only shown with #admin in the URL.
 const ADMIN = location.hash === "#admin";
@@ -158,28 +164,25 @@ const Q = (n, t) => `<div class="q"><b>Q${n}.</b> ${t}</div>`;
 function priceGauge(k) {
   const set = r[k] != null;
   return `<div class="gauge"><div class="val${set ? "" : " unset"}" id="v_${k}">${set ? euro(r[k], 2) : "Déplacez le curseur"}</div>
-    <input type="range" name="${k}" min="0" max="5" step="0.1" value="${set ? r[k] : 0}" class="${set ? "" : "unset"}"
+    <input type="range" name="${k}" min="${COUT_REVIENT}" max="10" step="0.1" value="${set ? r[k] : COUT_REVIENT}" class="${set ? "" : "unset"}"
       oninput="this.classList.remove('unset');this.dataset.set=1;const v=document.getElementById('v_${k}');v.classList.remove('unset');v.textContent=euro(this.value, 2)"
       ${set ? 'data-set="1"' : ""}>
-    <div class="scale"><span>0 €</span><span>1 €</span><span>2 €</span><span>3 €</span><span>4 €</span><span>5 €</span></div></div>`;
+    <div class="scale"><span>${euro(COUT_REVIENT, 2)}</span><span>2,5 €</span><span>5 €</span><span>7,5 €</span><span>10 €</span></div></div>`;
 }
-function likertGauge(k, text, n) {
+function likertGauge(k, text, scale, n) {
   const set = r[k] != null && r[k] !== "";
-  return `<div class="lk">${Q(n, text)}<div class="gauge"><div class="val${set ? "" : " unset"}" id="v_${k}">${set ? LIKERT[r[k] - 1] : "Déplacez le curseur"}</div>
+  return `<div class="lk">${Q(n, text)}<div class="gauge"><div class="val${set ? "" : " unset"}" id="v_${k}">${set ? scale[r[k] - 1] : "Déplacez le curseur"}</div>
     <input type="range" class="${set ? "" : "unset"}" name="${k}" min="1" max="5" step="1" value="${set ? r[k] : 3}"
-      oninput="this.classList.remove('unset');this.dataset.set=1;const v=document.getElementById('v_${k}');v.classList.remove('unset');v.textContent=LIKERT[this.value-1]"
+      oninput="this.classList.remove('unset');this.dataset.set=1;const v=document.getElementById('v_${k}');v.classList.remove('unset');v.textContent=LIKERT_ITEMS.find(x=>x[0]==='${k}')[2][this.value-1]"
       ${set ? 'data-set="1"' : ""}>
-    <div class="scale"><span>Pas du tout d’accord</span><span>Tout à fait d’accord</span></div></div></div>`;
+    <div class="scale"><span>${scale[0]}</span><span>${scale[4]}</span></div></div></div>`;
 }
 const ggKey = p => "G_" + p.toFixed(2);
-const positive = v => v === "Certainement" || v === "Probablement";
+const positive = v => v === "Oui";
 function ggRefresh() {
   let show = true;
   GG_PRICES.forEach((p, i) => { document.getElementById("gg" + i).hidden = !show;
     const v = val(ggKey(p)); show = show && !!v && !positive(v); });
-  // Easter egg: still not convinced at the lowest price. Friendly nudge, not blocking.
-  const last = val(ggKey(GG_PRICES[GG_PRICES.length - 1]));
-  document.getElementById("egg").hidden = !(last && !positive(last) && !document.getElementById("gg" + (GG_PRICES.length - 1)).hidden);
 }
 function slider(name) { const e = document.querySelector(`input[name="${name}"]`); return e.dataset.set ? Number(e.value) : null; }
 
@@ -217,16 +220,16 @@ const screens = {
     next: () => { const f1 = val("F1"), f2 = val("F2"), f3 = val("F3");
       if (!f1 || !f2 || !f3) return "Merci de répondre à toutes les questions.";
       Object.assign(r, { F1: f1, F2: f2, F3: f3 });
-      f1 === "Non" ? finish("hors cible") : go("offre"); }
+      (f1 === "Non" || f3 === "Moins de 18 ans") ? finish("hors cible") : go("offre"); }
   },
   offre: {
     html: () => `<p>Voici un nouveau produit. <strong>Voici sa description, merci de la lire attentivement :</strong></p>
       <div class="bottle">${BOTTLE}</div><p class="concept">« ${CONCEPT[r.version]} »</p>`,
-    next: () => go("vw")
+    next: () => go("controle")
   },
   vw: {
-    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p><p class="muted">Faites glisser chaque curseur jusqu’au prix qui vous correspond (de 0 à 5 €, par pas de 10 centimes).</p>
-      ${VW_ITEMS.map(([k, t], i) => Q(5 + i, t) + priceGauge(k)).join("")}`,
+    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p><p class="muted">Faites glisser chaque curseur jusqu’au prix qui vous correspond (de ${euro(COUT_REVIENT, 2)} à 10 €, par pas de 10 centimes).</p>
+      ${VW_ITEMS.map(([k, t], i) => Q(6 + i, t) + priceGauge(k)).join("")}`,
     next: () => { const p = VW_ITEMS.map(([k]) => slider(k));
       if (p.some(x => x === null)) return "Merci de placer chaque curseur sur un prix.";
       if (!(p[0] >= p[1] && p[1] >= p[2] && p[2] >= p[3]))
@@ -235,36 +238,34 @@ const screens = {
   },
   gg: {
     // Gabor-Granger on one page: next (lower) price appears only while the answer is not positive.
-    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p>${Q(9, "Achèteriez-vous ce produit aux prix suivants ?")}
-      ${GG_PRICES.map((p, i) => `<div class="ggrow" id="gg${i}"><div class="q">${String.fromCharCode(97 + i)}) Si ce produit coûtait ${euro(p, 2)}, l’achèteriez-vous ?</div>
-        ${radios(ggKey(p), GG_SCALE, r[ggKey(p)])}</div>`).join("")}
-      <div class="egg" id="egg" hidden>🕵️ Hmm… même à 1,50 €, le prix d’un petit café ? On commence à se demander si vous ne testez pas notre questionnaire 😄
-        Si c’est vraiment votre avis, aucun souci, vous pouvez continuer. Sinon, prenez une seconde pour répondre le plus sincèrement possible, ça nous aide beaucoup !</div>`,
+    html: () => `<p class="concept">« ${CONCEPT[r.version]} »</p>${Q(10, "Pour chacun des prix suivants, indiquez si vous achèteriez ce produit.")}
+      ${GG_PRICES.map((p, i) => `<div class="ggrow" id="gg${i}"><div class="q">${String.fromCharCode(97 + i)}) Achèteriez-vous ce produit au prix de ${euro(p, 2)} ?</div>
+        ${radios(ggKey(p), GG_SCALE, r[ggKey(p)])}</div>`).join("")}`,
     after: () => { document.querySelectorAll(".ggrow input").forEach(e => e.onchange = ggRefresh); ggRefresh(); },
     next: () => { const shown = GG_PRICES.filter((p, i) => !document.getElementById("gg" + i).hidden);
       const last = shown[shown.length - 1], v = val(ggKey(last));
       if (!v) return "Merci de répondre.";
       GG_PRICES.forEach(p => r[ggKey(p)] = shown.includes(p) ? val(ggKey(p)) : "");
-      r.GG_prix_accepte = positive(v) ? last : ""; go("controle"); }
+      r.GG_prix_accepte = positive(v) ? last : ""; go("perception"); }
   },
   controle: {
-    html: () => `${Q(10, "D’après la description, d’où provenait le collagène, ou ce qui le soutient, dans ce produit ?")}
-      ${radios("C1", ["Origine végétale", "Origine animale (bovine)", "Origine marine", "Je ne sais pas"], r.C1)}`,
+    html: () => `${Q(5, "D’après la description, quelle est l’origine du collagène contenu dans ce produit ?")}
+      ${radios("C1", ["Origine végétale", "Origine animale", "Origine marine", "Je ne sais pas"], r.C1)}`,
     next: () => { const v = val("C1"); if (!v) return "Merci de répondre.";
-      r.C1 = v; r.controle_ok = (r.version === "A" ? v === "Origine végétale" : v === "Origine animale (bovine)") ? 1 : 0;
-      go("perception"); }
+      r.C1 = v; r.controle_ok = (r.version === "A" ? v === "Origine végétale" : v === "Origine animale") ? 1 : 0;
+      go("vw"); }
   },
   perception: {
-    html: () => `<p>Dans quelle mesure êtes-vous d’accord avec les affirmations suivantes ?</p>
-      ${LIKERT_ITEMS.map(([k, t], i) => likertGauge(k, t, 11 + i)).join("")}`,
+    html: () => `<p>Pour chaque question, placez le curseur sur la réponse qui correspond le mieux à votre avis.</p>
+      ${LIKERT_ITEMS.map(([k, t, sc], i) => likertGauge(k, t, sc, 11 + i)).join("")}`,
     next: () => { const v = LIKERT_ITEMS.map(([k]) => slider(k));
       if (v.some(x => x === null)) return "Merci de placer chaque curseur.";
       LIKERT_ITEMS.forEach(([k], i) => r[k] = v[i]); go("profil"); }
   },
   profil: {
     html: () => `${Q(16, "Vous êtes :")}${radios("genre", ["Une femme", "Un homme", "Autre", "Je préfère ne pas répondre"], r.genre)}
-      ${Q(17, "Quel est votre régime alimentaire ?")}${radios("regime", ["Omnivore", "Flexitarien", "Végétarien", "Végan"], r.regime)}
-      ${Q(18, "Combien dépensez-vous habituellement pour une bouteille d’eau de 50 cl ?")}${radios("depense", ["< 0,50 €", "0,50–1 €", "1–2 €", "> 2 €"], r.depense_50cl)}`,
+      ${Q(17, "Quel est votre régime alimentaire ?")}${radios("regime", ["Omnivore", "Flexitarien", "Végétarien", "Végan", "Autre"], r.regime)}
+      ${Q(18, "Combien dépensez-vous habituellement pour une bouteille d’eau de 50 cl ?")}${radios("depense", ["Moins de 0,30 €", "De 0,30 € à 0,49 €", "De 0,50 € à 0,79 €", "De 0,80 € à 0,99 €", "De 1,00 € à 1,49 €", "De 1,50 € à 1,99 €", "2,00 € ou plus"], r.depense_50cl)}`,
     next: () => { const g = val("genre"), d = val("regime"), e = val("depense");
       if (!g || !d || !e) return "Merci de répondre à toutes les questions.";
       Object.assign(r, { genre: g, regime: d, depense_50cl: e }); finish("complet"); }
@@ -272,9 +273,9 @@ const screens = {
 };
 
 function exportCSV() {
-  // Q10: correct answers first, then wrong ones, then incomplete questionnaires.
+  // Q5 (control): correct answers first, then wrong ones, then incomplete questionnaires.
   const rank = x => x.controle_ok === 1 ? 0 : x.controle_ok === 0 ? 1 : 2;
-  const list = load().map(x => ({ ...x, groupe_controle: ["Bonne réponse Q10", "Erreur Q10", "Non atteint"][rank(x)] }))
+  const list = load().map(x => ({ ...x, groupe_controle: ["Bonne réponse contrôle", "Erreur contrôle", "Non atteint"][rank(x)] }))
     .sort((a, b) => rank(a) - rank(b));
   if (!list.length) return;
   const cols = ["id", "version", "statut", "debut", "fin", "consentement", "F1", "F2", "F3", "P1", "P2", "P3", "P4",

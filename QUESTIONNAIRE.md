@@ -1,52 +1,48 @@
-# Questionnaire A/B : eau au collagène vegan (A) ou bovin (B)
+# Questionnaire A/B : eau au collagène d'origine végétale (A) ou animale (B)
 
-**Principe** : chaque répondant voit une seule version, attribuée au hasard (randomisation par blocs de 4 : 2 A et 2 B dans un ordre aléatoire). Le texte, l'image, le format et la marque sont les mêmes dans les deux versions. Seule l'origine du collagène change, ce qui permet d'attribuer à cette seule différence l'écart de prix accepté.
+**Principe** : chaque répondant voit une seule version, attribuée au hasard (randomisation par blocs de 4 : 2 A et 2 B dans un ordre aléatoire). Le texte, l'image, le format et la marque sont identiques ; seul le mot « végétale » / « animale » change.
 
-## 1. Accueil
-« Cette enquête porte sur les boissons. Elle dure environ 5 minutes. Vos réponses sont anonymes et utilisées uniquement à des fins d'étude. Acceptez-vous de participer ? » ☐ Oui ☐ Non (fin)
+## Accueil
+**Q1.** « Cette enquête porte sur les boissons. Elle dure environ 5 minutes. Vos réponses sont anonymes et utilisées uniquement à des fins d'étude. Acceptez-vous de participer ? » ☐ Oui ☐ Non (fin)
 
-> L'accueil dit « boissons » et pas « collagène » ni « vegan », pour ne pas orienter les réponses.
+## Filtre
+- **Q2.** Au cours des 3 derniers mois, avez-vous acheté de l'eau en bouteille ? ☐ Oui ☐ Non (fin)
+- **Q3.** Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément enrichi (vitamines, protéines, collagène…) ? Les boissons énergisantes ne sont pas concernées. ☐ Oui ☐ Non
+- **Q4.** Votre âge : ☐ moins de 18 ans (fin) ☐ 18-24 ☐ 25-34 ☐ 35-49 ☐ 50 ans et plus
 
-## 2. Filtre
-- **F1.** Au cours des 3 derniers mois, avez-vous acheté de l'eau en bouteille ? ☐ Oui ☐ Non (fin)
-- **F2.** Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément enrichi (vitamines, protéines, collagène…) ? Les boissons énergisantes ne sont pas concernées. ☐ Oui ☐ Non
-- **F3.** Votre âge : ☐ moins de 18 ans ☐ 18-24 ☐ 25-34 ☐ 35-49 ☐ 50 ans et plus
-
-## 3. L'offre (seule partie qui change) — même visuel de bouteille 50 cl
+## L'offre (seule partie qui change), même visuel de bouteille 50 cl
 
 | Version A | Version B |
 |---|---|
-| « Eau minérale naturelle enrichie en actifs végétaux qui soutiennent la production naturelle de collagène (vitamine C, silicium…), sans ingrédient d'origine animale. 50 cl. » | « Eau minérale naturelle enrichie en collagène d'origine bovine (peptides de collagène). 50 cl. » |
+| « Eau minérale naturelle enrichie en collagène d'origine végétale. 50 cl. » | « Eau minérale naturelle enrichie en collagène d'origine animale. 50 cl. » |
 
-> Vigilance : le collagène vegan n'existe pas à proprement parler → on parle de « soutien au collagène ». Formulations honnêtes, de longueur et de ton comparables.
+## Contrôle de manipulation (juste après l'offre)
+- **Q5.** D'après la description, quelle est l'origine du collagène contenu dans ce produit ? ☐ Origine végétale ☐ Origine animale ☐ Origine marine ☐ Je ne sais pas
+- Les répondants qui se trompent sont isolés à l'export (colonne `groupe_controle`).
 
-## 4. Mesure du prix
-**Van Westendorp** (curseur de 0 à 5 €, par pas de 0,10 €)
-- **P1.** À partir de quel prix trouveriez-vous ce produit trop cher au point de ne pas l'acheter ?
-- **P2.** À partir de quel prix le trouveriez-vous cher, tout en envisageant de l'acheter ?
-- **P3.** À quel prix le trouveriez-vous bon marché, une bonne affaire ?
-- **P4.** À partir de quel prix le trouveriez-vous trop bon marché au point de douter de sa qualité ?
+## Van Westendorp (curseurs du coût de revient estimé, 0,50 €, à 10 €, par pas de 0,10 €)
+- **Q6.** À partir de quel prix trouveriez-vous ce produit trop cher au point de ne pas l'acheter ?
+- **Q7.** À partir de quel prix le trouveriez-vous cher, tout en envisageant de l'acheter ?
+- **Q8.** À quel prix le trouveriez-vous bon marché, une bonne affaire ?
+- **Q9.** À partir de quel prix le trouveriez-vous trop bon marché au point de douter de sa qualité ?
 
-**Gabor-Granger (Q9, sur une seule page)** : les prix sont montrés du plus élevé au plus bas ; le prix suivant n'apparaît que si la réponse n'est pas positive (arrêt au premier « Certainement » ou « Probablement »).
-- « Si ce produit coûtait 3,50 €, l'achèteriez-vous ? » ☐ Certainement ☐ Probablement ☐ Je ne sais pas ☐ Probablement pas ☐ Certainement pas
-- puis 2,90 € → 2,40 € → 1,90 € → 1,50 €.
+## Gabor-Granger (Q10, réponse Oui / Non, sur une seule page)
+« Achèteriez-vous ce produit au prix de X € ? » ☐ Oui ☐ Non
+Prix du plus élevé au plus bas : 3,50 € → 2,90 € → 2,40 € → 1,90 € → 1,50 €. Le prix suivant n'apparaît que si la réponse est Non ; arrêt au premier Oui.
 
-## 5. Contrôle de manipulation
-- **C1.** « D'après la description, d'où provenait le collagène, ou ce qui le soutient, dans ce produit ? » ☐ Origine végétale ☐ Origine animale (bovine) ☐ Origine marine ☐ Je ne sais pas
-- Les répondants qui se trompent sont analysés à part ou retirés.
+## Perception (Likert 5 points, une échelle propre à chaque question)
+| | Question | Échelle (1 → 5) |
+|---|---|---|
+| Q11 | Ce produit est-il de qualité ? | Très insatisfait → Très satisfait |
+| Q12 | Selon vous, quel est l'effet de ce produit sur la santé ? | Très négatif → Très positif |
+| Q13 | Quel degré de confiance accordez-vous à l'efficacité de ce produit ? | Aucune confiance → Totale confiance |
+| Q14 | Ce produit correspond-il à vos valeurs (éthique, environnement) ? | Pas du tout → Tout à fait |
+| Q15 | Ce produit vous paraît-il naturel ? | Pas du tout naturel → Très naturel |
 
-## 6. Perception (Likert 5 points, « pas du tout d'accord » → « tout à fait d'accord »)
-- **L1.** Ce produit est de bonne qualité.
-- **L2.** Ce produit est bon pour ma santé.
-- **L3.** Je fais confiance à l'efficacité de ce produit.
-- **L4.** Ce produit correspond à mes valeurs (éthique, environnement).
-- **L5.** Ce produit me paraît naturel.
-
-## 7. Profil
-- Genre
-- Tranche d'âge (déjà demandée en F3)
-- Régime alimentaire : ☐ omnivore ☐ flexitarien ☐ végétarien ☐ végan — **variable clé à croiser**
-- Dépense habituelle pour une bouteille d'eau de 50 cl : ☐ < 0,50 € ☐ 0,50–1 € ☐ 1–2 € ☐ > 2 €
+## Profil
+- **Q16.** Vous êtes : ☐ une femme ☐ un homme ☐ autre ☐ je préfère ne pas répondre
+- **Q17.** Régime alimentaire : ☐ omnivore ☐ flexitarien ☐ végétarien ☐ végan ☐ autre (variable clé à croiser)
+- **Q18.** Dépense habituelle pour une bouteille d'eau de 50 cl : ☐ moins de 0,30 € ☐ 0,30–0,49 € ☐ 0,50–0,79 € ☐ 0,80–0,99 € ☐ 1,00–1,49 € ☐ 1,50–1,99 € ☐ 2,00 € ou plus
 
 ## Analyse
 - Van Westendorp : point de prix optimal (OPP), plage de prix acceptable, par version.
