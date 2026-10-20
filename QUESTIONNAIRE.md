@@ -30,28 +30,23 @@
 « Achèteriez-vous ce produit au prix de X € ? » ☐ Oui ☐ Non
 Prix du plus élevé au plus bas : 3,50 € → 2,90 € → 2,40 € → 1,90 € → 1,50 €. Le prix suivant n'apparaît que si la réponse est Non ; arrêt au premier Oui.
 
-## Perception (Q11 à Q22 : 3 questions par thème, une page par thème, échelle en 5 points propre à chaque question)
-| | Thème | Question | Échelle (1 → 5) |
-|---|---|---|---|
-| Q11 | Santé | Selon vous, ce produit est-il bon pour la santé ? | Pas du tout bon → Très bon |
-| Q12 | Santé | Ce produit peut-il contribuer à votre bien-être ? | Pas du tout → Tout à fait |
-| Q13 | Santé | Ce produit vous paraît-il sûr à consommer ? | Pas du tout sûr → Tout à fait sûr |
-| Q14 | Qualité | Comment jugez-vous la qualité de ce produit ? | Très mauvaise → Très bonne |
-| Q15 | Qualité | Comment jugez-vous la qualité des ingrédients de ce produit ? | Très mauvaise → Très bonne |
-| Q16 | Qualité | Quel degré de confiance accordez-vous à l'efficacité de ce produit ? | Aucune confiance → Totale confiance |
-| Q17 | Valeur | Comment jugez-vous le rapport qualité-prix de ce produit ? | Très mauvais → Très bon |
-| Q18 | Valeur | Ce produit vous apporte-t-il plus qu'une eau minérale classique ? | Pas du tout → Tout à fait |
-| Q19 | Valeur | Seriez-vous prêt(e) à payer plus cher ce produit qu'une eau minérale classique ? | Pas du tout prêt(e) → Tout à fait prêt(e) |
-| Q20 | Image de marque | Quelle image avez-vous de ce produit ? | Très négative → Très positive |
-| Q21 | Image de marque | Ce produit vous paraît-il naturel ? | Pas du tout naturel → Très naturel |
-| Q22 | Image de marque | Ce produit correspond-il à vos valeurs (éthique, environnement) ? | Pas du tout → Tout à fait |
+## Perception (Q11 à Q17, une seule page, échelles en 7 points reprises des échelles d'origine)
+Les concepts ne sont pas affichés aux répondants. Sources et liens : voir `SOURCES.md`.
 
-Avec 3 questions par thème, on peut calculer un score moyen par thème et vérifier sa cohérence (alpha de Cronbach).
+| | Question | Concept | Échelle (1 → 7) |
+|---|---|---|---|
+| Q11 | Ce produit peut-il contribuer à votre bien-être ? | Bien-être | Pas du tout d'accord → Tout à fait d'accord |
+| Q12 | Pensez-vous que ce produit convient à une consommation quotidienne ? | Routine (compatibilité) | Pas du tout d'accord → Tout à fait d'accord |
+| Q13 | Ce produit correspond-il à vos valeurs (éthique, environnement) ? | Valeurs | Pas du tout d'accord → Tout à fait d'accord |
+| Q14 | L'innovation de ce produit justifie-t-elle un prix plus élevé ? | Innovation (prix premium) | Pas du tout d'accord → Tout à fait d'accord |
+| Q15 | Quel degré de confiance accordez-vous à l'efficacité de ce produit ? | Confiance | Pas du tout d'accord → Tout à fait d'accord |
+| Q16 | La présence de collagène vous donne-t-elle une impression de qualité supérieure ? | Qualité perçue | Qualité nettement inférieure → Qualité nettement supérieure |
+| Q17 | L'ajout de collagène vous semble-t-il compatible avec l'image naturelle de l'eau minérale ? | RSE (fit) | Totalement incompatible → Totalement compatible |
 
 ## Profil
-- **Q23.** Vous êtes : ☐ une femme ☐ un homme ☐ autre ☐ je préfère ne pas répondre
-- **Q24.** Régime alimentaire : ☐ omnivore ☐ flexitarien ☐ végétarien ☐ végan ☐ autre (variable clé à croiser)
-- **Q25.** Dépense habituelle pour une bouteille d'eau de 50 cl : ☐ moins de 0,30 € ☐ 0,30–0,49 € ☐ 0,50–0,79 € ☐ 0,80–0,99 € ☐ 1,00–1,49 € ☐ 1,50–1,99 € ☐ 2,00 € ou plus
+- **Q18.** Vous êtes : ☐ une femme ☐ un homme ☐ autre ☐ je préfère ne pas répondre
+- **Q19.** Régime alimentaire : ☐ omnivore ☐ flexitarien ☐ végétarien ☐ végan ☐ autre (variable clé à croiser)
+- **Q20.** Dépense habituelle pour une bouteille d'eau de 50 cl : ☐ moins de 0,30 € ☐ 0,30–0,49 € ☐ 0,50–0,79 € ☐ 0,80–0,99 € ☐ 1,00–1,49 € ☐ 1,50–1,99 € ☐ 2,00 € ou plus
 
 ## Analyse
 - Van Westendorp : point de prix optimal (OPP), plage de prix acceptable, par version.

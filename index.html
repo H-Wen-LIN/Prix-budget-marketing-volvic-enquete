@@ -37,8 +37,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;cur
   background:radial-gradient(circle,#1b2a55 0 4px,#fff 5px);border:1px solid #cfd6de;box-shadow:0 2px 6px #0002}
 input[type=range].unset::-webkit-slider-thumb{opacity:.55}
 input[type=range].unset::-moz-range-thumb{opacity:.55}
-.scale{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
-.theme{font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:0 0 4px}
+.scale{display:flex;justify-content:space-between;gap:16px;font-size:.8rem;color:var(--muted)}
+.scale span:last-child{text-align:right}
 /* Likert */
 .ggrow .q{font-weight:500;margin:14px 0 6px}
 .ggrow label.opt{display:inline-block;margin:4px 8px 4px 0;padding:10px 24px;font-size:1.05rem;font-weight:600;min-width:80px;text-align:center}
@@ -64,26 +64,30 @@ const CONCEPT = {
 };
 const GG_PRICES = [3.50, 2.90, 2.40, 1.90, 1.50];
 const GG_SCALE = ["Oui", "Non"];
-// Perception: 3 questions per theme, each with its own 5-point scale (most negative -> most positive).
-const THEMES = [
-  ["Santé", [
-    ["sante_1", "Selon vous, ce produit est-il bon pour la santé ?", ["Pas du tout bon", "Peu bon", "Moyennement bon", "Plutôt bon", "Très bon"]],
-    ["sante_2", "Ce produit peut-il contribuer à votre bien-être ?", ["Pas du tout", "Un peu", "Moyennement", "Beaucoup", "Tout à fait"]],
-    ["sante_3", "Ce produit vous paraît-il sûr à consommer ?", ["Pas du tout sûr", "Peu sûr", "Moyennement sûr", "Plutôt sûr", "Tout à fait sûr"]]]],
-  ["Qualité", [
-    ["qualite_1", "Comment jugez-vous la qualité de ce produit ?", ["Très mauvaise", "Mauvaise", "Ni bonne ni mauvaise", "Bonne", "Très bonne"]],
-    ["qualite_2", "Comment jugez-vous la qualité des ingrédients de ce produit ?", ["Très mauvaise", "Mauvaise", "Ni bonne ni mauvaise", "Bonne", "Très bonne"]],
-    ["qualite_3", "Quel degré de confiance accordez-vous à l’efficacité de ce produit ?", ["Aucune confiance", "Peu de confiance", "Confiance moyenne", "Assez confiance", "Totale confiance"]]]],
-  ["Valeur", [
-    ["valeur_1", "Comment jugez-vous le rapport qualité-prix de ce produit ?", ["Très mauvais", "Mauvais", "Ni bon ni mauvais", "Bon", "Très bon"]],
-    ["valeur_2", "Ce produit vous apporte-t-il plus qu’une eau minérale classique ?", ["Pas du tout", "Un peu", "Moyennement", "Beaucoup", "Tout à fait"]],
-    ["valeur_3", "Seriez-vous prêt(e) à payer plus cher ce produit qu’une eau minérale classique ?", ["Pas du tout prêt(e)", "Peu prêt(e)", "Moyennement prêt(e)", "Plutôt prêt(e)", "Tout à fait prêt(e)"]]]],
-  ["Image de marque", [
-    ["image_1", "Quelle image avez-vous de ce produit ?", ["Très négative", "Plutôt négative", "Ni négative ni positive", "Plutôt positive", "Très positive"]],
-    ["image_2", "Ce produit vous paraît-il naturel ?", ["Pas du tout naturel", "Peu naturel", "Moyennement naturel", "Plutôt naturel", "Très naturel"]],
-    ["image_3", "Ce produit correspond-il à vos valeurs (éthique, environnement) ?", ["Pas du tout", "Un peu", "Moyennement", "Beaucoup", "Tout à fait"]]]]
+// Perception (Q11-Q17). Each item measures one concept with the response format of its source scale
+// (all 7-point; references in SOURCES.md). Concepts are never shown to respondents.
+const AGREE7 = ["Pas du tout d’accord", "Pas d’accord", "Plutôt pas d’accord", "Ni d’accord ni pas d’accord",
+  "Plutôt d’accord", "D’accord", "Tout à fait d’accord"];
+const LIKERT_ITEMS = [
+  // Well-being: El Hedhli, Chebat & Sirgy (2013), 7-point agreement
+  ["bien_etre", "Ce produit peut-il contribuer à votre bien-être ?", AGREE7],
+  // Routine / compatibility: Moore & Benbasat (1991), 7-point agreement
+  ["routine", "Pensez-vous que ce produit convient à une consommation quotidienne ?", AGREE7],
+  // Values compatibility: Karahanna, Agarwal & Angst (2006), 7-point agreement
+  ["valeurs", "Ce produit correspond-il à vos valeurs (éthique, environnement) ?", AGREE7],
+  // Innovation / price premium: Netemeyer et al. (2004), 7-point agreement
+  ["innovation", "L’innovation de ce produit justifie-t-elle un prix plus élevé ?", AGREE7],
+  // Trust: Chaudhuri & Holbrook (2001), 7-point agreement
+  ["confiance", "Quel degré de confiance accordez-vous à l’efficacité de ce produit ?", AGREE7],
+  // Perceived quality: Dodds, Monroe & Grewal (1991), 7-point bipolar scale
+  ["qualite", "La présence de collagène vous donne-t-elle une impression de qualité supérieure ?",
+    ["Qualité nettement inférieure", "Qualité inférieure", "Qualité légèrement inférieure", "Ni inférieure ni supérieure",
+     "Qualité légèrement supérieure", "Qualité supérieure", "Qualité nettement supérieure"]],
+  // CSR fit: Becker-Olsen, Cudmore & Hill (2006), 7-point bipolar scale
+  ["rse", "L’ajout de collagène vous semble-t-il compatible avec l’image naturelle de l’eau minérale ?",
+    ["Totalement incompatible", "Incompatible", "Plutôt incompatible", "Ni compatible ni incompatible",
+     "Plutôt compatible", "Compatible", "Totalement compatible"]]
 ];
-const LIKERT_ITEMS = THEMES.flatMap(([, items]) => items);
 const VW_ITEMS = [
   ["P1", "À partir de quel prix trouveriez-vous ce produit trop cher au point de ne pas l’acheter ?"],
   ["P2", "À partir de quel prix le trouveriez-vous cher, tout en envisageant de l’acheter ?"],
@@ -202,8 +206,8 @@ function nudge(k, d) {
 }
 const priceGauge = k => gauge(k, { min: COUT_REVIENT, max: 10, step: 0.1, init: COUT_REVIENT,
   fmt: v => euro(v, 2), ends: [euro(COUT_REVIENT, 2), "10,00 €"] });
-const likertGauge = (k, text, scale, n) => Q(n, text) + gauge(k, { min: 1, max: 5, step: 1, init: 3,
-  fmt: v => scale[v - 1], ends: [scale[0], scale[4]] });
+const likertGauge = (k, text, scale, n) => Q(n, text) + gauge(k, { min: 1, max: scale.length, step: 1,
+  init: Math.ceil(scale.length / 2), fmt: v => scale[v - 1], ends: [scale[0], scale[scale.length - 1]] });
 const ggKey = p => "G_" + p.toFixed(2);
 const positive = v => v === "Oui";
 function ggRefresh() {
@@ -234,17 +238,13 @@ function keep() {
 }
 
 const screens = {};
-// One perception page per theme (Q11 to Q22).
-THEMES.forEach(([title, items], t) => {
-  screens["perception" + t] = {
-    html: () => `<p class="theme">${title}</p><p class="muted">Placez le curseur sur la réponse qui correspond le mieux à votre avis.</p>
-      ${items.map(([k, q, sc], i) => likertGauge(k, q, sc, 11 + 3 * t + i)).join("")}`,
-    next: () => { const v = items.map(([k]) => slider(k));
-      if (v.some(x => x === null)) return "Merci de placer chaque curseur.";
-      items.forEach(([k], i) => r[k] = v[i]);
-      go(t + 1 < THEMES.length ? "perception" + (t + 1) : "profil"); }
-  };
-});
+screens.perception0 = {
+  html: () => `<p class="muted">Placez le curseur sur la réponse qui correspond le mieux à votre avis.</p>
+    ${LIKERT_ITEMS.map(([k, q, sc], i) => likertGauge(k, q, sc, 11 + i)).join("")}`,
+  next: () => { const v = LIKERT_ITEMS.map(([k]) => slider(k));
+    if (v.some(x => x === null)) return "Merci de placer chaque curseur.";
+    LIKERT_ITEMS.forEach(([k], i) => r[k] = v[i]); go("profil"); }
+};
 Object.assign(screens, {
   accueil: {
     html: () => `<h1>Enquête</h1><p>Cette enquête porte sur les boissons. Elle dure environ 5 minutes. Vos réponses sont anonymes et utilisées uniquement à des fins d’étude.</p>
@@ -295,9 +295,9 @@ Object.assign(screens, {
       go("vw"); }
   },
   profil: {
-    html: () => `${Q(23, "Vous êtes :")}${radios("genre", ["Une femme", "Un homme", "Autre", "Je préfère ne pas répondre"], r.genre)}
-      ${Q(24, "Quel est votre régime alimentaire ?")}${radios("regime", ["Omnivore", "Flexitarien", "Végétarien", "Végan", "Autre"], r.regime)}
-      ${Q(25, "Combien dépensez-vous habituellement pour une bouteille d’eau de 50 cl ?")}${radios("depense", ["Moins de 0,30 €", "De 0,30 € à 0,49 €", "De 0,50 € à 0,79 €", "De 0,80 € à 0,99 €", "De 1,00 € à 1,49 €", "De 1,50 € à 1,99 €", "2,00 € ou plus"], r.depense_50cl)}`,
+    html: () => `${Q(18, "Vous êtes :")}${radios("genre", ["Une femme", "Un homme", "Autre", "Je préfère ne pas répondre"], r.genre)}
+      ${Q(19, "Quel est votre régime alimentaire ?")}${radios("regime", ["Omnivore", "Flexitarien", "Végétarien", "Végan", "Autre"], r.regime)}
+      ${Q(20, "Combien dépensez-vous habituellement pour une bouteille d’eau de 50 cl ?")}${radios("depense", ["Moins de 0,30 €", "De 0,30 € à 0,49 €", "De 0,50 € à 0,79 €", "De 0,80 € à 0,99 €", "De 1,00 € à 1,49 €", "De 1,50 € à 1,99 €", "2,00 € ou plus"], r.depense_50cl)}`,
     next: () => { const g = val("genre"), d = val("regime"), e = val("depense");
       if (!g || !d || !e) return "Merci de répondre à toutes les questions.";
       Object.assign(r, { genre: g, regime: d, depense_50cl: e }); finish("complet"); }
