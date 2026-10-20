@@ -73,8 +73,13 @@ input[type=range].unset::-moz-range-thumb{opacity:.55}
 .ggrow label.opt input{display:none}
 .end{text-align:center;padding:12px 0}
 .end .big{font-size:2.4rem}
+.intro p{margin:0 0 12px}
+.intro p:last-child{margin-bottom:0}
+/* University disclaimer, shown once under every step */
+.site-note{max-width:640px;margin:0 auto;padding:4px 16px 24px;text-align:center;font-size:.8rem;line-height:1.45;color:var(--muted)}
 /* Phone: tighter card, full-width buttons, bigger tap targets */
 @media (max-width:480px){
+  .site-note{padding:2px 14px 20px;font-size:.78rem}
   main{padding:12px 10px 24px}
   .card{padding:18px 14px}
   .nav button{flex:1;padding:13px 10px}
@@ -84,6 +89,7 @@ input[type=range].unset::-moz-range-thumb{opacity:.55}
 </head>
 <body>
 <main id="app"></main>
+<footer class="site-note">Étude universitaire — M1 Marketing, IAE Clermont Auvergne. Non affiliée à la marque Volvic.</footer>
 <script>
 // Concept texts: only the collagen origin differs between A and B.
 const CONCEPT = {
@@ -274,7 +280,9 @@ screens.perception0 = {
 };
 Object.assign(screens, {
   accueil: {
-    html: () => `<h1>Enquête</h1><p>Cette enquête porte sur les boissons. Elle dure environ 5 minutes. Vos réponses sont anonymes et utilisées uniquement à des fins d’étude.</p>
+    html: () => `<div class="intro"><h1>Bonjour !</h1>
+      <p>Nous sommes un groupe d’étudiants de M1 Marketing à l’IAE Clermont Auvergne. Dans le cadre d’un projet de cours, nous étudions le prix que les consommateurs accepteraient de payer pour une bouteille d’eau Volvic proposant une innovation visant à soutenir naturellement la production de collagène.</p>
+      <p>Le questionnaire prend environ 5 minutes. Il est anonyme : nous ne recueillons ni nom ni adresse e-mail. Les réponses servent uniquement à ce projet.</p></div>
       ${Q(1, "Acceptez-vous de participer ?")}${radios("consent", ["Oui", "Non"], r.consentement)}`,
     next: () => { const v = val("consent"); if (!v) return "Merci de répondre.";
       r.consentement = v; v === "Non" ? finish("refus") : go("filtre"); }

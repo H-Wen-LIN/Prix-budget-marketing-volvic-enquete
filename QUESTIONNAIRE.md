@@ -3,7 +3,15 @@
 **Principe** : chaque répondant voit une seule version, attribuée au hasard (randomisation par blocs de 4 : 2 A et 2 B dans un ordre aléatoire). Le texte, l'image, le format et la marque sont identiques ; seul le mot « végétale » / « animale » change.
 
 ## Accueil
-**Q1.** « Cette enquête porte sur les boissons. Elle dure environ 5 minutes. Vos réponses sont anonymes et utilisées uniquement à des fins d'étude. Acceptez-vous de participer ? » ☐ Oui ☐ Non (fin)
+> Bonjour !
+>
+> Nous sommes un groupe d'étudiants de M1 Marketing à l'IAE Clermont Auvergne. Dans le cadre d'un projet de cours, nous étudions le prix que les consommateurs accepteraient de payer pour une bouteille d'eau Volvic proposant une innovation visant à soutenir naturellement la production de collagène.
+>
+> Le questionnaire prend environ 5 minutes. Il est anonyme : nous ne recueillons ni nom ni adresse e-mail. Les réponses servent uniquement à ce projet.
+
+**Q1.** Acceptez-vous de participer ? ☐ Oui ☐ Non (fin)
+
+Mention en bas de chaque page : « Étude universitaire — M1 Marketing, IAE Clermont Auvergne. Non affiliée à la marque Volvic. »
 
 ## Filtre
 - **Q2.** Au cours des 3 derniers mois, avez-vous acheté de l'eau en bouteille ? ☐ Oui ☐ Non (n'élimine pas)
