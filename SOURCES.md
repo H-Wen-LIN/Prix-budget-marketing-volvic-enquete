@@ -6,17 +6,17 @@ Les numéros de page sont ceux **de la revue** (imprimés en haut des pages), et
 
 ## Tableau récapitulatif
 
-Les pages sont celles imprimées dans la revue.
+Les pages sont celles imprimées dans la revue. La colonne « PDF » renvoie aux articles que vous m'avez fournis, rangés dans le dossier `sources/` à côté de ce fichier. Ce dossier n'est pas envoyé sur GitHub (articles protégés par le droit d'auteur des éditeurs) : les liens marchent sur l'ordinateur où se trouve le dossier. La colonne « Lien officiel » marche partout.
 
-| Q | Concept | Article | Revue (FNEGE 2025) | Page du format de réponse | Page des items |
-|---|---|---|---|---|---|
-| Q11 | Bien-être | El Hedhli, Chebat & Sirgy (2013), *Shopping well-being at the mall: Construct, antecedents, and consequences* | Journal of Business Research (2) | p. 859, section 5.2 « Measures » | p. 860, Tableau 1, « Shopper well-being » |
-| Q12 | Routine | Moore & Benbasat (1991), *Development of an instrument to measure the perceptions of adopting an information technology innovation* | Information Systems Research (1*) | p. 199 | p. 216, Appendix 3, « Compatibility » |
-| Q13 | Valeurs | Karahanna, Agarwal & Angst (2006), *Reconceptualizing compatibility beliefs in technology acceptance research* | MIS Quarterly (1*) | p. 794, note du Tableau 4 | p. 804, Appendix, « Compatibility with Values » |
-| Q14 | Innovation (prix premium) | Netemeyer et al. (2004), *Developing and validating measures of facets of customer-based brand equity* | Journal of Business Research (2) | p. 223, Appendix A (note) | p. 223, Appendix A, « Willingness to pay a price premium » |
-| Q15 | Confiance | Chaudhuri & Holbrook (2001), *The chain of effects from brand trust and brand affect to brand performance: the role of brand loyalty* | Journal of Marketing (1*) | p. 87, « Measures: brand trust… » | p. 87 (même paragraphe) |
-| Q16 | Qualité perçue | Dodds, Monroe & Grewal (1991), *Effects of price, brand, and store information on buyers' product evaluations* | Journal of Marketing Research (1*) | p. 312, « Dependent Variables » | p. 318, Appendix, « Perceived Quality Indicators » |
-| Q17 | RSE (fit) | Becker-Olsen, Cudmore & Hill (2006), *The impact of perceived corporate social responsibility on consumer behavior* | Journal of Business Research (2) | p. 48, prétest avant la section 3 | p. 48 (même paragraphe) |
+| Q | Concept | Article | Page du format de réponse | Page des items | PDF | Lien officiel |
+|---|---|---|---|---|---|---|
+| Q11 | Bien-être | El Hedhli, Chebat & Sirgy (2013), *Shopping well-being at the mall: Construct, antecedents, and consequences*, Journal of Business Research (FNEGE 2) | p. 859, section 5.2 « Measures » | p. 860, Tableau 1, « Shopper well-being » | [PDF](sources/Q11_ElHedhli_2013.pdf) | [DOI](https://doi.org/10.1016/j.jbusres.2011.06.011) |
+| Q12 | Routine | Moore & Benbasat (1991), *Development of an instrument to measure the perceptions of adopting an information technology innovation*, Information Systems Research (FNEGE 1*) | p. 199 | p. 216, Appendix 3, « Compatibility » | [PDF](sources/Q12_Moore_Benbasat_1991.pdf) | [DOI](https://doi.org/10.1287/isre.2.3.192) |
+| Q13 | Valeurs | Karahanna, Agarwal & Angst (2006), *Reconceptualizing compatibility beliefs in technology acceptance research*, MIS Quarterly (FNEGE 1*) | p. 794, note sous le Tableau 4 | p. 804, Appendix, « Compatibility with Values » | [PDF](sources/Q13_Karahanna_2006.pdf) | [DOI](https://doi.org/10.2307/25148754) |
+| Q14 | Innovation (prix plus élevé) | Netemeyer et al. (2004), *Developing and validating measures of facets of customer-based brand equity*, Journal of Business Research (FNEGE 2) | p. 223, Appendix A (note) | p. 223, Appendix A, « Willingness to pay a price premium » | [PDF](sources/Q14_Netemeyer_2004.pdf) | [DOI](https://doi.org/10.1016/S0148-2963(01)00303-4) |
+| Q15 | Confiance | Chaudhuri & Holbrook (2001), *The chain of effects from brand trust and brand affect to brand performance: the role of brand loyalty*, Journal of Marketing (FNEGE 1*) | p. 87, « Measures: brand trust… » | p. 87, même paragraphe | [PDF](sources/Q15_Chaudhuri_Holbrook_2001.pdf) · [en ligne (Columbia)](https://business.columbia.edu/sites/default/files-efs/pubfiles/593/The_Chain_of_Effects.pdf) | [DOI](https://doi.org/10.1509/jmkg.65.2.81.18255) |
+| Q16 | Qualité perçue | Dodds, Monroe & Grewal (1991), *Effects of price, brand, and store information on buyers' product evaluations*, Journal of Marketing Research (FNEGE 1*) | p. 312, « Dependent Variables » | p. 318, Appendix, « Perceived Quality Indicators » | [PDF](sources/Q16_Dodds_Monroe_Grewal_1991.pdf) | [DOI](https://doi.org/10.1177/002224379102800305) |
+| Q17 | RSE | Becker-Olsen, Cudmore & Hill (2006), *The impact of perceived corporate social responsibility on consumer behavior*, Journal of Business Research (FNEGE 2) | p. 48, juste avant la section 3 « Study 1 » | p. 48, même paragraphe | [PDF](sources/Q17_BeckerOlsen_2006.pdf) | [DOI](https://doi.org/10.1016/j.jbusres.2005.01.001) |
 
 Les 7 articles ont été lus dans leur texte intégral.
 
