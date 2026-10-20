@@ -73,6 +73,8 @@ input[type=range].unset::-moz-range-thumb{opacity:.55}
 .ggrow label.opt input{display:none}
 .end{text-align:center;padding:12px 0}
 .end .big{font-size:2.4rem}
+.sync{text-align:center;margin-top:14px}
+.sync button{margin-left:6px;padding:6px 14px}
 .intro p{margin:0 0 12px}
 .intro p:last-child{margin-bottom:0}
 /* University disclaimer, shown once under every step */
@@ -135,6 +137,10 @@ const VW_ITEMS = [
 // Estimated production cost of one 50 cl bottle: lower bound of the Q6-Q9 gauges. Adjust if needed.
 const COUT_REVIENT = 0.50;
 const STORE = "enquete_collagene_reponses";
+// Online collection: URL of the Google Apps Script web app (see collecte/INSTALLATION.md). Not a secret.
+// Empty = responses are only kept on this device (local CSV export in #admin mode).
+const COLLECTE_URL = "";
+const OUTBOX = "enquete_collagene_a_envoyer";
 // Admin tools (export CSV, counter, new respondent) only shown with #admin in the URL.
 const ADMIN = location.hash === "#admin";
 
@@ -185,6 +191,7 @@ function greeting() {
 function finish(statut) {
   r.statut = statut; r.fin = new Date().toISOString();
   const list = load(); list.push(r); save(list);
+  queue(r);
   const msg = statut === "complet"
     ? `<div class="big">🙏</div><h1>Merci infiniment !</h1>
        <p>Vos réponses sont précieuses : elles vont directement nourrir notre étude et nous aider à mieux comprendre ce qui compte vraiment pour les consommateurs.</p>
@@ -196,7 +203,49 @@ function finish(statut) {
        <p>Nous respectons votre choix. ${greeting()} !</p>`;
   render(`<div class="end">${msg}</div>` + (ADMIN ? `<div class="nav"><button onclick="start()">Nouveau répondant</button>
     <button class="sec" onclick="exportCSV()">Exporter (CSV)</button></div>
-    <p class="muted">${load().length} réponse(s) enregistrée(s) sur cet appareil.</p>` : ""));
+    <p class="muted">${load().length} réponse(s) enregistrée(s) sur cet appareil.</p>` : "")
+    + `<p class="sync muted" id="sync" aria-live="polite"></p>`);
+  sync(true);
+}
+
+// ---- Sending responses to the online sheet ----
+// Every finished questionnaire goes into an outbox kept on the device until the server confirms it.
+// The server ignores an id it already has, so re-sending after a network error never creates a duplicate.
+const SEND_FIELDS = ["id", "version", "statut", "debut", "fin", "consentement", "F1", "F2", "F3", "C1", "controle_ok",
+  "P1", "P2", "P3", "P4", ...GG_PRICES.map(p => "G_" + p.toFixed(2)), "GG_prix_accepte",
+  ...LIKERT_ITEMS.map(([k]) => k), "genre", "regime", "depense_50cl"];
+function outbox() { try { return JSON.parse(localStorage.getItem(OUTBOX)) || []; } catch { return []; } }
+function setOutbox(l) { try { localStorage.setItem(OUTBOX, JSON.stringify(l)); } catch {} }
+function queue(rec) {
+  const payload = {}; SEND_FIELDS.forEach(k => { if (rec[k] !== undefined) payload[k] = rec[k]; });
+  setOutbox(outbox().filter(x => x.id !== payload.id).concat(payload));
+}
+async function sendOne(payload) {
+  try {
+    const res = await fetch(COLLECTE_URL, { method: "POST", body: JSON.stringify(payload) }); // text/plain: no CORS preflight
+    const out = await res.json();
+    return out.ok === true && out.id === payload.id;
+  } catch { return false; }
+}
+let syncing = false;
+async function flush() {
+  if (!COLLECTE_URL || syncing) return outbox().length;
+  syncing = true;
+  for (const p of outbox()) if (await sendOne(p)) setOutbox(outbox().filter(x => x.id !== p.id));
+  syncing = false;
+  return outbox().length;
+}
+// On the end screen: send now, retry a few times, and say plainly whether it worked.
+async function sync(show, attempt = 0) {
+  const el = () => document.getElementById("sync");
+  if (!COLLECTE_URL) { if (ADMIN && el()) el().textContent = "Collecte en ligne non configurée : réponses gardées sur cet appareil uniquement."; return; }
+  if (show && el() && attempt === 0) el().textContent = "Envoi de vos réponses…";
+  const left = await flush();
+  if (!el()) return;
+  if (left === 0) { el().textContent = "✓ Vos réponses ont bien été enregistrées."; return; }
+  if (attempt < 3) { setTimeout(() => sync(show, attempt + 1), [2000, 5000, 10000][attempt]); return; }
+  el().innerHTML = `L’envoi n’a pas abouti (connexion internet ?). <button type="button" class="sec" id="retry">Réessayer</button>`;
+  document.getElementById("retry").onclick = () => { el().textContent = "Nouvel essai…"; sync(true, 3); };
 }
 
 // Screen order, used only for the progress bar.
@@ -356,6 +405,7 @@ function exportCSV() {
 }
 
 start();
+flush(); // resend anything left over from an earlier visit on this device
 </script>
 </body>
 </html>
