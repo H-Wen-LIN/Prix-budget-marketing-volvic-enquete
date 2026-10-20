@@ -1,41 +1,49 @@
 # Sources des échelles de perception (Q11 à Q17)
 
-Document interne, non visible par les répondants. Rangs : classement FNEGE 2025 des revues en sciences de gestion ([page officielle](https://fnege.org/classement-des-revues-scientifiques-en-sciences-de-gestion/)). Tous les DOI ci-dessous ont été vérifiés (titre, revue et année) via Crossref.
+Document interne, non visible par les répondants. Rangs : classement FNEGE 2025 ([page officielle](https://fnege.org/classement-des-revues-scientifiques-en-sciences-de-gestion/)). Tous les DOI ont été vérifiés (titre, revue, année) via Crossref.
 
-| Q | Concept | Article de référence | Revue (rang FNEGE) | Lien | Échelle retenue |
-|---|---|---|---|---|---|
-| Q11 | Bien-être | El Hedhli, K., Chebat, J.-C. & Sirgy, M. J. (2013). *Shopping well-being at the mall: Construct, antecedents, and consequences*, 66(7), 856-863. | Journal of Business Research (2) | [doi:10.1016/j.jbusres.2011.06.011](https://doi.org/10.1016/j.jbusres.2011.06.011) | Likert d'accord, 7 points |
-| Q12 | Routine (compatibilité avec les habitudes) | Moore, G. C. & Benbasat, I. (1991). *Development of an instrument to measure the perceptions of adopting an information technology innovation*, 2(3), 192-222. Échelle « Compatibility », issue de Rogers. | Information Systems Research (1*) | [doi:10.1287/isre.2.3.192](https://doi.org/10.1287/isre.2.3.192) | Likert d'accord, 7 points |
-| Q13 | Valeurs | Karahanna, E., Agarwal, R. & Angst, C. M. (2006). *Reconceptualizing compatibility beliefs in technology acceptance research*, 30(4), 781-804. Dimension « compatibility with values ». | MIS Quarterly (1*) | [doi:10.2307/25148754](https://doi.org/10.2307/25148754) · [AIS eLibrary](https://aisel.aisnet.org/misq/vol30/iss4/3/) | Likert d'accord, 7 points |
-| Q14 | Innovation justifiant un prix plus élevé | Netemeyer, R. G. et al. (2004). *Developing and validating measures of facets of customer-based brand equity*, 57(2), 209-224. Facette « willingness to pay a price premium ». | Journal of Business Research (2) | [doi:10.1016/S0148-2963(01)00303-4](https://doi.org/10.1016/S0148-2963(01)00303-4) | Likert d'accord, 7 points |
-| Q15 | Confiance | Chaudhuri, A. & Holbrook, M. B. (2001). *The chain of effects from brand trust and brand affect to brand performance: the role of brand loyalty*, 65(2), 81-93. | Journal of Marketing (1*) | [doi:10.1509/jmkg.65.2.81.18255](https://doi.org/10.1509/jmkg.65.2.81.18255) · [texte intégral (Columbia)](https://business.columbia.edu/sites/default/files-efs/pubfiles/593/The_Chain_of_Effects.pdf) | Likert d'accord, 7 points |
-| Q16 | Qualité perçue | Dodds, W. B., Monroe, K. B. & Grewal, D. (1991). *Effects of price, brand, and store information on buyers' product evaluations*, 28(3), 307-319. | Journal of Marketing Research (1*) | [doi:10.1177/002224379102800305](https://doi.org/10.1177/002224379102800305) · [JSTOR](https://www.jstor.org/stable/3172866) | Échelle bipolaire, 7 points |
-| Q17 | RSE (cohérence perçue, « fit ») | Becker-Olsen, K. L., Cudmore, B. A. & Hill, R. P. (2006). *The impact of perceived corporate social responsibility on consumer behavior*, 59(1), 46-53. | Journal of Business Research (2) | [doi:10.1016/j.jbusres.2005.01.001](https://doi.org/10.1016/j.jbusres.2005.01.001) | Échelle bipolaire, 7 points |
+Les numéros de page sont ceux **de la revue** (imprimés en haut des pages), et non ceux du lecteur PDF.
 
-## Niveau de vérification du format de réponse
+## Q11 · Bien-être
+**El Hedhli, K., Chebat, J.-C. & Sirgy, M. J. (2013).** Shopping well-being at the mall: Construct, antecedents, and consequences. *Journal of Business Research*, 66(7), 856-863. FNEGE : 2. [doi:10.1016/j.jbusres.2011.06.011](https://doi.org/10.1016/j.jbusres.2011.06.011)
+- **Format : p. 859**, colonne de droite, section **5.2 « Measures »** : « Does shopping at (mall name) contribute to your quality of life? » puis des « **7-point differential scales** » (différentiel sémantique en 7 points).
+- **Items : p. 860, Tableau 1**, bloc « Shopper well-being » : « This mall does not play a role / plays a very important role in my social well-being », etc. (4 items).
+- **Échelle retenue :** 7 points, pôles « Ne joue aucun rôle » / « Joue un rôle très important ».
+- Correction : j'avais indiqué une échelle d'accord d'après une réplication brésilienne. L'article d'origine utilise un différentiel sémantique.
 
-- **Q15 (Chaudhuri & Holbrook, 2001)** : vérifié dans le texte intégral, p. 87 : « seven-point ratings of agreement (1 = very strongly disagree, 7 = very strongly agree) », items « I trust this brand », « I rely on this brand », « This is an honest brand », « This brand is safe ».
-- **Q11 (El Hedhli et al., 2013)** : 7 points d'accord, confirmé par une réplication qui reprend l'échelle ([Revista Pensamento Contemporâneo em Administração, 2018](https://www.redalyc.org/jatsRepo/4417/441760643009/html/index.html)).
-- **Q16 (Dodds et al., 1991)** : 7 points, d'après une étude qui réutilise l'échelle (Sweeney, Soutar & Johnson, 1999, *The role of perceived risk in the quality-value relationship*, Journal of Retailing) ; non vérifié dans l'article d'origine.
-- **Q12, Q13, Q14, Q17** : article, revue et année vérifiés ; texte intégral payant, donc format de réponse (7 points) non vérifié mot pour mot dans l'article. À contrôler via l'accès bibliothèque de l'école.
+## Q12 · Routine (compatibilité avec les habitudes)
+**Moore, G. C. & Benbasat, I. (1991).** Development of an instrument to measure the perceptions of adopting an information technology innovation. *Information Systems Research*, 2(3), 192-222. FNEGE : 1*. [doi:10.1287/isre.2.3.192](https://doi.org/10.1287/isre.2.3.192)
+- **Format : p. 199** : « seven-point Likert scale ranging from "extremely disagree" to "extremely agree" ».
+- **Items : p. 216, Appendix 3 « List of Items by Construct »**, bloc « Compatibility » : « Using a PWS is compatible with all aspects of my work », « …fits well with the way I like to work », « …fits into my work style ».
+- **Échelle retenue :** Likert 7 points, « Extrêmement en désaccord » → « Extrêmement d'accord ».
 
-## Adaptations
+## Q13 · Valeurs
+**Karahanna, E., Agarwal, R. & Angst, C. M. (2006).** Reconceptualizing compatibility beliefs in technology acceptance research. *MIS Quarterly*, 30(4), 781-804. FNEGE : 1*. [doi:10.2307/25148754](https://doi.org/10.2307/25148754)
+- **Format : p. 794**, note sous le **Tableau 4 « Descriptive Statistics »** : « measured on a scale of 1 (strongly disagree) to 7 (strongly agree) ».
+- **Items : p. 804, Appendix « Scales Items »**, bloc « Compatibility with Values » (CVAL1 à CVAL6), par ex. « Using the CRM system runs counter to my own values ».
+- **Échelle retenue :** Likert 7 points, « Pas du tout d'accord » → « Tout à fait d'accord ».
 
-- Les questions sont formulées à la forme interrogative (formulation imposée), alors que les échelles d'origine sont des affirmations auxquelles on répond « d'accord / pas d'accord ».
-- Un seul item par concept est utilisé, alors que les échelles d'origine en comptent 3 à 5 : on ne peut donc pas calculer d'alpha de Cronbach par concept.
-- Les libellés français des 7 points sont une traduction (Pas du tout d'accord, Pas d'accord, Plutôt pas d'accord, Ni d'accord ni pas d'accord, Plutôt d'accord, D'accord, Tout à fait d'accord).
+## Q14 · Innovation justifiant un prix plus élevé
+**Netemeyer, R. G. et al. (2004).** Developing and validating measures of facets of customer-based brand equity. *Journal of Business Research*, 57(2), 209-224. FNEGE : 2. [doi:10.1016/S0148-2963(01)00303-4](https://doi.org/10.1016/S0148-2963(01)00303-4)
+- **Format et items : p. 223, Appendix A « Items in the CBBE scales »** (colonne de droite), bloc « Willingness to pay a price premium » : « I am willing to pay a higher price for (brand name)… », « I am willing to pay a lot more for… ». Note : « all items are measured on seven-point strongly disagree to strongly agree scales » (sauf l'item 3, en %).
+- **Échelle retenue :** Likert 7 points, « Pas du tout d'accord » → « Tout à fait d'accord ».
 
-## Où se trouve l'échelle dans chaque source
+## Q15 · Confiance
+**Chaudhuri, A. & Holbrook, M. B. (2001).** The chain of effects from brand trust and brand affect to brand performance: the role of brand loyalty. *Journal of Marketing*, 65(2), 81-93. FNEGE : 1*. [doi:10.1509/jmkg.65.2.81.18255](https://doi.org/10.1509/jmkg.65.2.81.18255) · [texte intégral (Columbia)](https://business.columbia.edu/sites/default/files-efs/pubfiles/593/The_Chain_of_Effects.pdf)
+- **Format et items : p. 87**, colonne de droite, section « Method > Phase 3 », paragraphe « Measures: brand trust, brand affect, and brand loyalty » : « seven-point ratings of agreement (1 = very strongly disagree, 7 = very strongly agree) », items « I trust this brand », « I rely on this brand », « This is an honest brand », « This brand is safe ».
+- **Échelle retenue :** Likert 7 points, « Très fortement en désaccord » → « Très fortement d'accord ».
 
-| Q | Source | Emplacement | Vérifié ? |
-|---|---|---|---|
-| Q15 | Chaudhuri & Holbrook (2001), [texte intégral (Columbia)](https://business.columbia.edu/sites/default/files-efs/pubfiles/593/The_Chain_of_Effects.pdf) | **p. 87** de la revue (page 7 du PDF), colonne de droite, section « Method > Phase 3 », paragraphe « Measures: brand trust, brand affect, and brand loyalty » | Oui, lu dans le texte |
-| Q11 | Réplication de l'échelle d'El Hedhli et al. ([Redalyc, 2018](https://www.redalyc.org/jatsRepo/4417/441760643009/html/index.html)) | **Tableau 1**, bloc « Well-being » (4 items). Le format 7 points d'accord est décrit dans la partie méthode | Oui, lu dans la réplication (pas dans l'article d'origine) |
-| Q11 | El Hedhli, Chebat & Sirgy (2013), JBR 66(7), p. 856-863 | Non localisé (texte payant) | Non |
-| Q12 | Moore & Benbasat (1991), ISR 2(3), p. 192-222 | Non localisé (texte payant). L'instrument final est donné en fin d'article | Non |
-| Q13 | Karahanna, Agarwal & Angst (2006), MISQ 30(4), p. 781-804 | Non localisé (texte payant). L'article renvoie à son annexe (« see the appendix ») pour les items | Non |
-| Q14 | Netemeyer et al. (2004), JBR 57(2), p. 209-224 | Non localisé (texte payant) | Non |
-| Q16 | Dodds, Monroe & Grewal (1991), JMR 28(3), p. 307-319 | Non localisé (texte payant) | Non |
-| Q17 | Becker-Olsen, Cudmore & Hill (2006), JBR 59(1), p. 46-53 | Non localisé (texte payant) | Non |
+## Q16 · Qualité perçue (non vérifié dans l'article)
+**Dodds, W. B., Monroe, K. B. & Grewal, D. (1991).** Effects of price, brand, and store information on buyers' product evaluations. *Journal of Marketing Research*, 28(3), 307-319. FNEGE : 1*. [doi:10.1177/002224379102800305](https://doi.org/10.1177/002224379102800305) · [JSTOR](https://www.jstor.org/stable/3172866)
+- **Emplacement : non localisé.** Cet article ne faisait pas partie des PDF fournis. Le format 7 points provient d'une étude qui réutilise l'échelle (Sweeney, Soutar & Johnson, 1999, *Journal of Retailing*).
+- **Échelle retenue (provisoire) :** bipolaire 7 points, « Qualité nettement inférieure » → « Qualité nettement supérieure ».
 
-Pour les lignes « Non », il faut ouvrir l'article via la bibliothèque de l'école (ScienceDirect, SAGE, JSTOR, INFORMS, AIS eLibrary) et chercher la partie « Measures » ou l'annexe.
+## Q17 · RSE (cohérence perçue, « fit »)
+**Becker-Olsen, K. L., Cudmore, B. A. & Hill, R. P. (2006).** The impact of perceived corporate social responsibility on consumer behavior. *Journal of Business Research*, 59(1), 46-53. FNEGE : 2. [doi:10.1016/j.jbusres.2005.01.001](https://doi.org/10.1016/j.jbusres.2005.01.001)
+- **Format et items : p. 48**, colonne de droite, description du prétest (juste avant la section **3 « Study 1 »**) : « Fit between the firm and social initiative was measured using four scaled items (1 = low fit/7 = strong fit, 1 = dissimilar/7 = similar, 1 = inconsistent/7 = consistent, and 1 = not complementary/7 = complementary) ».
+- **Échelle retenue :** différentiel sémantique 7 points, pôles « Incohérent » / « Cohérent » (item « inconsistent / consistent », le plus proche de « compatible »).
+
+## Adaptations communes
+- Les questions sont formulées à la forme interrogative (formulation imposée), alors que les échelles d'origine sont des affirmations.
+- Un seul item par concept (les échelles d'origine en comptent 3 à 6), donc pas d'alpha de Cronbach possible par concept.
+- Pour les échelles Likert, les articles ne nomment que les deux extrémités : les libellés intermédiaires sont une traduction. Pour les différentiels sémantiques, seuls les deux pôles sont nommés et la position s'affiche « x / 7 », comme dans les articles.

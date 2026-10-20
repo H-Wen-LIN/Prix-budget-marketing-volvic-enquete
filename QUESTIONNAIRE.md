@@ -37,13 +37,13 @@ Les concepts ne sont pas affichés aux répondants. Sources et liens : voir `SOU
 
 | | Question | Concept | Échelle (1 → 7) |
 |---|---|---|---|
-| Q11 | Ce produit peut-il contribuer à votre bien-être ? | Bien-être | Pas du tout d'accord → Tout à fait d'accord |
-| Q12 | Pensez-vous que ce produit convient à une consommation quotidienne ? | Routine (compatibilité) | Pas du tout d'accord → Tout à fait d'accord |
-| Q13 | Ce produit correspond-il à vos valeurs (éthique, environnement) ? | Valeurs | Pas du tout d'accord → Tout à fait d'accord |
-| Q14 | L'innovation de ce produit justifie-t-elle un prix plus élevé ? | Innovation (prix premium) | Pas du tout d'accord → Tout à fait d'accord |
-| Q15 | Quel degré de confiance accordez-vous à l'efficacité de ce produit ? | Confiance | Pas du tout d'accord → Tout à fait d'accord |
-| Q16 | La présence de collagène vous donne-t-elle une impression de qualité supérieure ? | Qualité perçue | Qualité nettement inférieure → Qualité nettement supérieure |
-| Q17 | L'ajout de collagène vous semble-t-il compatible avec l'image naturelle de l'eau minérale ? | RSE (fit) | Totalement incompatible → Totalement compatible |
+| Q11 | Ce produit peut-il contribuer à votre bien-être ? | Bien-être | Différentiel sémantique : Ne joue aucun rôle → Joue un rôle très important |
+| Q12 | Pensez-vous que ce produit convient à une consommation quotidienne ? | Routine (compatibilité) | Likert : Extrêmement en désaccord → Extrêmement d'accord |
+| Q13 | Ce produit correspond-il à vos valeurs (éthique, environnement) ? | Valeurs | Likert : Pas du tout d'accord → Tout à fait d'accord |
+| Q14 | L'innovation de ce produit justifie-t-elle un prix plus élevé ? | Innovation (prix premium) | Likert : Pas du tout d'accord → Tout à fait d'accord |
+| Q15 | Quel degré de confiance accordez-vous à l'efficacité de ce produit ? | Confiance | Likert : Très fortement en désaccord → Très fortement d'accord |
+| Q16 | La présence de collagène vous donne-t-elle une impression de qualité supérieure ? | Qualité perçue | Échelle bipolaire : Qualité nettement inférieure → Qualité nettement supérieure |
+| Q17 | L'ajout de collagène vous semble-t-il compatible avec l'image naturelle de l'eau minérale ? | RSE (fit) | Différentiel sémantique : Incohérent → Cohérent |
 
 ## Profil
 - **Q18.** Vous êtes : ☐ une femme ☐ un homme ☐ autre ☐ je préfère ne pas répondre

@@ -92,29 +92,33 @@ const CONCEPT = {
 };
 const GG_PRICES = [3.50, 2.90, 2.40, 1.90, 1.50];
 const GG_SCALE = ["Oui", "Non"];
-// Perception (Q11-Q17). Each item measures one concept with the response format of its source scale
-// (all 7-point; references in SOURCES.md). Concepts are never shown to respondents.
+// Perception (Q11-Q17). Each item uses the response format of its source scale (all 7-point; page
+// references in SOURCES.md). A labels array = Likert scale (every point named); {ends} = semantic
+// differential (only the two poles are named, the value shows as "x / 7"). Concepts are never shown.
 const AGREE7 = ["Pas du tout d’accord", "Pas d’accord", "Plutôt pas d’accord", "Ni d’accord ni pas d’accord",
   "Plutôt d’accord", "D’accord", "Tout à fait d’accord"];
 const LIKERT_ITEMS = [
-  // Well-being: El Hedhli, Chebat & Sirgy (2013), 7-point agreement
-  ["bien_etre", "Ce produit peut-il contribuer à votre bien-être ?", AGREE7],
-  // Routine / compatibility: Moore & Benbasat (1991), 7-point agreement
-  ["routine", "Pensez-vous que ce produit convient à une consommation quotidienne ?", AGREE7],
-  // Values compatibility: Karahanna, Agarwal & Angst (2006), 7-point agreement
+  // Well-being: El Hedhli, Chebat & Sirgy (2013), 7-point semantic differential (p. 859)
+  ["bien_etre", "Ce produit peut-il contribuer à votre bien-être ?",
+    { ends: ["Ne joue aucun rôle", "Joue un rôle très important"] }],
+  // Routine / compatibility: Moore & Benbasat (1991), 7-point Likert "extremely disagree" to "extremely agree" (p. 199)
+  ["routine", "Pensez-vous que ce produit convient à une consommation quotidienne ?",
+    ["Extrêmement en désaccord", "En désaccord", "Plutôt en désaccord", "Ni d’accord ni en désaccord",
+     "Plutôt d’accord", "D’accord", "Extrêmement d’accord"]],
+  // Values compatibility: Karahanna, Agarwal & Angst (2006), 1 strongly disagree to 7 strongly agree (p. 794)
   ["valeurs", "Ce produit correspond-il à vos valeurs (éthique, environnement) ?", AGREE7],
-  // Innovation / price premium: Netemeyer et al. (2004), 7-point agreement
+  // Innovation / price premium: Netemeyer et al. (2004), 7-point strongly disagree to strongly agree (p. 223)
   ["innovation", "L’innovation de ce produit justifie-t-elle un prix plus élevé ?", AGREE7],
-  // Trust: Chaudhuri & Holbrook (2001), 7-point agreement
-  ["confiance", "Quel degré de confiance accordez-vous à l’efficacité de ce produit ?", AGREE7],
-  // Perceived quality: Dodds, Monroe & Grewal (1991), 7-point bipolar scale
+  // Trust: Chaudhuri & Holbrook (2001), 1 very strongly disagree to 7 very strongly agree (p. 87)
+  ["confiance", "Quel degré de confiance accordez-vous à l’efficacité de ce produit ?",
+    ["Très fortement en désaccord", "En désaccord", "Plutôt en désaccord", "Ni d’accord ni en désaccord",
+     "Plutôt d’accord", "D’accord", "Très fortement d’accord"]],
+  // Perceived quality: Dodds, Monroe & Grewal (1991), 7-point bipolar scale (format not checked in the article)
   ["qualite", "La présence de collagène vous donne-t-elle une impression de qualité supérieure ?",
-    ["Qualité nettement inférieure", "Qualité inférieure", "Qualité légèrement inférieure", "Ni inférieure ni supérieure",
-     "Qualité légèrement supérieure", "Qualité supérieure", "Qualité nettement supérieure"]],
-  // CSR fit: Becker-Olsen, Cudmore & Hill (2006), 7-point bipolar scale
+    { ends: ["Qualité nettement inférieure", "Qualité nettement supérieure"] }],
+  // CSR fit: Becker-Olsen, Cudmore & Hill (2006), 7-point semantic differential 1 = inconsistent / 7 = consistent (p. 48)
   ["rse", "L’ajout de collagène vous semble-t-il compatible avec l’image naturelle de l’eau minérale ?",
-    ["Totalement incompatible", "Incompatible", "Plutôt incompatible", "Ni compatible ni incompatible",
-     "Plutôt compatible", "Compatible", "Totalement compatible"]]
+    { ends: ["Incohérent", "Cohérent"] }]
 ];
 const VW_ITEMS = [
   ["P1", "À partir de quel prix trouveriez-vous ce produit trop cher au point de ne pas l’acheter ?"],
@@ -227,8 +231,10 @@ function nudge(k, d) {
 }
 const priceGauge = k => gauge(k, { min: COUT_REVIENT, max: 10, step: 0.1, init: COUT_REVIENT,
   fmt: v => euro(v, 2), ends: [euro(COUT_REVIENT, 2), "10,00 €"] });
-const likertGauge = (k, text, scale, n) => Q(n, text) + gauge(k, { min: 1, max: scale.length, step: 1,
-  init: Math.ceil(scale.length / 2), fmt: v => scale[v - 1], ends: [scale[0], scale[scale.length - 1]] });
+const likertGauge = (k, text, scale, n) => Array.isArray(scale)
+  ? Q(n, text) + gauge(k, { min: 1, max: scale.length, step: 1, init: Math.ceil(scale.length / 2),
+      fmt: v => scale[v - 1], ends: [scale[0], scale[scale.length - 1]] })
+  : Q(n, text) + gauge(k, { min: 1, max: 7, step: 1, init: 4, fmt: v => v + " / 7", ends: scale.ends });
 const ggKey = p => "G_" + p.toFixed(2);
 const positive = v => v === "Oui";
 function ggRefresh() {
