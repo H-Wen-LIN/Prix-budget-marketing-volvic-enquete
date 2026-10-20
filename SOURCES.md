@@ -24,3 +24,18 @@ Document interne, non visible par les répondants. Rangs : classement FNEGE 2025
 - Les questions sont formulées à la forme interrogative (formulation imposée), alors que les échelles d'origine sont des affirmations auxquelles on répond « d'accord / pas d'accord ».
 - Un seul item par concept est utilisé, alors que les échelles d'origine en comptent 3 à 5 : on ne peut donc pas calculer d'alpha de Cronbach par concept.
 - Les libellés français des 7 points sont une traduction (Pas du tout d'accord, Pas d'accord, Plutôt pas d'accord, Ni d'accord ni pas d'accord, Plutôt d'accord, D'accord, Tout à fait d'accord).
+
+## Où se trouve l'échelle dans chaque source
+
+| Q | Source | Emplacement | Vérifié ? |
+|---|---|---|---|
+| Q15 | Chaudhuri & Holbrook (2001), [texte intégral (Columbia)](https://business.columbia.edu/sites/default/files-efs/pubfiles/593/The_Chain_of_Effects.pdf) | **p. 87** de la revue (page 7 du PDF), colonne de droite, section « Method > Phase 3 », paragraphe « Measures: brand trust, brand affect, and brand loyalty » | Oui, lu dans le texte |
+| Q11 | Réplication de l'échelle d'El Hedhli et al. ([Redalyc, 2018](https://www.redalyc.org/jatsRepo/4417/441760643009/html/index.html)) | **Tableau 1**, bloc « Well-being » (4 items). Le format 7 points d'accord est décrit dans la partie méthode | Oui, lu dans la réplication (pas dans l'article d'origine) |
+| Q11 | El Hedhli, Chebat & Sirgy (2013), JBR 66(7), p. 856-863 | Non localisé (texte payant) | Non |
+| Q12 | Moore & Benbasat (1991), ISR 2(3), p. 192-222 | Non localisé (texte payant). L'instrument final est donné en fin d'article | Non |
+| Q13 | Karahanna, Agarwal & Angst (2006), MISQ 30(4), p. 781-804 | Non localisé (texte payant). L'article renvoie à son annexe (« see the appendix ») pour les items | Non |
+| Q14 | Netemeyer et al. (2004), JBR 57(2), p. 209-224 | Non localisé (texte payant) | Non |
+| Q16 | Dodds, Monroe & Grewal (1991), JMR 28(3), p. 307-319 | Non localisé (texte payant) | Non |
+| Q17 | Becker-Olsen, Cudmore & Hill (2006), JBR 59(1), p. 46-53 | Non localisé (texte payant) | Non |
+
+Pour les lignes « Non », il faut ouvrir l'article via la bibliothèque de l'école (ScienceDirect, SAGE, JSTOR, INFORMS, AIS eLibrary) et chercher la partie « Measures » ou l'annexe.
