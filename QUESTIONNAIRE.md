@@ -10,7 +10,9 @@
 - **Q3.** Au cours des 3 derniers mois, avez-vous acheté au moins une fois une boisson ou un complément enrichi (vitamines, protéines, collagène…) ? Les boissons énergisantes ne sont pas concernées. ☐ Oui ☐ Non
 - **Q4.** Quel est votre âge ? Curseur de 0 à 100 ans (moins de 18 ans → fin : « Cette étude est réservée aux personnes âgées de 18 ans et plus. »)
 
-## L'offre (seule partie qui change), même visuel de bouteille 50 cl
+## L'offre (seule partie qui change) : photo du produit Volvic Boost « Soutien collagène » 50 cl
+
+Photos : `img/bouteille_vegetal.jpg` (version A, étiquette verte « 100 % végétal ») et `img/bouteille_animal.jpg` (version B, étiquette rose « Collagène d'origine animale »). La photo est montrée sur l'écran de l'offre puis rappelée en vignette au-dessus des questions de prix (Q6 à Q10).
 
 | Version A | Version B |
 |---|---|
