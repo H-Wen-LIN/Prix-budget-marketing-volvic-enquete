@@ -4,6 +4,22 @@ Document interne, non visible par les répondants. Rangs : classement FNEGE 2025
 
 Les numéros de page sont ceux **de la revue** (imprimés en haut des pages), et non ceux du lecteur PDF.
 
+## Tableau récapitulatif
+
+Les pages sont celles imprimées dans la revue.
+
+| Q | Concept | Article | Revue (FNEGE 2025) | Page du format de réponse | Page des items |
+|---|---|---|---|---|---|
+| Q11 | Bien-être | El Hedhli, Chebat & Sirgy (2013), *Shopping well-being at the mall: Construct, antecedents, and consequences* | Journal of Business Research (2) | p. 859, section 5.2 « Measures » | p. 860, Tableau 1, « Shopper well-being » |
+| Q12 | Routine | Moore & Benbasat (1991), *Development of an instrument to measure the perceptions of adopting an information technology innovation* | Information Systems Research (1*) | p. 199 | p. 216, Appendix 3, « Compatibility » |
+| Q13 | Valeurs | Karahanna, Agarwal & Angst (2006), *Reconceptualizing compatibility beliefs in technology acceptance research* | MIS Quarterly (1*) | p. 794, note du Tableau 4 | p. 804, Appendix, « Compatibility with Values » |
+| Q14 | Innovation (prix premium) | Netemeyer et al. (2004), *Developing and validating measures of facets of customer-based brand equity* | Journal of Business Research (2) | p. 223, Appendix A (note) | p. 223, Appendix A, « Willingness to pay a price premium » |
+| Q15 | Confiance | Chaudhuri & Holbrook (2001), *The chain of effects from brand trust and brand affect to brand performance: the role of brand loyalty* | Journal of Marketing (1*) | p. 87, « Measures: brand trust… » | p. 87 (même paragraphe) |
+| Q16 | Qualité perçue | Dodds, Monroe & Grewal (1991), *Effects of price, brand, and store information on buyers' product evaluations* | Journal of Marketing Research (1*) | p. 312, « Dependent Variables » | p. 318, Appendix, « Perceived Quality Indicators » |
+| Q17 | RSE (fit) | Becker-Olsen, Cudmore & Hill (2006), *The impact of perceived corporate social responsibility on consumer behavior* | Journal of Business Research (2) | p. 48, prétest avant la section 3 | p. 48 (même paragraphe) |
+
+Les 7 articles ont été lus dans leur texte intégral.
+
 ## Q11 · Bien-être
 **El Hedhli, K., Chebat, J.-C. & Sirgy, M. J. (2013).** Shopping well-being at the mall: Construct, antecedents, and consequences. *Journal of Business Research*, 66(7), 856-863. FNEGE : 2. [doi:10.1016/j.jbusres.2011.06.011](https://doi.org/10.1016/j.jbusres.2011.06.011)
 - **Format : p. 859**, colonne de droite, section **5.2 « Measures »** : « Does shopping at (mall name) contribute to your quality of life? » puis des « **7-point differential scales** » (différentiel sémantique en 7 points).
@@ -33,10 +49,11 @@ Les numéros de page sont ceux **de la revue** (imprimés en haut des pages), et
 - **Format et items : p. 87**, colonne de droite, section « Method > Phase 3 », paragraphe « Measures: brand trust, brand affect, and brand loyalty » : « seven-point ratings of agreement (1 = very strongly disagree, 7 = very strongly agree) », items « I trust this brand », « I rely on this brand », « This is an honest brand », « This brand is safe ».
 - **Échelle retenue :** Likert 7 points, « Très fortement en désaccord » → « Très fortement d'accord ».
 
-## Q16 · Qualité perçue (non vérifié dans l'article)
+## Q16 · Qualité perçue
 **Dodds, W. B., Monroe, K. B. & Grewal, D. (1991).** Effects of price, brand, and store information on buyers' product evaluations. *Journal of Marketing Research*, 28(3), 307-319. FNEGE : 1*. [doi:10.1177/002224379102800305](https://doi.org/10.1177/002224379102800305) · [JSTOR](https://www.jstor.org/stable/3172866)
-- **Emplacement : non localisé.** Cet article ne faisait pas partie des PDF fournis. Le format 7 points provient d'une étude qui réutilise l'échelle (Sweeney, Soutar & Johnson, 1999, *Journal of Retailing*).
-- **Échelle retenue (provisoire) :** bipolaire 7 points, « Qualité nettement inférieure » → « Qualité nettement supérieure ».
+- **Format : p. 312**, colonne de gauche, section **« Dependent Variables »** : « Subjects evaluated product quality, value, and willingness to buy on multi-item 7-point scales ».
+- **Items : p. 318, Appendix « Description of Multi-Item Indicators »**, bloc **« Perceived Quality Indicators »** (5 items), par ex. « This product should be of: (very good quality to very poor quality) », « The likelihood that the product would be reliable is: (very high to very low) ».
+- **Échelle retenue :** bipolaire 7 points, pôles « Très mauvaise qualité » / « Très bonne qualité » (item 3). Dans l'article, 1 = très bonne et 7 = très mauvaise (note du Tableau 3, p. 313). Ici, l'ordre est inversé pour que le curseur aille du négatif au positif, comme les autres questions : il faut en tenir compte si l'on compare les moyennes avec l'article.
 
 ## Q17 · RSE (cohérence perçue, « fit »)
 **Becker-Olsen, K. L., Cudmore, B. A. & Hill, R. P. (2006).** The impact of perceived corporate social responsibility on consumer behavior. *Journal of Business Research*, 59(1), 46-53. FNEGE : 2. [doi:10.1016/j.jbusres.2005.01.001](https://doi.org/10.1016/j.jbusres.2005.01.001)

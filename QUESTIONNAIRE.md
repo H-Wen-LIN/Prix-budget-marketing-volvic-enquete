@@ -42,7 +42,7 @@ Les concepts ne sont pas affichés aux répondants. Sources et liens : voir `SOU
 | Q13 | Ce produit correspond-il à vos valeurs (éthique, environnement) ? | Valeurs | Likert : Pas du tout d'accord → Tout à fait d'accord |
 | Q14 | L'innovation de ce produit justifie-t-elle un prix plus élevé ? | Innovation (prix premium) | Likert : Pas du tout d'accord → Tout à fait d'accord |
 | Q15 | Quel degré de confiance accordez-vous à l'efficacité de ce produit ? | Confiance | Likert : Très fortement en désaccord → Très fortement d'accord |
-| Q16 | La présence de collagène vous donne-t-elle une impression de qualité supérieure ? | Qualité perçue | Échelle bipolaire : Qualité nettement inférieure → Qualité nettement supérieure |
+| Q16 | La présence de collagène vous donne-t-elle une impression de qualité supérieure ? | Qualité perçue | Échelle bipolaire : Très mauvaise qualité → Très bonne qualité |
 | Q17 | L'ajout de collagène vous semble-t-il compatible avec l'image naturelle de l'eau minérale ? | RSE (fit) | Différentiel sémantique : Incohérent → Cohérent |
 
 ## Profil
