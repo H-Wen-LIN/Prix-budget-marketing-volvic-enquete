@@ -16,9 +16,8 @@ Document interne, non visible par les répondants. Rangs : classement FNEGE 2025
 
 - **Q15 (Chaudhuri & Holbrook, 2001)** : vérifié dans le texte intégral, p. 87 : « seven-point ratings of agreement (1 = very strongly disagree, 7 = very strongly agree) », items « I trust this brand », « I rely on this brand », « This is an honest brand », « This brand is safe ».
 - **Q11 (El Hedhli et al., 2013)** : 7 points d'accord, confirmé par une réplication qui reprend l'échelle ([Revista Pensamento Contemporâneo em Administração, 2018](https://www.redalyc.org/jatsRepo/4417/441760643009/html/index.html)).
-- **Q12 (Moore & Benbasat, 1991)** : 7 points (format Likert indiqué par la [fiche de l'instrument, RNAO](https://rnao.ca/sites/default/files/2023-05/Perceived%20Characteristics%20of%20innovation.pdf)).
-- **Q16 (Dodds et al., 1991)** : 7 points, d'après une étude qui réutilise l'échelle (Sweeney, Soutar & Johnson, 1999, Journal of Retailing).
-- **Q13, Q14, Q17** : article, revue et année vérifiés ; texte intégral payant, donc format de réponse (7 points) non vérifié mot pour mot dans l'article. À contrôler via l'accès bibliothèque de l'école.
+- **Q16 (Dodds et al., 1991)** : 7 points, d'après une étude qui réutilise l'échelle (Sweeney, Soutar & Johnson, 1999, *The role of perceived risk in the quality-value relationship*, Journal of Retailing) ; non vérifié dans l'article d'origine.
+- **Q12, Q13, Q14, Q17** : article, revue et année vérifiés ; texte intégral payant, donc format de réponse (7 points) non vérifié mot pour mot dans l'article. À contrôler via l'accès bibliothèque de l'école.
 
 ## Adaptations
 
