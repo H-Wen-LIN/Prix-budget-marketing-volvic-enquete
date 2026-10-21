@@ -60,3 +60,19 @@ Deux réglages à faire une seule fois, avec vos comptes (environ 10 minutes) :
 
 1. Faites un ou deux questionnaires de test sur l'adresse publique, vérifiez qu'ils apparaissent dans la feuille, puis **supprimez ces lignes de test** (clic droit sur le numéro de ligne > Supprimer la ligne). Gardez la ligne 1 (les en-têtes).
 2. Diffusez l'adresse : https://h-wen-lin.github.io/Prix-budget-marketing-volvic-enquete/
+
+## Importer les données dans le dépôt
+
+Le script peut renvoyer toutes les réponses en CSV, **uniquement** avec une clé secrète :
+
+1. Dans Apps Script : **Paramètres du projet** (roue dentée) > **Propriétés du script** > ajouter la propriété `EXPORT_KEY` avec une valeur longue et aléatoire.
+2. Redéployer : **Déployer > Gérer les déploiements > Modifier (crayon) > Version : Nouvelle version > Déployer**. L'URL `/exec` ne change pas.
+3. Import :
+   ```
+   EXPORT_KEY="la-clé" python3 collecte/importer.py
+   ```
+   Le fichier `donnees/reponses.csv` est créé (séparateur `;`, UTF-8, lisible par Excel).
+
+- La clé ne doit **jamais** être écrite dans un fichier du dépôt.
+- Si elle a fuité : changez la valeur de `EXPORT_KEY` dans les Propriétés du script. Il n'y a rien à redéployer.
+- Le dépôt est public : `donnees/reponses.csv` est visible par tout le monde sur GitHub.

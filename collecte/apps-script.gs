@@ -5,6 +5,8 @@
  * - doPost : reçoit une réponse (JSON envoyé par index.html) et l'ajoute comme une ligne de l'onglet « Reponses ».
  *   Une réponse déjà reçue (même id) n'est jamais écrite deux fois : le navigateur peut donc renvoyer sans risque.
  * - doGet : simple test de disponibilité ({ ok: true, reponses: <nombre> }), sans exposer les données.
+ *   Avec ?export=csv&key=<clé>, renvoie toutes les réponses en CSV, uniquement si la clé correspond
+ *   à la propriété de script EXPORT_KEY (Paramètres du projet > Propriétés du script).
  * Aucune donnée nominative n'est attendue ni stockée.
  */
 var SHEET_NAME = 'Reponses';
@@ -60,7 +62,22 @@ function doPost(e) {
   }
 }
 
-function doGet() {
+function doGet(e) {
   var sh = sheet_();
+  var p = (e && e.parameter) || {};
+  if (p.export === 'csv') {
+    // Export of all responses, only with the secret key stored in Project Settings > Script properties (EXPORT_KEY).
+    var key = PropertiesService.getScriptProperties().getProperty('EXPORT_KEY');
+    if (!key || p.key !== key) return json_({ ok: false });
+    var values = sh.getDataRange().getValues();
+    var csv = values.map(function (row) {
+      return row.map(function (v) {
+        if (v instanceof Date) v = v.toISOString();
+        var s = String(v);
+        return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }).join(';');
+    }).join('\n');
+    return ContentService.createTextOutput(csv).setMimeType(ContentService.MimeType.CSV);
+  }
   return json_({ ok: true, reponses: Math.max(sh.getLastRow() - 1, 0) });
 }
