@@ -137,7 +137,7 @@ def hero(eyebrow, title, subtitle, lede, kpis, disclaimer):
     return f"""
 <header class="hero" id="top">
   <div class="hero-media">
-    <video id="pub" autoplay muted loop playsinline preload="auto" poster="media/volvic-boost-poster.jpg" aria-label="Notre film publicitaire Volvic Boost">
+    <video id="pub" autoplay muted playsinline preload="auto" poster="media/volvic-boost-poster.jpg" aria-label="Notre film publicitaire Volvic Boost">
       <source src="media/volvic-boost-pub.mp4" type="video/mp4">
     </video>
     <button class="sound" id="sound" type="button" aria-pressed="false">Activer le son</button>
@@ -159,19 +159,15 @@ CSS = """
 /* Concept : on suit l'eau, de la source (le volcan, en haut) jusqu'à la bouteille (la décision, en bas).
    Aquarelle sur papier frais, verts d'Auvergne, rose pour la version animale comme dans notre film. */
 :root{
- --bg:#f3f6f2;--paper:#fbfcf9;--surface:#ffffff;--ink:#11281c;--muted:#506559;--line:#d5e0d8;
+ --bg:#ffffff;--paper:#ffffff;--surface:#ffffff;--ink:#11281c;--muted:#506559;--line:#d5e0d8;
  --accent:#0f5a36;--accent-2:#1c7a4b;--leaf:#8cc63f;--water:#2f86c0;--water-2:#9fd0ec;--mist:#dde9ee;
  --m-far:#b9d3dd;--m-mid:#8fb98f;--m-near:#2f6b45;--zone:#e5efe7;
  --a:#2F7A44;--b:#E07BA0;--sg-base:#c7d3cb;--sg-marge:#d8eedf;--sg-dist:#ece6da;--sg-tva:#e0e2ea;
  --warn-bg:#fff4e6;--warn-ink:#7a4a00;
+ color-scheme:light;
  --display:"Fraunces",Georgia,serif;--body:"Figtree",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;--hand:"Caveat",cursive;
 }
-@media (prefers-color-scheme:dark){:root{
- --bg:#0d1612;--paper:#111d17;--surface:#14211a;--ink:#e3ede6;--muted:#9cb3a6;--line:#273a30;
- --accent:#7fd3a0;--accent-2:#9fe0b8;--leaf:#a5d86a;--water:#5aa9dc;--water-2:#2c5d7e;--mist:#1a2a2f;
- --m-far:#2a4450;--m-mid:#2f5a3c;--m-near:#173b27;--zone:#1b2b22;
- --a:#2C7A44;--b:#D16C94;--sg-base:#3a4a41;--sg-marge:#1f3f2e;--sg-dist:#3c362b;--sg-tva:#33353e;
- --warn-bg:#2a2214;--warn-ink:#f0c98a;color-scheme:dark}}
+
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{margin:0;color:var(--ink);font:17px/1.65 var(--body);background:var(--bg) PAPER}
@@ -324,6 +320,10 @@ JS = """
   const v = document.getElementById('pub'), s = document.getElementById('sound');
   if (v && s) s.addEventListener('click', () => { v.muted = !v.muted; if (!v.muted) v.play(); s.setAttribute('aria-pressed', String(!v.muted)); s.textContent = v.muted ? 'Activer le son' : 'Couper le son'; });
   if (v && reduce) { v.removeAttribute('autoplay'); v.pause(); }
+  const mute = () => { if (v && !v.muted) { v.muted = true; s.setAttribute('aria-pressed', 'false'); s.textContent = 'Activer le son'; } };
+  if (v && 'IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { if (e.intersectionRatio < 0.35) mute(); }), {threshold: [0, 0.35, 1]}).observe(v);
+  if (v) v.addEventListener('ended', () => { s.textContent = 'Revoir le film'; s.setAttribute('aria-pressed', 'false'); });
+  if (v && s) s.addEventListener('click', () => { if (v.ended) { v.currentTime = 0; v.play(); } });
 
   // Compteurs des chiffres clés
   if (!reduce) document.querySelectorAll('.kpi .v[data-count]').forEach(el => {

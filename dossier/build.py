@@ -419,7 +419,7 @@ sec["proposition"] = f"""
 
 sec["client"] = f"""
 {answer(f"Le client accepte environ <strong>1,50 €</strong> la bouteille, quelle que soit l'origine du collagène. Zone acceptable de {eur(vA['PMC'])} à {eur(vA['PME'])} avec la variation végétale, de {eur(vB['PMC'])} à {eur(vB['PME'])} sans. La variation ne change pas le prix accepté.")}
-<p>Nous avons mesuré le prix accepté de deux façons, sur les {nS} répondants (voir « Qui a répondu » plus bas) :</p>
+<p>Nous avons mesuré le prix accepté de deux façons, sur les {nS} répondants (voir « Qui a répondu » plus haut) :</p>
 <ul class="def"><li><strong>Van Westendorp</strong> : chacun indique, sur un curseur, à partir de quel prix il trouve le produit trop bon marché, bon marché, cher, puis trop cher (Q6 à Q9). En croisant les réponses de tous, on obtient une zone de prix acceptable.</li>
 <li><strong>Gabor-Granger</strong> : on propose des prix du plus cher (3,50 €) au moins cher (1,50 €), et chacun dit s'il achèterait (Q10). On obtient la part d'acheteurs à chaque prix.</li></ul>
 <h3>Van Westendorp</h3>
@@ -508,7 +508,7 @@ sec["methode"] = f"""
 """
 
 NAV = [("entreprise", "L'entreprise"), ("marche", "Le marché"), ("proposition", "La proposition"),
-       ("client", "Le client"), ("repondants", "Qui a répondu"), ("decision", "La décision")]
+       ("repondants", "Qui a répondu"), ("client", "Le client"), ("decision", "La décision")]
 QUESTIONS = {"entreprise": "Qui est-elle, de quoi vit-elle, et que disent ses comptes ?",
              "marche": "Qui sont ses concurrents, à quels prix, et quel plafond en tirer ?",
              "proposition": "Quelle variation du mix, pourquoi celle-là, et combien coûte-t-elle ?",
