@@ -518,20 +518,10 @@ QUESTIONS = {"entreprise": "Qui est-elle, de quoi vit-elle, et que disent ses co
              "decision": "Quel prix recommandons-nous, la variation se paie-t-elle, et à quel moment le scénario lâche-t-il ?",
              "methode": "Comment lire ce dossier"}
 
-def read_min(h):
-    words = len(re.sub(r"<[^>]+>", " ", h).split())
-    return max(1, round(words / 180))
-
-def next_link(i):
-    if i + 1 < len(NAV):
-        k, t = NAV[i + 1]
-        return f"<p class='next'><a href='#{k}'>Suite : {i + 2:02d} · {t} <span aria-hidden='true'>↓</span></a></p>"
-    return "<p class='next'><a href='#carte'>Revenir au plan <span aria-hidden='true'>↑</span></a></p>"
-
 sections_html = "".join(
     f"<section id='{k}'><header class='sh'><span class='kicker'>{i + 1:02d} · {t}</span><h2>{QUESTIONS[k]}</h2>"
-    f"<span class='rt'>Lecture : environ {read_min(sec[k])} min · l'essentiel en 30 secondes dans « En bref »</span></header>{sec[k]}"
-    f"<p class='ess-note'>Mode « l'essentiel » : les détails et les calculs de cette partie sont masqués.</p>{next_link(i)}</section>"
+    f"</header>{sec[k]}"
+    f"<p class='ess-note'>Mode « l'essentiel » : les détails et les calculs de cette partie sont masqués.</p></section>"
     for i, (k, t) in enumerate(NAV))
 
 carte = f"""<div class="carte reveal" id="carte"><p class="eyebrow">Le dossier en un coup d'œil</p>
