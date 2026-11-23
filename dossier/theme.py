@@ -159,7 +159,7 @@ CSS = """
 /* Concept : on suit l'eau, de la source (le volcan, en haut) jusqu'à la bouteille (la décision, en bas).
    Aquarelle sur papier frais, verts d'Auvergne, rose pour la version animale comme dans notre film. */
 :root{
- --bg:#ffffff;--paper:#ffffff;--surface:#ffffff;--ink:#11281c;--muted:#506559;--line:#d5e0d8;
+ --bg:#fafafa;--paper:#fafafa;--surface:#ffffff;--ink:#11281c;--muted:#506559;--line:#d5e0d8;
  --accent:#0f5a36;--accent-2:#1c7a4b;--leaf:#8cc63f;--water:#2f86c0;--water-2:#9fd0ec;--mist:#dde9ee;
  --m-far:#b9d3dd;--m-mid:#8fb98f;--m-near:#2f6b45;--zone:#e5efe7;
  --a:#2F7A44;--b:#E07BA0;--sg-base:#c7d3cb;--sg-marge:#d8eedf;--sg-dist:#ece6da;--sg-tva:#e0e2ea;
