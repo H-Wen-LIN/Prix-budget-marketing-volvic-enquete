@@ -130,6 +130,57 @@ def mindmap_svg(items):
             f'aria-label="Carte mentale des raisons du choix de la variation" style="min-width:560px">{"".join(out)}</svg></div>')
 
 
+# ---------- Carte mentale du dossier : le plan, cliquable ----------
+def sitemap_svg(question, items):
+    """items : 6 (ancre, numéro, titre, ligne 1, ligne 2). Colonne gauche 01-03, colonne droite 04-06."""
+    W, H = 760, 450; cx, cy = 380, 225
+    pos = [(140, 75), (140, 225), (140, 375), (620, 75), (620, 225), (620, 375)]
+    q1, q2 = question
+    out = []
+    for i, (x, y) in enumerate(pos):
+        sx = cx + (-100 if x < cx else 100); ex = x + (110 if x < cx else -110)
+        out.append(f'<path d="M{sx},{cy} C{(sx + ex) / 2:.0f},{cy} {(sx + ex) / 2:.0f},{y} {ex},{y}" class="mm-branch b{i}" pathLength="1"/>')
+    out += [f'<ellipse cx="{cx}" cy="{cy}" rx="104" ry="62" class="mm-core" filter="url(#wc-blob)"/>',
+            f'<text x="{cx}" y="{cy - 6}" class="mm-title" text-anchor="middle">{esc(q1)}</text>',
+            f'<text x="{cx}" y="{cy + 18}" class="mm-title" text-anchor="middle">{esc(q2)}</text>']
+    for i, ((x, y), (ref, num, title, l1, l2)) in enumerate(zip(pos, items)):
+        out.append(f'<a href="#{ref}" class="mm-link"><ellipse cx="{x}" cy="{y}" rx="112" ry="54" class="mm-node n{i % 4}" filter="url(#wc-blob)"/>'
+                   f'<circle cx="{x + (-104 if x < cx else 104)}" cy="{y - 38}" r="15" class="mm-num"/>'
+                   f'<text x="{x + (-104 if x < cx else 104)}" y="{y - 33}" class="mm-numt" text-anchor="middle">{num}</text>'
+                   f'<text x="{x}" y="{y - 14}" class="mm-h" text-anchor="middle">{esc(title)}</text>'
+                   f'<text x="{x}" y="{y + 8}" class="m" text-anchor="middle">{esc(l1)}</text>'
+                   f'<text x="{x}" y="{y + 26}" class="m" text-anchor="middle">{esc(l2)}</text></a>')
+    svg = (f'<svg class="chart mindmap sitemap" viewBox="0 0 {W} {H}" role="img" '
+           f'aria-label="Carte mentale du dossier : la question centrale et les six parties, chacune avec sa réponse courte">{"".join(out)}</svg>')
+    lst = "".join(f'<li><a href="#{ref}"><span class="n">{num}</span><b>{esc(title)}</b><span>{esc(l1)}, {esc(l2)}</span></a></li>'
+                  for ref, num, title, l1, l2 in items)
+    return f'{svg}<ol class="mm-list" aria-label="Plan du dossier">{lst}</ol>'
+
+
+# ---------- Schéma : comment marche le test A/B ----------
+def ab_svg(nA, nB):
+    W, H = 760, 260
+    def box(x, y, w, h, cls, l1, l2, c1="tb b"):
+        return (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" class="{cls}"/>'
+                f'<text x="{x + w / 2}" y="{y + h / 2 - 4}" class="{c1}" text-anchor="middle">{l1}</text>'
+                f'<text x="{x + w / 2}" y="{y + h / 2 + 15}" class="m s" text-anchor="middle">{l2}</text>')
+    person = ('<circle cx="62" cy="108" r="13" class="ab-ic"/><path d="M36,152 C36,128 88,128 88,152 Z" class="ab-ic"/>'
+              '<text x="62" y="176" class="m s" text-anchor="middle">1 répondant</text>')
+    dice = ('<rect x="168" y="102" width="46" height="46" rx="10" class="ab-dice"/>' +
+            "".join(f'<circle cx="{168 + dx}" cy="{102 + dy}" r="4" class="ab-pip"/>' for dx, dy in [(13, 13), (33, 13), (23, 23), (13, 33), (33, 33)]) +
+            '<text x="191" y="170" class="m s" text-anchor="middle">tirage au sort</text>')
+    flows = ['M94,125 L160,125', 'M222,118 C270,118 270,62 316,62', 'M222,132 C270,132 270,190 316,190',
+             'M486,62 C530,62 530,118 566,118', 'M486,190 C530,190 530,132 566,132']
+    paths = "".join(f'<path d="{d}" class="ab-fl"/>' for d in flows)
+    return (f'<div class="cw"><svg class="chart abflow" viewBox="0 0 {W} {H}" role="img" '
+            f'aria-label="Schéma du test A/B : chaque répondant est tiré au sort, voit la version A ou la version B, répond aux mêmes questions, puis on compare les deux groupes." style="min-width:560px">'
+            f'{paths}{person}{dice}'
+            f'{box(318, 30, 168, 64, "ab-a", "Version A · végétal", f"{nA} répondants", "ta b")}'
+            f'{box(318, 158, 168, 64, "ab-b", "Version B · animal", f"{nB} répondants")}'
+            f'{box(568, 80, 176, 90, "ab-c", "On compare A et B", "mêmes questions : prix, avis")}'
+            f'<text x="656" y="190" class="hand v" text-anchor="middle">seule l\'origine change</text></svg></div>')
+
+
 # ---------- Héros : la vidéo, les volcans, le titre ----------
 def hero(eyebrow, title, subtitle, lede, kpis, disclaimer):
     k = "".join(f'<div class="kpi"><span class="k">{a}</span><span class="v" data-count="{c}">{b}</span><span class="s">{d}</span></div>'
@@ -255,15 +306,15 @@ figure.paint{background:linear-gradient(180deg,var(--surface),color-mix(in srgb,
 
 /* Schéma du collagène */
 .collagen .strand{fill:none;stroke-width:5;stroke-linecap:round}
-.collagen .helix{animation:slide 3.2s linear infinite}
+.collagen .helix{animation:slide 3.2s linear 4}
 .collagen .s0{stroke:var(--accent-2)}.collagen .s1{stroke:var(--water)}.collagen .s2{stroke:var(--b)}
 .collagen .mini{stroke-width:3;stroke-dasharray:none;animation:none}.collagen .sa-h{stroke:var(--a)}.collagen .sb-h{stroke:var(--b)}
-.collagen .build .mini{stroke-dasharray:1;stroke-dashoffset:1;animation:build 3.4s ease-in-out infinite}
+.collagen .build .mini{stroke-dasharray:1;stroke-dashoffset:1;animation:build 3.4s ease-in-out 3 forwards}
 .collagen .flow{fill:none;stroke-width:2;stroke-dasharray:3 5;opacity:.7}.collagen .fa-s{stroke:var(--a)}.collagen .fb-s{stroke:var(--b)}
 .collagen .leaf{fill:var(--leaf)}.collagen .leaf-vein{fill:none;stroke:var(--a);stroke-width:1.5}
 .collagen .bead{fill:var(--b);opacity:.9}.collagen .body{fill:var(--mist);stroke:var(--muted);stroke-width:1.2}
 @keyframes slide{to{transform:translateX(-92px)}}
-@keyframes build{0%{stroke-dashoffset:1}55%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}
+@keyframes build{0%{stroke-dashoffset:1}55%,100%{stroke-dashoffset:0}}
 
 /* Carte mentale */
 .mindmap .mm-core{fill:var(--water-2);opacity:.9}
@@ -309,13 +360,83 @@ table.hyp td:nth-child(2){min-width:220px}
 }
 @keyframes rise{from{opacity:.15;transform:translateY(28px)}to{opacity:1;transform:none}}
 @keyframes draw{to{stroke-dashoffset:0}}
+
+/* Carte mentale du dossier */
+.carte{padding:46px 0 6px}
+.carte .sitemap{max-width:900px;margin:0 auto}
+.mm-link{cursor:pointer}.mm-link:hover .mm-node,.mm-link:focus-visible .mm-node{opacity:.85}
+.mm-link:focus-visible{outline:none}.mm-link:focus-visible .mm-node{stroke:var(--ink);stroke-width:2.5}
+.mindmap .mm-num{fill:var(--accent)}.mindmap .mm-numt{font:600 13px var(--body);fill:#fff}
+.sitemap .n4{fill:var(--water-2)}.sitemap .m{font-size:14px}
+.mm-list{display:none;list-style:none;margin:0;padding:0 0 0 18px;border-left:4px solid var(--water-2)}
+.mm-list li{margin:0 0 10px}.mm-list a{display:grid;grid-template-columns:auto 1fr;gap:0 10px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.mm-list .n{grid-row:span 2;align-self:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:600 13px var(--body)}
+.mm-list span:last-child{color:var(--muted);font-size:15px}
+@media (max-width:700px){.carte .sitemap{display:none}.mm-list{display:block}}
+
+/* Schéma du test A/B */
+.abflow .ab-fl{fill:none;stroke:var(--water);stroke-width:2.5;stroke-dasharray:5 6;stroke-linecap:round}
+.abflow .ab-ic{fill:var(--muted)}.abflow .ab-dice{fill:var(--surface);stroke:var(--ink);stroke-width:2}.abflow .ab-pip{fill:var(--ink)}
+.abflow .ab-a{fill:color-mix(in srgb,var(--a) 14%,var(--surface));stroke:var(--a);stroke-width:2}
+.abflow .ab-b{fill:color-mix(in srgb,var(--b) 18%,var(--surface));stroke:var(--b);stroke-width:2}
+.abflow .ab-c{fill:var(--mist);stroke:var(--water);stroke-width:2}
+@media (prefers-reduced-motion:no-preference){.abflow .ab-fl{animation:flowd 1.4s linear 5}.abflow .ab-dice{transform-box:fill-box;transform-origin:center;animation:roll 1.2s ease-in-out 2}}
+@keyframes flowd{to{stroke-dashoffset:-22}}
+@keyframes roll{50%{transform:rotate(90deg)}}
+
+/* Repères de lecture : durée, suite */
+.rt{font:500 13px var(--body);color:var(--muted)}
+.next{margin:34px 0 10px;max-width:none}
+.next a{display:inline-flex;gap:8px;align-items:center;font-weight:600;text-decoration:none;border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;background:var(--surface)}
+.next a:hover{border-color:var(--water)}
+
+/* Confort de lecture */
+.comfort{position:fixed;z-index:30;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));display:grid;justify-items:end;gap:8px}
+.comfort>button{border:0;border-radius:999px;padding:11px 18px;font:600 15px var(--body);background:var(--accent);color:#fff;cursor:pointer;box-shadow:0 8px 24px -10px rgba(15,60,40,.6)}
+.comfort .panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 18px 40px -20px rgba(15,60,40,.5);width:min(320px,calc(100vw - 32px));display:grid;gap:12px}
+.comfort .panel[hidden]{display:none}
+.comfort label{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;cursor:pointer;font-weight:600;font-size:15px}
+.comfort label small{grid-column:2;font-weight:400;color:var(--muted);font-size:13.5px;line-height:1.4}
+.comfort input{width:20px;height:20px;accent-color:var(--accent);margin:2px 0 0}
+.ess-note{display:none}
+html.essentiel .ess-note{display:block;color:var(--muted);font-size:15px;font-style:normal}
+html.essentiel section>:not(.sh):not(.answer):not(.key):not(.next):not(.ess-note){display:none}
+
+/* Police adaptée dys */
+html.dys{--display:"Atkinson Hyperlegible",Verdana,sans-serif;--body:"Atkinson Hyperlegible",Verdana,sans-serif;--mono:"Atkinson Hyperlegible",Verdana,sans-serif;--hand:"Atkinson Hyperlegible",Verdana,sans-serif}
+html.dys body{line-height:1.85;letter-spacing:.02em;word-spacing:.12em}
+html.dys em,html.dys i{font-style:normal}
+html.dys .eyebrow,html.dys .kicker,html.dys th,html.dys .kpi .k,html.dys .answer span{text-transform:none;letter-spacing:.02em;font-size:14px}
+html.dys p,html.dys li,html.dys dd{max-width:64ch}
+html.dys h1{line-height:1.08}
+
+/* Sans animations */
+html.calm *,html.calm *::before,html.calm *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+html.calm .collagen .build .mini{stroke-dashoffset:0}
+@media print{.comfort{display:none}}
+@media (max-width:640px){.comfort .cf-l{display:none}.comfort>button{width:48px;height:48px;padding:0;font-size:17px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.collagen .helix,.collagen .build .mini{animation:none;stroke-dashoffset:0}}
 @media (max-width:640px){.hero-tag{display:none}.topnav .in{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;scrollbar-width:none}.topnav strong{display:none}body{font-size:16px}.ab{grid-template-columns:1fr}figure{padding:12px}figure.duo{grid-template-columns:1fr 1fr}.hero-media video{border-radius:16px}}
 """.replace("PAPER", PAPER)
 
 JS = """
 (() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+  const calm = () => root.classList.contains('calm');
+  // Confort de lecture : police dys, sans animations, l'essentiel
+  const cb = document.getElementById('comfort-btn'), panel = document.getElementById('comfort-panel');
+  if (cb) cb.addEventListener('click', () => { const open = panel.hidden; panel.hidden = !open; cb.setAttribute('aria-expanded', String(open)); });
+  document.querySelectorAll('.comfort input[data-mode]').forEach(inp => {
+    inp.checked = root.classList.contains(inp.dataset.mode);
+    inp.addEventListener('change', () => {
+      root.classList.toggle(inp.dataset.mode, inp.checked);
+      try { localStorage.setItem('cf-' + inp.dataset.mode, inp.checked ? '1' : '0'); } catch (e) {}
+      if (inp.dataset.mode === 'calm' && inp.checked && v) v.pause();
+      setTimeout(() => dispatchEvent(new Event('resize')), 50);
+    });
+  });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && panel && !panel.hidden) { panel.hidden = true; cb.setAttribute('aria-expanded', 'false'); cb.focus(); } });
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || calm();
   // Son de la vidéo
   const v = document.getElementById('pub'), s = document.getElementById('sound');
   if (v && s) s.addEventListener('click', () => { v.muted = !v.muted; if (!v.muted) v.play(); s.setAttribute('aria-pressed', String(!v.muted)); s.textContent = v.muted ? 'Activer le son' : 'Couper le son'; });
@@ -367,7 +488,7 @@ JS = """
     }
     let cur = null; heads.forEach(h => { if (h.getBoundingClientRect().top < innerHeight * 0.4) cur = h.closest('section').id; });
     links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + cur));
-    if (!reduce) document.querySelectorAll('.hero .ridge').forEach(g => g.style.transform = `translateY(${Math.min(scrollY, 900) * g.dataset.depth}px)`);
+    if (!reduce && !calm()) document.querySelectorAll('.hero .ridge').forEach(g => g.style.transform = `translateY(${Math.min(scrollY, 900) * g.dataset.depth}px)`);
   }
   addEventListener('scroll', () => requestAnimationFrame(update), {passive: true});
   addEventListener('resize', build); addEventListener('load', build);
@@ -377,5 +498,5 @@ JS = """
 """
 
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Figtree:wght@400;500;600&'
+         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Figtree:wght@400;500;600&'
          'family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..700,100,1&family=JetBrains+Mono:wght@500&display=swap">')

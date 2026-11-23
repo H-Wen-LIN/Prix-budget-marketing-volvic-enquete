@@ -2,7 +2,7 @@
 
 Lancer : python3 dossier/build.py
 """
-import html, math, pathlib
+import html, math, pathlib, re
 import analyse as an
 import theme as th
 
@@ -381,7 +381,7 @@ sec["marche"] = f"""
     ["Volvic Essentiel Bio (eau aromatisée)", "75 cl", "1,75 € (prix promo)", eur(1.75 / 1.5), L("Bonial, Carrefour", "essentiel")],
     ["Vitamin Well (eau vitaminée)", "50 cl", "2,55 €", eur(2.55), L("Fitadium", "vitwell")],
     ["Humble+ Collagen Water (5 g de collagène marin)", "33 cl", "2,99 €", eur(2.99 / 0.66), L("Je vais mieux merci", "humble_prix") + ", " + L("Atida", "humble_dose")]])}
-{fig(market_svg(), "Prix en rayon d'une unité. La bande grisée est la zone de prix que nos répondants jugent acceptable (Van Westendorp, voir « Le client »).")}
+{fig(market_svg(), cls="key", caption="Prix en rayon d'une unité. La bande grisée est la zone de prix que nos répondants jugent acceptable (Van Westendorp, voir « Le client »).")}
 <h3>Quel plafond en tirer ?</h3>
 <p>Le plafond est le prix du concurrent le plus proche et le plus cher : <strong>{eur(an.CONC)} pour Humble+</strong>, la seule eau au collagène trouvée en vente en France. Au-dessus, le consommateur trouve une offre comparable moins chère.</p>
 """
@@ -397,7 +397,7 @@ sec["proposition"] = f"""
     ("Image naturelle", "une eau de volcan, B Corp", f"cohérence : {fr(v8['ma'])} contre {fr(v8['mb'])} sur 7", "→ confirmé (H8)"),
     ("Coût", f"actifs végétaux : {fr(an.var_A, 3)} €", f"collagène bovin : {fr(an.var_B, 3)} €", f"→ {fr(an.var_B / an.var_A, 0)} fois moins cher"),
     ("Le risque", "le « vrai » collagène", "jugé plus efficace ?", "→ non : plus de confiance (H9)")]),
-    "Pourquoi le collagène végétal : les quatre arguments du choix, et ce que l'étude en a dit (détail dans « Qui a répondu »).", "paint")}
+    "Pourquoi le collagène végétal : les quatre arguments du choix, et ce que l'étude en a dit (détail dans « Qui a répondu »).", "paint key")}
 <figure class="duo"><img src="../img/bouteille_vegetal.jpg" alt="Bouteille version A, collagène 100 % végétal"><img src="../img/bouteille_animal.jpg" alt="Bouteille version B, collagène d'origine animale"><figcaption>Les deux visuels montrés aux répondants. Version A : « Eau minérale naturelle enrichie en collagène d'origine végétale. 50 cl. » Version B : « … d'origine animale. » Les étiquettes diffèrent aussi par leur couleur, une limite à garder en tête.</figcaption></figure>
 <h3>Combien coûte-t-elle ?</h3>
 <p>Danone ne publie pas ses coûts. Nous avons chiffré chaque poste avec un prix de gros public quand il existe, et une hypothèse signalée sinon.</p>
@@ -429,7 +429,7 @@ sec["client"] = f"""
     ["OPP", "trop bon marché × trop cher", "prix qui fait le moins de rejets", eur(vAll["OPP"]), eur(vA["OPP"]), eur(vB["OPP"])],
     ["IPP", "bon marché × cher", "prix perçu comme normal", eur(vAll["IPP"]), eur(vA["IPP"]), eur(vB["IPP"])],
     ["PME", "bon marché × trop cher", "haut de la zone", eur(vAll["PME"]), eur(vA["PME"]), eur(vB["PME"])]])}
-{fig(vwzone_svg(), "Zone de prix acceptable (du PMC au PME) et prix optimal (OPP) pour chaque version. Les zones se recouvrent presque entièrement.")}
+{fig(vwzone_svg(), cls="key", caption="Zone de prix acceptable (du PMC au PME) et prix optimal (OPP) pour chaque version. Les zones se recouvrent presque entièrement.")}
 <p>Les courbes se comparent à l'œil ; la différence entre versions se teste sur les réponses de chaque répondant (voir « Ce que permettent de conclure les réponses »). Aucun des quatre seuils ne diffère significativement entre A et B.</p>
 <h3>Gabor-Granger</h3>
 {fig(gg_svg(), "Part des répondants de chaque version qui achèteraient au prix indiqué. Un répondant achète à un prix s'il a dit oui à ce prix ou à un prix plus élevé.")}
@@ -441,6 +441,7 @@ sec["repondants"] = f"""
 {answer(f"{nS} vraies réponses complètes ({nA} en version végétale, {nB} en version animale), surtout de jeunes adultes ({fr(age_m, 1)} ans en moyenne). Les répondants ont bien vu la différence, et elle change leurs <strong>perceptions</strong> (valeurs, image naturelle, confiance), pas leurs <strong>prix</strong>.")}
 <h3>Qui a répondu ?</h3>
 <p>Le {L('questionnaire en ligne', 'questionnaire')} a été diffusé du 20 octobre au 12 novembre 2026. Chaque répondant voyait une seule version, tirée au sort. Les réponses brutes sont publiées dans {L('le fichier de données', 'donnees')} et tous les calculs dans {L('le script d\'analyse', 'code')}.</p>
+{fig(th.ab_svg(nA, nB), "Le principe du test A/B : le hasard décide de la version vue. Les deux groupes ne diffèrent que par l'origine du collagène, donc un écart entre eux vient de là.", "paint key")}
 <figure>{funnel_svg()}</figure>
 {table(["Profil", "Répartition"], [
     ["Âge moyen", f"{fr(age_m, 1)} ans (de {int(min(ages))} à {int(max(ages))} ans)"],
@@ -456,7 +457,7 @@ sec["repondants"] = f"""
 {fig(pvalue_svg(RAND), "Comparaison des profils des deux groupes. Un point à droite du seuil : pas de différence.")}
 <p>Âge, régime et habitudes d'achat sont comparables (toutes les valeurs de p sont au moins de {fr(rand_other, 3)}). <strong>Exception : la dépense habituelle pour une bouteille</strong> ({fp(dep[2])}). {an.dep3['tab'][1][0]} répondants de la version animale dépensent moins de 0,50 €, contre {an.dep3['tab'][0][0]} en version végétale. Cette différence se signale et se garde en tête : un groupe qui dépense moins pourrait déclarer des prix plus bas.</p>
 <h4>3. La version change-t-elle les réponses ?</h4>
-{fig(forest_svg(), "Chaque ligne est un test de Welch, repérée par le même code que dans le tableau dessous. Le point est la taille de l'écart entre A et B (d de Cohen), le trait son intervalle de confiance. Point plein : écart significatif. E = question exploratoire, sans hypothèse.")}
+{fig(forest_svg(), cls="key", caption="Chaque ligne est un test de Welch, repérée par le même code que dans le tableau dessous. Le point est la taille de l'écart entre A et B (d de Cohen), le trait son intervalle de confiance. Point plein : écart significatif. E = question exploratoire, sans hypothèse.")}
 {hyp_table()}
 <p class="note">Perceptions notées de 1 à 7, sur l'échelle de l'article de référence de chaque concept ({L('détail des échelles', 'sources_echelles')}). Pour les seuils de prix, l'étude ne pouvait détecter qu'un écart d'au moins d ≈ {fr(an.prix[0]['mde'])} : un effet plus petit reste possible.</p>
 <p><strong>Ce que nous concluons :</strong> l'origine végétale est un argument d'image. Elle rend le produit plus conforme aux valeurs, plus cohérent avec une eau naturelle, et, contre notre attente, plus digne de confiance. Elle ne fait pas payer plus cher.</p>
@@ -472,7 +473,7 @@ sec["decision"] = f"""
 <li>Il reste <strong>deux fois sous le plafond</strong> des concurrents ({eur(an.CONC)}) et trois fois au-dessus de Volvic nature ({eur(2.99 / 6)}).</li></ul>
 <p class="note">Limite : 1,50 € est le prix le plus bas proposé en Q10. Le vrai optimum pourrait être un peu plus bas ; le prix optimal de Van Westendorp, {eur(vA['OPP'])} en version végétale, le suggère.</p>
 <h3>La variation se paie-t-elle ? Oui, par le coût.</h3>
-{fig(cost_svg(P_REC), "Ce que devient 1,50 € payé en rayon, pour chaque version. L'actif végétal est presque invisible : il coûte moins d'un demi-centime.")}
+{fig(cost_svg(P_REC), cls="key", caption="Ce que devient 1,50 € payé en rayon, pour chaque version. L'actif végétal est presque invisible : il coûte moins d'un demi-centime.")}
 {calc_dec()}
 <p>La version végétale ne se vend pas plus cher, mais elle coûte environ {fr(an.var_B - an.var_A, 2)} € de moins à produire, et elle améliore l'image du produit. Elle rapporte donc plus par bouteille, à prix égal.</p>
 <h3>À quel moment le scénario lâche-t-il ?</h3>
@@ -517,9 +518,41 @@ QUESTIONS = {"entreprise": "Qui est-elle, de quoi vit-elle, et que disent ses co
              "decision": "Quel prix recommandons-nous, la variation se paie-t-elle, et à quel moment le scénario lâche-t-il ?",
              "methode": "Comment lire ce dossier"}
 
+def read_min(h):
+    words = len(re.sub(r"<[^>]+>", " ", h).split())
+    return max(1, round(words / 180))
+
+def next_link(i):
+    if i + 1 < len(NAV):
+        k, t = NAV[i + 1]
+        return f"<p class='next'><a href='#{k}'>Suite : {i + 2:02d} · {t} <span aria-hidden='true'>↓</span></a></p>"
+    return "<p class='next'><a href='#carte'>Revenir au plan <span aria-hidden='true'>↑</span></a></p>"
+
 sections_html = "".join(
-    f"<section id='{k}'><header class='sh'><span class='kicker'>{i + 1:02d} · {t}</span><h2>{QUESTIONS[k]}</h2></header>{sec[k]}</section>"
+    f"<section id='{k}'><header class='sh'><span class='kicker'>{i + 1:02d} · {t}</span><h2>{QUESTIONS[k]}</h2>"
+    f"<span class='rt'>Lecture : environ {read_min(sec[k])} min · l'essentiel en 30 secondes dans « En bref »</span></header>{sec[k]}"
+    f"<p class='ess-note'>Mode « l'essentiel » : les détails et les calculs de cette partie sont masqués.</p>{next_link(i)}</section>"
     for i, (k, t) in enumerate(NAV))
+
+carte = f"""<div class="carte reveal" id="carte"><p class="eyebrow">Le dossier en un coup d'œil</p>
+<h2>Six questions, six réponses courtes</h2>
+<p class="rt">Cliquez sur une bulle pour aller à la partie. Elles se lisent dans l'ordre, de 01 à 06.</p>
+{th.sitemap_svg(("Quel prix pour", "Volvic Boost ?"), [
+    ("entreprise", "01", "L'entreprise", "Volvic, filiale de Danone", "45 M€ de bénéfice en 2024"),
+    ("marche", "02", "Le marché", "un seul concurrent direct", f"Humble+ à {eur(an.CONC)}"),
+    ("proposition", "03", "La proposition", "collagène végétal (A)", "contre animal (B)"),
+    ("repondants", "04", "Qui a répondu", f"{nS} répondants", "le végétal change l'image"),
+    ("client", "05", "Le client", "accepte environ 1,50 €", f"zone {fr(vA['PMC'])} – {eur(vA['PME'])}"),
+    ("decision", "06", "La décision", "végétal à 1,50 €", f"+{fr(cmA - cmB, 2)} € par bouteille")])}
+</div>"""
+
+comfort = """<div class="comfort"><div class="panel" id="comfort-panel" hidden role="group" aria-label="Confort de lecture">
+<label><input type="checkbox" data-mode="dys"> Police adaptée dys<small>Police plus lisible, lettres et lignes plus espacées, sans italique ni majuscules.</small></label>
+<label><input type="checkbox" data-mode="calm"> Sans animations<small>Tout s'arrête : rien ne bouge ni ne clignote.</small></label>
+<label><input type="checkbox" data-mode="essentiel"> L'essentiel seulement<small>Garde la réponse « En bref » et un schéma par partie ; masque les détails.</small></label>
+</div><button type="button" id="comfort-btn" aria-expanded="false" aria-controls="comfort-panel" aria-label="Confort de lecture">Aa<span class="cf-l"> · Confort de lecture</span></button></div>"""
+
+head_js = """<script>(function(){var r=document.documentElement;['dys','calm','essentiel'].forEach(function(m){try{var x=localStorage.getItem('cf-'+m);if(x==='1'||(x===null&&m==='calm'&&matchMedia('(prefers-reduced-motion: reduce)').matches))r.classList.add(m);}catch(e){}});})();</script>"""
 nav_html = "".join(f"<a href='#{k}'>{t}</a>" for k, t in NAV)
 
 hero = th.hero(
@@ -544,17 +577,19 @@ page = f"""<!doctype html>
 <meta name="description" content="Dossier Prix, M1 Marketing IAE Clermont Auvergne : prix accepté d'une eau Volvic au collagène végétal contre animal.">
 <meta name="theme-color" content="#0f5a36">
 {th.FONTS}
-<style>{th.CSS}</style></head>
+<style>{th.CSS}</style>{head_js}</head>
 <body>
 {th.SVG_DEFS}
 <nav class="topnav" aria-label="Sections"><div class="in"><strong>Volvic Boost · Dossier Prix</strong>{nav_html}</div><div class="progress"></div></nav>
 {hero}
 <div class="flowwrap"><svg class="river" aria-hidden="true"></svg>
 <main>
+{carte}
 {sections_html}
 {finale}
 <p class="foot">Étude universitaire, M1 Marketing, IAE Clermont Auvergne. Non affiliée à la marque Volvic ni au groupe Danone. Le film publicitaire et les visuels de bouteille sont des maquettes réalisées pour l'étude. Données : {L('réponses au questionnaire', 'donnees')}, export du 23 novembre 2026. Calculs : {L('script d\'analyse', 'code')}.</p>
 </main></div>
+{comfort}
 <script>{th.JS}</script>
 </body></html>"""
 OUT.write_text(page, encoding="utf-8")
