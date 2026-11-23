@@ -4,6 +4,7 @@ Lancer : python3 dossier/build.py
 """
 import html, math, pathlib
 import analyse as an
+import theme as th
 
 OUT = pathlib.Path(__file__).resolve().parent / "index.html"
 esc = html.escape
@@ -346,9 +347,9 @@ def table(head, rows, cls=""):
     tr = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
     return f"<div class='tw'><table class='{cls}'><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>"
 
-def fig(chart, caption): return f"<figure>{chart}<figcaption>{caption}</figcaption></figure>"
+def fig(chart, caption, cls=""): return f"<figure class='reveal {cls}'>{chart}<figcaption>{caption}</figcaption></figure>"
 
-def answer(text): return f"<p class='answer'><span>En bref</span>{text}</p>"
+def answer(text): return f"<p class='answer reveal'><span>En bref</span>{text}</p>"
 
 sec = {}
 
@@ -389,7 +390,14 @@ sec["proposition"] = f"""
 {answer(f"Nous testons l'origine du collagène : <strong>végétale</strong> (version A, la variation) contre <strong>animale</strong> (version B, la formule standard du marché). La variation ne coûte pas plus cher, elle coûte moins : environ {fr(an.var_A, 3)} € d'actifs végétaux par bouteille, contre {fr(an.var_B, 3)} € de collagène bovin.")}
 <h3>Quelle variation, et pourquoi celle-là ?</h3>
 <p>Les eaux au collagène du marché utilisent du collagène animal, comme Humble+ et ses {L('5 g de collagène marin', 'humble_dose')}. Notre variation est un collagène <strong>d'origine végétale</strong>. {L('Il n\'existe pas à proprement parler', 'vegan')} : ce sont des nutriments végétaux, comme la vitamine C, qui aident le corps à fabriquer son propre collagène.</p>
+{fig(th.collagen_svg(), f"Le collagène est une protéine en triple hélice, présente seulement chez les animaux. La version B en apporte directement ; la version A apporte des nutriments végétaux, comme la vitamine C, qui {L('contribue à la formation normale de collagène', 'allegation')}.", "paint")}
 <p>Pourquoi celle-là : elle oppose l'éthique et le naturel au « vrai » collagène, réputé plus efficace, et elle colle à l'image naturelle de Volvic. Seule l'origine change entre les deux versions.</p>
+{fig(th.mindmap_svg([
+    ("Éthique et valeurs", "aucun ingrédient animal", f"valeurs : {fr(v7['ma'])} contre {fr(v7['mb'])} sur 7", "→ confirmé (H7)"),
+    ("Image naturelle", "une eau de volcan, B Corp", f"cohérence : {fr(v8['ma'])} contre {fr(v8['mb'])} sur 7", "→ confirmé (H8)"),
+    ("Coût", f"actifs végétaux : {fr(an.var_A, 3)} €", f"collagène bovin : {fr(an.var_B, 3)} €", f"→ {fr(an.var_B / an.var_A, 0)} fois moins cher"),
+    ("Le risque", "le « vrai » collagène", "jugé plus efficace ?", "→ non : plus de confiance (H9)")]),
+    "Pourquoi le collagène végétal : les quatre arguments du choix, et ce que l'étude en a dit (détail dans « Qui a répondu »).", "paint")}
 <figure class="duo"><img src="../img/bouteille_vegetal.jpg" alt="Bouteille version A, collagène 100 % végétal"><img src="../img/bouteille_animal.jpg" alt="Bouteille version B, collagène d'origine animale"><figcaption>Les deux visuels montrés aux répondants. Version A : « Eau minérale naturelle enrichie en collagène d'origine végétale. 50 cl. » Version B : « … d'origine animale. » Les étiquettes diffèrent aussi par leur couleur, une limite à garder en tête.</figcaption></figure>
 <h3>Combien coûte-t-elle ?</h3>
 <p>Danone ne publie pas ses coûts. Nous avons chiffré chaque poste avec un prix de gros public quand il existe, et une hypothèse signalée sinon.</p>
@@ -514,110 +522,40 @@ sections_html = "".join(
     for i, (k, t) in enumerate(NAV))
 nav_html = "".join(f"<a href='#{k}'>{t}</a>" for k, t in NAV)
 
-hero = f"""
-<header class="hero">
-  <p class="eyebrow">Dossier Prix · M1 Marketing · IAE Clermont Auvergne</p>
-  <h1>Volvic au collagène végétal</h1>
-  <p class="lede">Une eau Volvic enrichie en collagène se vendrait-elle plus cher si son collagène était d'origine végétale plutôt qu'animale ? Nous l'avons testé auprès de {nS} répondants, puis mis ce prix face aux coûts et aux concurrents.</p>
-  <div class="kpis">
-    <div><span class="k">Prix recommandé</span><span class="v">1,50 €</span><span class="s">la bouteille de 50 cl, version végétale</span></div>
-    <div><span class="k">Zone acceptable</span><span class="v">{fr(vA['PMC'])} – {eur(vA['PME'])}</span><span class="s">Van Westendorp, version végétale</span></div>
-    <div><span class="k">Effet du végétal sur le prix</span><span class="v">aucun</span><span class="s">seuils identiques entre A et B</span></div>
-    <div><span class="k">Gain par bouteille</span><span class="v">+{fr(cmA - cmB, 2)} €</span><span class="s">l'actif végétal coûte moins cher</span></div>
-  </div>
-</header>"""
+hero = th.hero(
+    "Dossier Prix · M1 Marketing · IAE Clermont Auvergne",
+    "Volvic Boost, <em>soutien collagène</em>",
+    "Végétal ou animal : lequel le consommateur paie-t-il plus cher ?",
+    f"Nous avons imaginé une eau Volvic enrichie en collagène, testé deux versions auprès de {nS} répondants, puis confronté le prix accepté aux coûts et aux concurrents. Suivez l'eau : elle descend de la source jusqu'à la décision.",
+    [("Prix recommandé", "1,50 €", "la bouteille de 50 cl, version végétale", "1.50"),
+     ("Zone acceptable", f"{fr(vA['PMC'])} – {eur(vA['PME'])}", "Van Westendorp, version végétale", ""),
+     ("Effet du végétal sur le prix", "aucun", "seuils identiques entre A et B", ""),
+     ("Gain par bouteille", f"+{fr(cmA - cmB, 2)} €", "l'actif végétal coûte moins cher", f"{cmA - cmB:.2f}")],
+    "Étude universitaire, non affiliée à la marque Volvic ni au groupe Danone. Le film et les bouteilles sont des maquettes réalisées pour l'étude.")
 
-CSS = """
-:root{--bg:#f5f8f6;--surface:#ffffff;--ink:#14231b;--muted:#566a5e;--line:#d7e2da;--accent:#00573f;--accent-2:#0d7a52;--leaf:#8cc63f;--zone:#e6efe8;
---a:#3F78D1;--b:#D46A2E;--sg-base:#c3cfc7;--sg-marge:#d6ecdf;--sg-dist:#ebe5d8;--sg-tva:#dfe0e7;--warn-bg:#fff6e8;--warn-ink:#7a4a00;
---display:"Fraunces",Georgia,serif;--body:"Source Sans 3",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
-@media (prefers-color-scheme:dark){:root{--bg:#0e1512;--surface:#15201a;--ink:#e3ece6;--muted:#9db1a5;--line:#2a3a31;--accent:#6fcf97;--accent-2:#8fdcae;--leaf:#a5d86a;--zone:#1c2a22;
---a:#5B8FE0;--b:#D2703A;--sg-base:#3b4b42;--sg-marge:#20402f;--sg-dist:#3d372b;--sg-tva:#34353f;--warn-bg:#2a2214;--warn-ink:#f0c98a;color-scheme:dark}}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:64px}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 var(--body)}
-a{color:var(--accent-2);text-decoration-thickness:1px;text-underline-offset:2px}
-a:hover{color:var(--accent)}
-.topnav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-.topnav .in{max-width:1100px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:6px 18px;flex-wrap:wrap;align-items:center}
-.topnav strong{font:600 15px var(--display);color:var(--accent);margin-right:8px}
-.topnav a{font-size:14px;color:var(--muted);text-decoration:none}
-.topnav a:hover{color:var(--accent)}
-main{max-width:1100px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
-.hero{padding:44px 0 28px;border-bottom:3px solid var(--accent);display:grid;gap:14px}
-.eyebrow,.kicker{font:500 12.5px/1.3 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
-h1{font:600 clamp(34px,5.4vw,58px)/1.05 var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
-.lede{max-width:68ch;margin:0;font-size:19px;color:var(--muted)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:10px}
-.kpis div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:2px}
-.kpis .k{font:500 11.5px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.kpis .v{font:600 30px/1.1 var(--display);color:var(--accent);font-variant-numeric:tabular-nums}
-.kpis .s{font-size:14px;color:var(--muted)}
-section{padding:52px 0 8px;border-bottom:1px solid var(--line)}
-.sh{display:grid;gap:6px;margin-bottom:18px}
-h2{font:600 clamp(24px,3.2vw,32px)/1.2 var(--display);margin:0;max-width:30ch;text-wrap:balance}
-h3{font:600 21px/1.3 var(--display);margin:34px 0 8px}
-h4{font:600 17px var(--body);margin:26px 0 6px;color:var(--accent)}
-p,li,dd{max-width:72ch}
-.answer{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:18px;max-width:none}
-.answer span{display:block;font:500 11.5px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
-.note,.cnote,figcaption{color:var(--muted);font-size:15px}
-figure{margin:18px 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px}
-figure.duo{grid-template-columns:repeat(2,minmax(0,1fr));justify-items:center;background:#fff}
-figure.duo img{max-height:330px;width:auto;max-width:100%}
-figure.duo figcaption{grid-column:1/-1;color:#566a5e}
-.cw{overflow-x:auto}
-.chart{width:100%;height:auto;display:block;font-family:var(--body)}
-.chart .t{fill:var(--ink);font-size:13px}.chart .m{fill:var(--muted);font-size:13px}.chart .s{font-size:11.5px}.chart .b{font-weight:600}
-.chart .fa{fill:var(--a)}.chart .fb{fill:var(--b)}.chart .fn{fill:var(--line)}.chart .fk{fill:var(--accent)}
-.chart .sa{stroke:var(--a)}.chart .sb{stroke:var(--b)}.chart .sk{stroke:var(--ink)}.chart .w{stroke-width:2;stroke-linecap:round}
-.chart .ring{stroke:var(--surface);stroke-width:2}.chart .ax{stroke:var(--muted)}.chart .grid{stroke:var(--line)}
-.chart .zone{fill:var(--zone)}.chart .thr{stroke:var(--accent);stroke-width:2;stroke-dasharray:4 3}
-.chart .dot{fill:var(--ink);stroke:var(--surface);stroke-width:2}.chart .hollow{fill:var(--surface);stroke:var(--muted);stroke-width:2}
-.chart .curve{fill:none;stroke-width:2.5}.chart .c-ch{stroke:var(--accent)}.chart .c-ex{stroke:var(--ink)}.chart .dashc{stroke-dasharray:7 4}
-.chart .pt{stroke:var(--muted);stroke-dasharray:2 3}.chart .dash{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:6 4}.chart .pl{stroke-width:4}
-.chart .seg-base{fill:var(--sg-base)}.chart .seg-marge{fill:var(--sg-marge)}.chart .seg-dist{fill:var(--sg-dist)}.chart .seg-tva{fill:var(--sg-tva)}
-.tw{overflow-x:auto;margin:12px 0}
-table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
-th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font:500 11.5px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
-td.num{white-space:nowrap}
-.calc{background:var(--surface);border:1px dashed var(--accent-2);border-radius:10px;padding:10px 16px;margin:16px 0}
-.calc summary{cursor:pointer;font:600 14px var(--mono);color:var(--accent);letter-spacing:.02em}
-.calc .tw{margin:8px 0 4px}
-ul.def{padding-left:20px}ul.def li{margin:6px 0}
-.ab{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:10px}
-.ab h5{margin:0 0 4px;font:600 13px var(--mono);letter-spacing:.03em}
-.colA{border-top:4px solid var(--a);padding-top:6px}.colA h5{color:var(--a)}
-.colB{border-top:4px solid var(--b);padding-top:6px}.colB h5{color:var(--b)}
-.ab .tw{margin:0}.ab td{font-size:14px}
-table.tot td:first-child{font-weight:600}
-table.wf th.ca,table.wf td.ca{border-left:4px solid var(--a)}table.wf th.cb,table.wf td.cb{border-left:4px solid var(--b)}
-table.wf th.ca{color:var(--a)}table.wf th.cb{color:var(--b)}
-ul.terms{margin:10px 0;padding-left:18px;font-size:15px}ul.terms li{margin:3px 0}
-table.hyp td:nth-child(2){min-width:220px}
-@media (max-width:640px){.ab{grid-template-columns:1fr}}
-.gloss{display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:8px 20px}
-.gloss dt{font-weight:600}.gloss dd{margin:0;color:var(--muted)}
-.foot{color:var(--muted);font-size:14px;padding:28px 0}
-:focus-visible{outline:3px solid var(--leaf);outline-offset:2px}
-@media (max-width:640px){body{font-size:16px}.gloss{grid-template-columns:1fr}.gloss dd{margin-bottom:8px}figure.duo{grid-template-columns:1fr 1fr}figure{padding:12px}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-"""
+finale = f"""<div class="finale reveal"><div class="fr">{th.mountains(1600, 300, "range")}</div>
+<p>De la source à la bouteille : la version végétale, à 1,50 €, plaît pour ses valeurs et coûte moins cher à produire.</p></div>"""
+
+
 
 page = f"""<!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Volvic au collagène végétal · Dossier Prix</title>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Volvic Boost · Dossier Prix</title>
 <meta name="description" content="Dossier Prix, M1 Marketing IAE Clermont Auvergne : prix accepté d'une eau Volvic au collagène végétal contre animal.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
-<style>{CSS}</style></head>
+<meta name="theme-color" content="#0f5a36">
+{th.FONTS}
+<style>{th.CSS}</style></head>
 <body>
-<nav class="topnav" aria-label="Sections"><div class="in"><strong>Dossier Prix</strong>{nav_html}</div></nav>
-<main>
+{th.SVG_DEFS}
+<nav class="topnav" aria-label="Sections"><div class="in"><strong>Volvic Boost · Dossier Prix</strong>{nav_html}</div><div class="progress"></div></nav>
 {hero}
+<div class="flowwrap"><svg class="river" aria-hidden="true"></svg>
+<main>
 {sections_html}
-<p class="foot">Étude universitaire, M1 Marketing, IAE Clermont Auvergne. Non affiliée à la marque Volvic ni au groupe Danone. Les visuels de bouteille sont des maquettes réalisées pour l'étude. Données : {L('réponses au questionnaire', 'donnees')}, export du 23 novembre 2026. Calculs : {L('script d\'analyse', 'code')}.</p>
-</main></body></html>"""
+{finale}
+<p class="foot">Étude universitaire, M1 Marketing, IAE Clermont Auvergne. Non affiliée à la marque Volvic ni au groupe Danone. Le film publicitaire et les visuels de bouteille sont des maquettes réalisées pour l'étude. Données : {L('réponses au questionnaire', 'donnees')}, export du 23 novembre 2026. Calculs : {L('script d\'analyse', 'code')}.</p>
+</main></div>
+<script>{th.JS}</script>
+</body></html>"""
 OUT.write_text(page, encoding="utf-8")
 print("ok", OUT, len(page) // 1024, "Ko")
