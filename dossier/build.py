@@ -215,9 +215,12 @@ def pvalue_svg(rows):
     out.append(txt(x0, yb + 28, "valeur de p (au-dessus de 0,05 : écart dû au hasard)", "m s"))
     return svg(yb + 36, "".join(out), "Comparabilité des deux groupes")
 
-ALLW = an.prix + an.perc + [dict(an.gg_first, lab="Premier prix accepté (Q10)", h="")]
+EXPL = {"bien_etre": "E1", "routine": "E2", "innovation": "E3"}
+ALLW = ([dict(r, code=r["h"], lab=f"Seuil « {r['lab'].lower()} »") for r in an.prix] +
+        [dict(r, code=r["h"] or EXPL[r["k"]]) for r in an.perc] +
+        [dict(an.gg_first, code="E4", lab="Premier prix accepté (Q10)")])
 def forest_svg():
-    x0, x1, top, rowh = 290, W - 20, 30, 25
+    x0, x1, top, rowh = 300, W - 20, 30, 25
     lo, hi = -1.2, 1.4; sx = lambda v: x0 + (x1 - x0) * (v - lo) / (hi - lo); mde = an.prix[0]["mde"]
     yb = top + rowh * len(ALLW); out = [rect(sx(-mde), top - 10, sx(mde) - sx(-mde), yb - top + 2, "zone", r=0)]
     out.append(txt(sx(0), top - 14, f"zone trop petite pour être détectée (|d| < {fr(mde)})", "m s", "middle"))
@@ -225,8 +228,8 @@ def forest_svg():
         out.append(line(sx(t_), top - 8, sx(t_), yb - 6, "ax" if t_ == 0 else "grid")); out.append(txt(sx(t_), yb + 8, fr(t_, 1), "m s", "middle"))
     for i, it in enumerate(ALLW):
         y = top + i * rowh + 6; sig = it["p2"] < 0.05 or it["p"] < 0.05
-        lab = it["lab"] if it["lab"] not in ("Trop cher", "Cher", "Bonne affaire", "Trop bon marché") else f"Seuil « {it['lab'].lower()} »"
-        out.append(txt(x0 - 12, y + 4, lab, "t" if sig else "m", "end"))
+        out.append(txt(x0 - 12, y + 4, it["lab"], "t" if sig else "m", "end"))
+        out.append(txt(4, y + 4, it["code"], "b " + ("t" if sig else "m")))
         out.append(line(sx(it["dlo"]), y, sx(it["dhi"]), y, "sk w"))
         out.append(f'<circle cx="{sx(it["d"]):.1f}" cy="{y}" r="5" class="{"dot" if sig else "hollow"}"><title>d = {fr(it["d"])}, {fp(it["p"])}</title></circle>')
     out.append(txt(sx(lo), yb + 26, "← plus haut en B (animal)", "m s"))
@@ -240,7 +243,8 @@ netA = an.net_producteur(P_REC); cmA = netA - an.CVU["A"]; cmB = netA - an.CVU["
 gA = {r["price"]: r for r in an.ggt["A"]}; gB = {r["price"]: r for r in an.ggt["B"]}
 v7, v8, v9, v10, v11, v12, v14 = an.perc
 dep = [r for r in an.rand if r[0].startswith("Dépense")][0]
-rand_other = min(r[2] for r in an.rand if not r[0].startswith("Dépense"))
+RAND = [r for r in an.rand if r[0] != "Genre"]          # le genre ne fait pas l'objet du contrôle du tirage au sort
+rand_other = min(r[2] for r in RAND if not r[0].startswith("Dépense"))
 ages = [float(d["F3"]) for d in S]; age_m = sum(ages) / len(ages)
 import collections
 cnt = lambda k: collections.Counter(d[k] for d in S)
@@ -275,10 +279,67 @@ def stress_svg():
     return svg(yb + 40, "".join(out), "Contribution par bouteille selon les scénarios")
 
 # ---------- page blocks ----------
-def calc(title, rows, note=""):
+def verdict(it):
+    if it["code"].startswith("E"):
+        return "écart significatif" if it["p2"] < 0.05 else "pas d'écart"
+    if it["p"] < 0.05: return "<strong>validée</strong>"
+    if it["alt"] and it["p2"] < 0.05: return "<strong>rejetée : effet inverse</strong>"
+    return "non validée"
+HYP_TXT = {"H2": "L'origine végétale fait monter le seuil « trop cher »", "H3": "… le seuil « cher »", "H4": "… le seuil « bonne affaire »",
+           "H5": "… le seuil « trop bon marché »", "H7": "L'origine végétale rend le produit plus conforme aux valeurs",
+           "H8": "… plus cohérent avec l'image naturelle de l'eau", "H9": "L'origine animale inspire plus confiance dans l'efficacité",
+           "H10": "L'origine animale donne une impression de qualité supérieure", "E1": "Bien-être (exploratoire)",
+           "E2": "Consommation quotidienne (exploratoire)", "E3": "L'innovation justifie un prix plus élevé (exploratoire)", "E4": "Premier prix accepté (exploratoire)"}
+REF = {"H7": "karahanna", "H8": "becker", "H9": "chaudhuri", "H10": "dodds"}
+def hyp_table():
+    rows = []
+    for it in ALLW:
+        unit = " €" if it["k"].startswith("P") or it["k"] == "GG_prix_accepte" else ""
+        h = it["code"] + (f" · {L('source', REF[it['code']])}" if it["code"] in REF else "")
+        pv = fp(it["p"]) + (" (unilatéral)" if it["alt"] else "")
+        if it["alt"] == "B>A" and it["d"] > 0: pv = f"p bilatéral = {fr(it['p2'], 3)}"
+        rows.append([f"<strong>{h}</strong>", HYP_TXT[it["code"]], fr(it["ma"]) + unit, fr(it["mb"]) + unit, pv, fr(it["d"]), verdict(it)])
+    b6 = an.buy[0]
+    rows.insert(4, ["<strong>H6</strong>", "L'origine végétale fait acheter plus à 3,50 € (chi², hors graphique)", pct(b6["na"] / nA), pct(b6["nb"] / nB),
+                    fp(b6["p"]), f"V = {fr(b6['v'])}", "non validée"])
+    return table(["Code", "Hypothèse", "A", "B", "p", "d", "Résultat"], rows, "hyp")
+
+def calc_dec():
+    ht = P_REC / (1 + an.TVA); net = an.net_producteur(P_REC)
+    defs = ("<ul class='terms'>"
+            f"<li><strong>TVA</strong> : taxe reversée à l'État, {L('5,5 % sur l\'eau', 'tva')}. Elle est comprise dans le prix en rayon.</li>"
+            "<li><strong>Part du distributeur</strong> : ce que garde le supermarché qui revend la bouteille. Hypothèse : 30 % du prix hors taxe.</li>"
+            "<li><strong>Prix net producteur</strong> : ce qui arrive réellement chez Volvic pour une bouteille.</li>"
+            "<li><strong>Coût variable</strong> : ce que coûte la fabrication d'une bouteille (bouteille, bouchon, eau, transport et actif). Il diffère entre A et B à cause de l'actif.</li>"
+            "<li><strong>Contribution</strong> : ce qui reste à Volvic une fois la bouteille payée. Elle sert d'abord à couvrir les coûts fixes (publicité, usine), puis devient du bénéfice.</li></ul>")
+    rows = [("Prix en rayon", eur(P_REC), eur(P_REC)),
+            ("− TVA (5,5 %)", "− " + eur(P_REC - ht), "− " + eur(P_REC - ht)),
+            ("= Prix hors taxe", eur(ht), eur(ht)),
+            ("− Part du distributeur (30 %)", "− " + eur(ht - net), "− " + eur(ht - net)),
+            ("<strong>= Prix net producteur</strong>", f"<strong>{eur(net)}</strong>", f"<strong>{eur(net)}</strong>"),
+            ("− Coût variable", f"− {fr(an.CVU['A'], 3)} €", f"− {fr(an.CVU['B'], 3)} €"),
+            ("<strong>= Contribution par bouteille</strong>", f"<strong>{eur(cmA)}</strong>", f"<strong>{eur(cmB)}</strong>"),
+            ("Taux de contribution (contribution ÷ prix net)", pct(cmA / net), pct(cmB / net)),
+            ("Bouteilles pour couvrir 100 000 € de coûts fixes", fr(100000 / cmA, 0), fr(100000 / cmB, 0))]
+    tr = "".join(f"<tr><td>{a}</td><td class='num ca'>{b}</td><td class='num cb'>{c}</td></tr>" for a, b, c in rows)
+    return (f"<details class='calc'><summary>Construction du calcul · contribution par bouteille vendue 1,50 €</summary>{defs}"
+            f"<div class='tw'><table class='wf'><thead><tr><th></th><th class='ca'>A · végétal</th><th class='cb'>B · animal</th></tr></thead><tbody>{tr}</tbody></table></div>"
+            f"<p class='cnote'>Les deux versions se vendent au même prix ; seule la ligne « coût variable » diffère. A garde donc {fr(cmA - cmB, 3)} € de plus par bouteille. Les coûts fixes de Danone ne sont pas publics : le seuil est donné pour 100 000 €.</p></details>")
+
+def calc(title, rows, note="", head=("Terme", "D'où il vient", "Valeur")):
     tr = "".join(f"<tr><td>{a}</td><td>{b}</td><td class='num'>{c}</td></tr>" for a, b, c in rows)
     n = f"<p class='cnote'>{note}</p>" if note else ""
-    return f"<details class='calc' open><summary>Construction du calcul · {title}</summary><div class='tw'><table><thead><tr><th>Terme</th><th>D'où il vient</th><th>Valeur</th></tr></thead><tbody>{tr}</tbody></table></div>{n}</details>"
+    th = "".join(f"<th>{h}</th>" for h in head)
+    return f"<details class='calc'><summary>Construction du calcul · {title}</summary><div class='tw'><table><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>{n}</details>"
+
+def calc_ab(title, rows_a, rows_b, total_rows, note=""):
+    def t(rows): return "".join(f"<tr><td>{a}</td><td>{b}</td><td class='num'>{c}</td></tr>" for a, b, c in rows)
+    tot = "".join(f"<tr><td>{a}</td><td>{b}</td><td>{c}</td></tr>" for a, b, c in total_rows)
+    n = f"<p class='cnote'>{note}</p>" if note else ""
+    return (f"<details class='calc'><summary>Construction du calcul · {title}</summary><div class='ab'>"
+            f"<div class='colA'><h5>Version A · collagène végétal</h5><div class='tw'><table><tbody>{t(rows_a)}</tbody></table></div></div>"
+            f"<div class='colB'><h5>Version B · collagène animal</h5><div class='tw'><table><tbody>{t(rows_b)}</tbody></table></div></div></div>"
+            f"<div class='tw'><table class='tot'><thead><tr><th></th><th>A · végétal</th><th>B · animal</th></tr></thead><tbody>{tot}</tbody></table></div>{n}</details>")
 
 def table(head, rows, cls=""):
     th = "".join(f"<th>{h}</th>" for h in head)
@@ -311,7 +372,7 @@ sec["entreprise"] = f"""
 """
 
 sec["marche"] = f"""
-{answer(f"Une eau au collagène n'a qu'un concurrent direct en France dans nos recherches : Humble+, vendue {L('2,99 € la canette de 33 cl', 'humble_prix')}. C'est notre plafond. Mais nos répondants placent le prix acceptable bien plus bas, entre {eur(vAll['PMC'])} et {eur(vAll['PME'])}, plus près des eaux aromatisées que du collagène.")}
+{answer(f"Une eau au collagène n'a qu'un concurrent direct en France dans nos recherches : Humble+, vendue {L('2,99 € la canette de 33 cl', 'humble_prix')}. C'est notre plafond. Autour, les eaux aromatisées et vitaminées se vendent entre 1 et 2,50 €.")}
 <h3>Les concurrents et leurs prix</h3>
 <p>Une eau Volvic au collagène se situerait entre l'eau nature et les boissons « santé ». Nous avons relevé les prix des produits les plus proches :</p>
 {table(["Produit", "Format", "Prix", "Prix pour 50 cl", "Source"], [
@@ -321,33 +382,31 @@ sec["marche"] = f"""
     ["Humble+ Collagen Water (5 g de collagène marin)", "33 cl", "2,99 €", eur(2.99 / 0.66), L("Je vais mieux merci", "humble_prix") + ", " + L("Atida", "humble_dose")]])}
 {fig(market_svg(), "Prix en rayon d'une unité. La bande grisée est la zone de prix que nos répondants jugent acceptable (Van Westendorp, voir « Le client »).")}
 <h3>Quel plafond en tirer ?</h3>
-<p>Le plafond est le prix du concurrent le plus proche et le plus cher : <strong>{eur(an.CONC)} pour Humble+</strong>, la seule eau au collagène trouvée en vente en France. Au-dessus, le consommateur trouve une offre comparable moins chère. Nos répondants placent leur seuil « trop cher » juste en dessous, à {eur((sum(an.prix[0]['a']) + sum(an.prix[0]['b'])) / nS)} en moyenne. Mais le prix qui leur paraît normal est bien plus bas, autour de {eur(vAll['IPP'])} : ils comparent le produit à une eau aromatisée plutôt qu'à une boisson au collagène. Le plafond n'est donc pas la vraie contrainte ; c'est le consommateur qui l'est.</p>
+<p>Le plafond est le prix du concurrent le plus proche et le plus cher : <strong>{eur(an.CONC)} pour Humble+</strong>, la seule eau au collagène trouvée en vente en France. Au-dessus, le consommateur trouve une offre comparable moins chère.</p>
 """
 
 sec["proposition"] = f"""
 {answer(f"Nous testons l'origine du collagène : <strong>végétale</strong> (version A, la variation) contre <strong>animale</strong> (version B, la formule standard du marché). La variation ne coûte pas plus cher, elle coûte moins : environ {fr(an.var_A, 3)} € d'actifs végétaux par bouteille, contre {fr(an.var_B, 3)} € de collagène bovin.")}
 <h3>Quelle variation, et pourquoi celle-là ?</h3>
-<p>Les eaux au collagène du marché utilisent du collagène animal : Humble+ contient {L('5 g de collagène marin par canette', 'humble_dose')}. Or {L('le « collagène végétal » n\'existe pas à proprement parler', 'vegan')} : le collagène est une protéine animale. Les produits « vegan » apportent en fait des nutriments végétaux qui aident le corps à fabriquer son propre collagène, comme la vitamine C, pour laquelle l'Union européenne autorise l'allégation {L('« contribue à la formation normale de collagène »', 'allegation')}.</p>
-<p>Nous avons choisi cette variation parce qu'elle oppose deux arguments : l'éthique et le naturel d'un côté, l'efficacité perçue du « vrai » collagène de l'autre. Elle colle aussi à l'image de Volvic, eau naturelle et marque certifiée B Corp. Seule l'origine change entre les deux versions ; la bouteille, le format et la marque sont identiques.</p>
+<p>Les eaux au collagène du marché utilisent du collagène animal, comme Humble+ et ses {L('5 g de collagène marin', 'humble_dose')}. Notre variation est un collagène <strong>d'origine végétale</strong>. {L('Il n\'existe pas à proprement parler', 'vegan')} : ce sont des nutriments végétaux, comme la vitamine C, qui aident le corps à fabriquer son propre collagène.</p>
+<p>Pourquoi celle-là : elle oppose l'éthique et le naturel au « vrai » collagène, réputé plus efficace, et elle colle à l'image naturelle de Volvic. Seule l'origine change entre les deux versions.</p>
 <figure class="duo"><img src="../img/bouteille_vegetal.jpg" alt="Bouteille version A, collagène 100 % végétal"><img src="../img/bouteille_animal.jpg" alt="Bouteille version B, collagène d'origine animale"><figcaption>Les deux visuels montrés aux répondants. Version A : « Eau minérale naturelle enrichie en collagène d'origine végétale. 50 cl. » Version B : « … d'origine animale. » Les étiquettes diffèrent aussi par leur couleur, une limite à garder en tête.</figcaption></figure>
 <h3>Combien coûte-t-elle ?</h3>
 <p>Danone ne publie pas ses coûts. Nous avons chiffré chaque poste avec un prix de gros public quand il existe, et une hypothèse signalée sinon.</p>
 {calc("produit de base, commun aux deux versions", [
-    ["Bouteille PET 50 cl", f"préformes de 500 ml à {L('2,5 à 4 cents de dollar en gros', 'preforme')}, arrondi pour du plastique recyclé", "0,04 €"],
-    ["Bouchon et étiquette", "hypothèse : aucun prix public trouvé", "0,02 €"],
-    ["Eau, embouteillage, énergie", "hypothèse : eau captée sur place, ligne industrielle", "0,03 €"],
-    ["Transport jusqu'au distributeur", "hypothèse", "0,05 €"],
-    ["<strong>Total produit de base</strong>", "somme", f"<strong>{eur(an.base_cost)}</strong>"]])}
-{calc("la variation (l'actif qui change)", [
-    ["Prix du collagène bovin", f"{L('20,5 à 26,5 $/kg en sac de 25 kg', 'collagene')}, milieu de fourchette × 0,90 €/$ (hypothèse de change)", f"{fr(an.coll_kg)} €/kg"],
-    ["Dose de collagène", f"celle d'Humble+ : {L('5 g par canette', 'humble_dose')}", "5 g"],
-    ["<strong>Version B : collagène bovin</strong>", f"{fr(an.coll_kg)} €/kg × 5 g", f"<strong>{fr(an.var_B, 3)} €</strong>"],
-    ["Prix de la vitamine C", f"{L('3,03 $/kg au 4e trimestre 2025', 'vitc')} × 0,90", f"{fr(an.vitc_kg)} €/kg"],
-    ["Prix de l'extrait de bambou (70 % de silice)", f"{L('42 à 48 $/kg', 'bambou')}, milieu × 0,90", f"{fr(an.bamb_kg)} €/kg"],
-    ["Doses", f"80 mg de vitamine C (100 % de l'apport de référence) et 100 mg de bambou, comme {L('un complément « vegan collagen » du commerce', 'swanson')}", "80 mg + 100 mg"],
-    ["<strong>Version A : actifs végétaux</strong>", f"{fr(an.vitc_kg)} €/kg × 80 mg + {fr(an.bamb_kg)} €/kg × 100 mg", f"<strong>{fr(an.var_A, 3)} €</strong>"],
-    ["Écart de coût", "B − A", f"{fr(an.var_B - an.var_A, 3)} € en faveur de A"]],
-    "Le collagène lui-même coûte cher, au poids et à la dose. Les nutriments qui aident le corps à le fabriquer coûtent presque rien. C'est contre-intuitif : la variation « premium » est la moins chère à produire.")}
+    ["Bouteille en plastique 50 cl", f"{L('préforme à 2,5 à 4 cents de dollar', 'preforme')}, arrondi pour du plastique recyclé", "0,04 €"],
+    ["Bouchon et étiquette", "hypothèse", "0,02 €"],
+    ["Eau, mise en bouteille, énergie", "hypothèse", "0,03 €"],
+    ["Transport jusqu'au magasin", "hypothèse", "0,05 €"],
+    ["<strong>Total</strong>", "", f"<strong>{eur(an.base_cost)}</strong>"]], head=("Poste", "D'où vient le chiffre", "Coût"))}
+{calc_ab("l'actif, différent pour A et pour B",
+    [["Vitamine C", f"{fr(an.vitc_kg)} €/kg ({L('3,03 $/kg', 'vitc')}) × 80 mg", fr(an.vitc_kg * 0.080 / 1000, 4) + " €"],
+     ["Extrait de bambou", f"{fr(an.bamb_kg)} €/kg ({L('42 à 48 $/kg', 'bambou')}) × 100 mg", fr(an.bamb_kg * 0.100 / 1000, 4) + " €"],
+     ["<strong>Actif A</strong>", "", f"<strong>{fr(an.var_A, 3)} €</strong>"]],
+    [["Collagène bovin", f"{fr(an.coll_kg)} €/kg ({L('20,5 à 26,5 $/kg', 'collagene')}) × 5 g", fr(an.var_B, 3) + " €"],
+     ["<strong>Actif B</strong>", "", f"<strong>{fr(an.var_B, 3)} €</strong>"]],
+    [["Coût variable par bouteille", f"{eur(an.base_cost)} + {fr(an.var_A, 3)} € = <strong>{fr(an.CVU['A'], 3)} €</strong>", f"{eur(an.base_cost)} + {fr(an.var_B, 3)} € = <strong>{fr(an.CVU['B'], 3)} €</strong>"]],
+    f"Doses : 80 mg de vitamine C et 100 mg de bambou comme {L('un complément « vegan collagen »', 'swanson')} ; 5 g de collagène comme {L('Humble+', 'humble_dose')}. Dollars convertis à 0,90 €. Le collagène coûte cher au poids ; les nutriments qui aident à le fabriquer, presque rien.")}
 """
 
 sec["client"] = f"""
@@ -355,7 +414,7 @@ sec["client"] = f"""
 <p>Nous avons mesuré le prix accepté de deux façons, sur les {nS} répondants (voir « Qui a répondu » plus bas) :</p>
 <ul class="def"><li><strong>Van Westendorp</strong> : chacun indique, sur un curseur, à partir de quel prix il trouve le produit trop bon marché, bon marché, cher, puis trop cher (Q6 à Q9). En croisant les réponses de tous, on obtient une zone de prix acceptable.</li>
 <li><strong>Gabor-Granger</strong> : on propose des prix du plus cher (3,50 €) au moins cher (1,50 €), et chacun dit s'il achèterait (Q10). On obtient la part d'acheteurs à chaque prix.</li></ul>
-<h3>Van Westendorp : la zone de prix acceptable</h3>
+<h3>Van Westendorp</h3>
 {fig(vw_svg(), f"Part des répondants ({nS}) qui jugent chaque prix trop bon marché, bon marché, cher ou trop cher. Les croisements de courbes donnent quatre points ; la zone grisée va du PMC au PME.")}
 {table(["Point", "Croisement", "Ce qu'il signifie", "Ensemble", "A · végétal", "B · animal"], [
     ["PMC", "trop bon marché × cher", "bas de la zone", eur(vAll["PMC"]), eur(vA["PMC"]), eur(vB["PMC"])],
@@ -364,17 +423,8 @@ sec["client"] = f"""
     ["PME", "bon marché × trop cher", "haut de la zone", eur(vAll["PME"]), eur(vA["PME"]), eur(vB["PME"])]])}
 {fig(vwzone_svg(), "Zone de prix acceptable (du PMC au PME) et prix optimal (OPP) pour chaque version. Les zones se recouvrent presque entièrement.")}
 <p>Les courbes se comparent à l'œil ; la différence entre versions se teste sur les réponses de chaque répondant (voir « Ce que permettent de conclure les réponses »). Aucun des quatre seuils ne diffère significativement entre A et B.</p>
-<h3>Gabor-Granger : combien achèteraient, à quel prix</h3>
+<h3>Gabor-Granger</h3>
 {fig(gg_svg(), "Part des répondants de chaque version qui achèteraient au prix indiqué. Un répondant achète à un prix s'il a dit oui à ce prix ou à un prix plus élevé.")}
-{table(["Prix", "Achètent · A", "Achètent · B", "Chiffre d'affaires par répondant · A", "Marge par répondant · A", "Marge par répondant · B"],
-    [[eur(p), pct(gA[p]["part"]), pct(gB[p]["part"]), eur(gA[p]["ca"]), eur(gA[p]["marge"]), eur(gB[p]["marge"])] for p in an.GGP])}
-{calc("la marge par répondant (formule du cours)", [
-    ["Prix en rayon", "prix proposé en Q10", eur(P_REC)],
-    ["Prix net producteur", f"1,50 ÷ 1,055 (TVA à {L('5,5 %', 'tva')}) × (1 − 30 %) (part du distributeur, hypothèse)", eur(netA)],
-    ["Coût variable · A", "produit de base + actifs végétaux (voir « La proposition »)", fr(an.CVU["A"], 3) + " €"],
-    ["Part qui achète · A", f"{round(gA[P_REC]['part'] * nA)} répondants sur {nA}", pct(gA[P_REC]["part"])],
-    ["<strong>Marge par répondant · A</strong>", f"({eur(netA)} − {fr(an.CVU['A'], 3)} €) × {pct(gA[P_REC]['part'])}", f"<strong>{eur(gA[P_REC]['marge'])}</strong>"]],
-    "C'est la formule du cours : (prix − coût variable) × part qui achète. Volvic vend par les supermarchés : on part donc du prix net qu'elle touche, et non du prix en rayon. La marge est la plus forte au prix le plus bas proposé, 1,50 € : la demande chute vite au-dessus.")}
 """
 
 c1 = an.c1
@@ -383,7 +433,7 @@ sec["repondants"] = f"""
 {answer(f"{nS} vraies réponses complètes ({nA} en version végétale, {nB} en version animale), surtout de jeunes adultes ({fr(age_m, 1)} ans en moyenne). Les répondants ont bien vu la différence, et elle change leurs <strong>perceptions</strong> (valeurs, image naturelle, confiance), pas leurs <strong>prix</strong>.")}
 <h3>Qui a répondu ?</h3>
 <p>Le {L('questionnaire en ligne', 'questionnaire')} a été diffusé du 20 octobre au 12 novembre 2026. Chaque répondant voyait une seule version, tirée au sort. Les réponses brutes sont publiées dans {L('le fichier de données', 'donnees')} et tous les calculs dans {L('le script d\'analyse', 'code')}.</p>
-{fig(funnel_svg(), "Du fichier brut à l'échantillon analysé. Les 50 réponses « test0000xx » sont des réponses générées, pas des répondants. Personne n'est retiré sur la question de contrôle, comme le demande le cours.")}
+<figure>{funnel_svg()}</figure>
 {table(["Profil", "Répartition"], [
     ["Âge moyen", f"{fr(age_m, 1)} ans (de {int(min(ages))} à {int(max(ages))} ans)"],
     ["Genre", ", ".join(f"{k} : {v}" for k, v in genre.most_common())],
@@ -393,19 +443,13 @@ sec["repondants"] = f"""
 <h3>Que permettent de conclure les réponses ?</h3>
 <h4>1. Les répondants ont-ils vu la différence ? Oui.</h4>
 {fig(grouped_svg(an.C1CATS, c1, "Origine du collagène retenue par version"), "Q5 : « D'après la description, quelle est l'origine du collagène ? » en % de chaque version.")}
-<p><strong>La manipulation a fonctionné :</strong> {pct(c1['A'][0] / nA)} des répondants de la version végétale retiennent une origine végétale, et {pct(c1['B'][1] / nB)} de ceux de la version animale une origine animale (chi² = {fr(an.manip['chi'])}, {an.manip['dof']} ddl, {fp(an.manip['p'])}, V de Cramer = {fr(an.manip['v'])}). Un test A/B sans effet peut donc être lu comme un vrai résultat, et non comme un test raté. Deux limites : la question est à choix et non notée de 1 à 7 ; elle est posée avant les prix, alors que {L('Hauser, Ellsworth et Gonzalez (2018)', 'hauser')} recommandent de la poser après.</p>
+<p><strong>La manipulation a fonctionné :</strong> {pct(c1['A'][0] / nA)} des répondants de la version végétale retiennent une origine végétale, et {pct(c1['B'][1] / nB)} de ceux de la version animale une origine animale (chi² = {fr(an.manip['chi'])}, {an.manip['dof']} ddl, {fp(an.manip['p'])}, V de Cramer = {fr(an.manip['v'])}). Un test A/B sans effet peut donc être lu comme un vrai résultat, et non comme un test raté.</p>
 <h4>2. Le tirage au sort a-t-il donné deux groupes comparables ? Oui, sauf sur un point.</h4>
-{fig(pvalue_svg(an.rand), "Comparaison des profils des deux groupes. Un point à droite du seuil : pas de différence.")}
-<p>Âge, genre, régime et habitudes d'achat sont comparables (toutes les valeurs de p sont au moins de {fr(rand_other, 3)}). <strong>Exception : la dépense habituelle pour une bouteille</strong> ({fp(dep[2])}). {an.dep3['tab'][1][0]} répondants de la version animale dépensent moins de 0,50 €, contre {an.dep3['tab'][0][0]} en version végétale. Cette différence se signale et se garde en tête : un groupe qui dépense moins pourrait déclarer des prix plus bas.</p>
+{fig(pvalue_svg(RAND), "Comparaison des profils des deux groupes. Un point à droite du seuil : pas de différence.")}
+<p>Âge, régime et habitudes d'achat sont comparables (toutes les valeurs de p sont au moins de {fr(rand_other, 3)}). <strong>Exception : la dépense habituelle pour une bouteille</strong> ({fp(dep[2])}). {an.dep3['tab'][1][0]} répondants de la version animale dépensent moins de 0,50 €, contre {an.dep3['tab'][0][0]} en version végétale. Cette différence se signale et se garde en tête : un groupe qui dépense moins pourrait déclarer des prix plus bas.</p>
 <h4>3. La version change-t-elle les réponses ?</h4>
-{fig(forest_svg(), "Chaque ligne est un test de Welch : le point est la taille de l'écart entre A et B (d de Cohen), le trait son intervalle de confiance. Point plein : écart significatif.")}
-{table(["Hypothèse", "A · végétal", "B · animal", "Test", "Résultat"], [
-    [f"H2-H5 · L'origine végétale fait monter les seuils de prix", f"« trop cher » {eur(an.prix[0]['ma'])}", eur(an.prix[0]['mb']), f"Welch, {fp(an.prix[0]['p'])}", "non validée : aucun écart"],
-    ["H6 · L'origine végétale fait acheter plus à 3,50 €", pct(an.buy[0]['na'] / nA), pct(an.buy[0]['nb'] / nB), f"chi², {fp(an.buy[0]['p'])}", "non validée"],
-    [f"H7 · …rend le produit plus conforme aux valeurs ({L('Karahanna et al., 2006', 'karahanna')})", fr(v7['ma']), fr(v7['mb']), f"Welch, {fp(v7['p'])}, d = {fr(v7['d'])}", "<strong>validée</strong>"],
-    [f"H8 · …le rend plus cohérent avec l'image naturelle ({L('Becker-Olsen et al., 2006', 'becker')})", fr(v8['ma']), fr(v8['mb']), f"Welch, {fp(v8['p'])}, d = {fr(v8['d'])}", "<strong>validée</strong>"],
-    [f"H9 · L'origine animale inspire plus confiance ({L('Chaudhuri et Holbrook, 2001', 'chaudhuri')})", fr(v9['ma']), fr(v9['mb']), f"Welch, p bilatéral = {fr(v9['p2'], 3)}, d = {fr(v9['d'])}", "<strong>rejetée : effet inverse</strong>"],
-    [f"H10 · L'origine animale donne une impression de qualité ({L('Dodds et al., 1991', 'dodds')})", fr(v10['ma']), fr(v10['mb']), f"Welch, {fp(v10['p'])}", "non validée"]])}
+{fig(forest_svg(), "Chaque ligne est un test de Welch, repérée par le même code que dans le tableau dessous. Le point est la taille de l'écart entre A et B (d de Cohen), le trait son intervalle de confiance. Point plein : écart significatif. E = question exploratoire, sans hypothèse.")}
+{hyp_table()}
 <p class="note">Perceptions notées de 1 à 7, sur l'échelle de l'article de référence de chaque concept ({L('détail des échelles', 'sources_echelles')}). Pour les seuils de prix, l'étude ne pouvait détecter qu'un écart d'au moins d ≈ {fr(an.prix[0]['mde'])} : un effet plus petit reste possible.</p>
 <p><strong>Ce que nous concluons :</strong> l'origine végétale est un argument d'image. Elle rend le produit plus conforme aux valeurs, plus cohérent avec une eau naturelle, et, contre notre attente, plus digne de confiance. Elle ne fait pas payer plus cher.</p>
 """
@@ -421,19 +465,10 @@ sec["decision"] = f"""
 <p class="note">Limite : 1,50 € est le prix le plus bas proposé en Q10. Le vrai optimum pourrait être un peu plus bas ; le prix optimal de Van Westendorp, {eur(vA['OPP'])} en version végétale, le suggère.</p>
 <h3>La variation se paie-t-elle ? Oui, par le coût.</h3>
 {fig(cost_svg(P_REC), "Ce que devient 1,50 € payé en rayon, pour chaque version. L'actif végétal est presque invisible : il coûte moins d'un demi-centime.")}
-{calc("contribution par bouteille à 1,50 €", [
-    ["Prix net producteur", "1,50 ÷ 1,055 × (1 − 30 %)", eur(netA)],
-    ["Coût variable · A (végétal)", f"{eur(an.base_cost)} + {fr(an.var_A, 3)} €", fr(an.CVU['A'], 3) + " €"],
-    ["Coût variable · B (animal)", f"{eur(an.base_cost)} + {fr(an.var_B, 3)} €", fr(an.CVU['B'], 3) + " €"],
-    ["<strong>Contribution · A</strong>", "prix net − coût variable", f"<strong>{eur(cmA)}</strong> ({pct(cmA / netA)} du prix net)"],
-    ["Contribution · B", "prix net − coût variable", f"{eur(cmB)} ({pct(cmB / netA)} du prix net)"],
-    ["Avantage de la variation", "A − B", f"+{fr(cmA - cmB, 3)} € par bouteille"],
-    ["Bouteilles pour couvrir 100 000 € de coûts fixes · A", "100 000 ÷ contribution", fr(100000 / cmA, 0)]],
-    "La contribution est ce qui reste au producteur après avoir payé la bouteille ; elle sert à couvrir les coûts fixes (publicité, usine) puis à faire du bénéfice. Les coûts fixes de Danone ne sont pas publics : le seuil de rentabilité est donné pour 100 000 €.")}
+{calc_dec()}
 <p>La version végétale ne se vend pas plus cher, mais elle coûte environ {fr(an.var_B - an.var_A, 2)} € de moins à produire, et elle améliore l'image du produit. Elle rapporte donc plus par bouteille, à prix égal.</p>
 <h3>À quel moment le scénario lâche-t-il ?</h3>
 {fig(stress_svg(), "Contribution par bouteille de la version végétale vendue 1,50 €, quand on dégrade nos hypothèses.")}
-{table(["Choc", "Contribution par bouteille", "Pourquoi le tester"], [[s[0], eur(s[1]), s[2]] for s in stress])}
 <p>La rentabilité unitaire résiste à tous les chocs testés : même en cumulant une TVA à 20 % ({L('hausse débattue au Parlement', 'tva20')}), un distributeur plus gourmand et des coûts doublés, il reste {eur(stress[-1][1])} par bouteille. Le scénario lâche ailleurs :</p>
 <ul class="def">
 <li><strong>Si le prix dépasse environ {eur(vA['PME'])}</strong> : au-delà du PME, les répondants jugeant le produit trop cher deviennent plus nombreux que ceux qui le trouvent bon marché. À 1,90 €, la part d'acheteurs tombe de {pct(gA[1.5]['part'])} à {pct(gA[1.9]['part'])}.</li>
@@ -465,7 +500,7 @@ sec["methode"] = f"""
 """
 
 NAV = [("entreprise", "L'entreprise"), ("marche", "Le marché"), ("proposition", "La proposition"),
-       ("client", "Le client"), ("repondants", "Qui a répondu"), ("decision", "La décision"), ("methode", "Lexique et limites")]
+       ("client", "Le client"), ("repondants", "Qui a répondu"), ("decision", "La décision")]
 QUESTIONS = {"entreprise": "Qui est-elle, de quoi vit-elle, et que disent ses comptes ?",
              "marche": "Qui sont ses concurrents, à quels prix, et quel plafond en tirer ?",
              "proposition": "Quelle variation du mix, pourquoi celle-là, et combien coûte-t-elle ?",
@@ -551,6 +586,17 @@ td.num{white-space:nowrap}
 .calc summary{cursor:pointer;font:600 14px var(--mono);color:var(--accent);letter-spacing:.02em}
 .calc .tw{margin:8px 0 4px}
 ul.def{padding-left:20px}ul.def li{margin:6px 0}
+.ab{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:10px}
+.ab h5{margin:0 0 4px;font:600 13px var(--mono);letter-spacing:.03em}
+.colA{border-top:4px solid var(--a);padding-top:6px}.colA h5{color:var(--a)}
+.colB{border-top:4px solid var(--b);padding-top:6px}.colB h5{color:var(--b)}
+.ab .tw{margin:0}.ab td{font-size:14px}
+table.tot td:first-child{font-weight:600}
+table.wf th.ca,table.wf td.ca{border-left:4px solid var(--a)}table.wf th.cb,table.wf td.cb{border-left:4px solid var(--b)}
+table.wf th.ca{color:var(--a)}table.wf th.cb{color:var(--b)}
+ul.terms{margin:10px 0;padding-left:18px;font-size:15px}ul.terms li{margin:3px 0}
+table.hyp td:nth-child(2){min-width:220px}
+@media (max-width:640px){.ab{grid-template-columns:1fr}}
 .gloss{display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:8px 20px}
 .gloss dt{font-weight:600}.gloss dd{margin:0;color:var(--muted)}
 .foot{color:var(--muted);font-size:14px;padding:28px 0}
