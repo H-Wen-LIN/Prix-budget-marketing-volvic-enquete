@@ -25,7 +25,7 @@ c1 = an.c1
 # ---------- briques du récit ----------
 def scene(n, total, claim, evidence, say, src=""):
     s = f"<p class='src'>Sources : {src}</p>" if src else ""
-    return (f"<article class='scene'><p class='sn'>Scène {n} sur {total}</p><h3 class='claim'>{claim}</h3>"
+    return (f"<article class='scene'><h3 class='claim'>{claim}</h3>"
             f"<div class='evidence'>{evidence}</div><p class='say'>{say}</p>{s}</article>")
 
 
@@ -168,7 +168,7 @@ breaks = f"""<div class="breaks">
 
 # ---------- les six chapitres ----------
 CH = [
-    (1, "entreprise", "L'entreprise", "La source", "Trois scènes : qui est Volvic, comment elle gagne sa vie, et si elle a les moyens de se lancer.", [
+    (1, "entreprise", "L'entreprise", "La source", "Au programme : qui est Volvic, comment elle gagne sa vie, et si elle a les moyens de se lancer.", [
         ("Volvic est l'eau de volcan du groupe Danone.", chain,
          "Volvic est une eau minérale naturelle puisée dans le massif volcanique d'Auvergne. Le chiffre de 10 % de part de marché n'est pas daté par sa source : c'est un ordre de grandeur.",
          f"{L('Danone 2025', 'danone')}, {L('LSA', 'lsa')}, {L('Agra', 'agra')}, {L('B Corp', 'bcorp')}, {L('Volvic', 'volvic')}"),
@@ -180,7 +180,7 @@ CH = [
          f"{L('Le Journal des Entreprises', 'sev_jde')}, {L('Xerfi', 'sev_xerfi')}, {L('Danone 2025', 'danone')}")],
      "Volvic est une marque solide et rentable de Danone, qui vit de gros volumes à petit prix. Elle peut se permettre d'innover.",
      "Mais sur quel marché arriverait une eau au collagène ?"),
-    (2, "marche", "Le marché", "La vallée", "Trois scènes : les prix autour de nous, le seul concurrent direct, et le plafond qu'on en tire.", [
+    (2, "marche", "Le marché", "La vallée", "Au programme : les prix autour de nous, le seul concurrent direct, et le plafond qu'on en tire.", [
         ("Autour de nous, les prix vont de 0,50 € à 2,99 € la bouteille.", c.market_svg(),
          "L'eau nature est la moins chère ; les eaux vitaminées et au collagène, les plus chères. La bande grise est la zone de prix que nos répondants jugeront acceptable : nous y reviendrons au chapitre 05.",
          f"{L('houra.fr', 'volvic_prix')}, {L('Bonial (prix promo)', 'essentiel')}, {L('Fitadium', 'vitwell')}, {L('Je vais mieux merci', 'humble_prix')}"),
@@ -191,7 +191,7 @@ CH = [
          "Au-dessus, le client trouve une offre comparable moins chère. Nous retenons le prix à l'unité en rayon, plus prudent que le prix ramené à 50 cl (4,53 €).", "")],
      f"Le marché va de l'eau simple ({eur(2.99 / 6)}) à l'eau au collagène ({eur(an.CONC)}). Notre prix devra rester sous {eur(an.CONC)}.",
      "Que mettre dans notre bouteille pour se distinguer ?"),
-    (3, "proposition", "La proposition", "L'idée", "Quatre scènes : nos deux bouteilles, ce qu'est vraiment le collagène végétal, pourquoi ce choix, et ce qu'il coûte.", [
+    (3, "proposition", "La proposition", "L'idée", "Au programme : nos deux bouteilles, ce qu'est vraiment le collagène végétal, pourquoi ce choix, et ce qu'il coûte.", [
         ("Deux bouteilles, une seule différence : l'origine du collagène.", bottles,
          "Chaque répondant n'a vu qu'une des deux. Limite à garder en tête : les étiquettes diffèrent aussi par leur couleur.", ""),
         ("Le « collagène végétal » n'existe pas : les plantes aident le corps à fabriquer le sien.", th.collagen_svg(),
@@ -204,7 +204,7 @@ CH = [
          f"{L('vitamine C', 'vitc')}, {L('bambou', 'bambou')}, {L('collagène bovin', 'collagene')}, {L('doses Swanson', 'swanson')}, {L('dose Humble+', 'humble_dose')}, {L('bouteille plastique (préforme)', 'preforme')}")],
      f"Notre variation : un collagène d'origine végétale, plus éthique, plus naturel, et {eur(an.var_B - an.var_A)} moins cher par bouteille.",
      "Reste la vraie question : le client le paiera-t-il autant ?"),
-    (4, "repondants", "Qui a répondu", "L'expérience", "Quatre scènes : comment nous avons testé, qui a répondu, s'ils ont vu la différence, et ce qu'elle change.", [
+    (4, "repondants", "Qui a répondu", "L'expérience", "Au programme : comment nous avons testé, qui a répondu, s'ils ont vu la différence, et ce qu'elle change.", [
         ("Pour comparer, nous avons laissé le hasard choisir.", th.ab_svg(nA, nB),
          "Du 20 octobre au 12 novembre 2026, chaque personne a reçu au hasard la version A ou B, puis a répondu aux mêmes questions. Seule l'origine change : un écart entre les groupes vient donc de l'origine.",
          L("notre questionnaire", "questionnaire")),
@@ -218,7 +218,7 @@ CH = [
          f"échelles de mesure : {L('valeurs, Karahanna et al.', 'karahanna')}, {L('image naturelle, Becker-Olsen et al.', 'becker')}, {L('confiance, Chaudhuri et Holbrook', 'chaudhuri')}, {L('qualité, Dodds et al.', 'dodds')} ({L('détail des échelles', 'sources_echelles')})")],
      "Les répondants ont bien vu la différence. Le végétal est un argument d'image, pas un argument de prix.",
      "Alors, quel prix le client accepte-t-il ?"),
-    (5, "client", "Le client", "Le verdict", "Trois scènes : nos deux méthodes, la zone de prix acceptable, et combien achèteraient.", [
+    (5, "client", "Le client", "Le verdict", "Au programme : nos deux méthodes, la zone de prix acceptable, et combien achèteraient.", [
         ("Nous avons mesuré le prix accepté de deux façons.", methods,
          "La première dit quels prix sont acceptables. La seconde dit combien de personnes achèteraient, ce qui permet de calculer une marge.", ""),
         (f"Prix acceptable : de {eur(vA['PMC'])} à {eur(vA['PME'])} pour le végétal.", c.vwzone_svg() + vwlegend,
@@ -227,7 +227,7 @@ CH = [
          f"{pct(gA[P]['part'])} en version végétale, {pct(gB[P]['part'])} en animale : l'écart n'est pas significatif. À 1,90 €, on tombe à {pct(gA[1.9]['part'])} et {pct(gB[1.9]['part'])}. 1,50 € est le prix le plus bas que nous avons proposé.", "")],
      f"Le client accepte environ {eur(P)}, que le collagène soit végétal ou animal.",
      "À ce prix, que gagne Volvic, et quelle version choisir ?"),
-    (6, "decision", "La décision", "La bouteille", "Trois scènes : notre prix, ce qu'il rapporte, et quand le plan ne tient plus.", [
+    (6, "decision", "La décision", "La bouteille", "Au programme : notre prix, ce qu'il rapporte, et quand le plan ne tient plus.", [
         (f"Notre prix : {eur(P)}, version végétale.", converge,
          f"Quatre indicateurs différents pointent vers le même prix. Limite : le prix qui fait le moins de rejets ({eur(vA['OPP'])}) suggère que le meilleur prix pourrait être un peu plus bas.", ""),
         (f"Sur {eur(P)}, il reste {eur(c.cmA)} à Volvic en végétal, {eur(c.cmB)} en animal.", c.cost_svg(P),
