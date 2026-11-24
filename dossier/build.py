@@ -148,6 +148,14 @@ methods = """<div class="m2">
 <p class="prices"><span>3,50 €</span><span>2,90 €</span><span>2,40 €</span><span>1,90 €</span><span>1,50 €</span></p>
 <p class="out">→ la <b>part d'acheteurs</b> à chaque prix</p></div></div>"""
 
+vwcurves = (f"<figure class='vwc'>{c.vw_svg()}<figcaption>Part des répondants ({nS}) qui jugent chaque prix trop bon marché, bon marché, cher ou trop cher. "
+            "Les croisements de courbes donnent quatre points ; la zone grisée va du PMC au PME.</figcaption></figure>" +
+            c.table(["Point", "Croisement", "Ce qu'il signifie", "Ensemble", "A · végétal", "B · animal"], [
+                ["PMC", "trop bon marché × cher", "bas de la zone", eur(vAll["PMC"]), eur(vA["PMC"]), eur(vB["PMC"])],
+                ["OPP", "trop bon marché × trop cher", "prix qui fait le moins de rejets", eur(vAll["OPP"]), eur(vA["OPP"]), eur(vB["OPP"])],
+                ["IPP", "bon marché × cher", "prix perçu comme normal", eur(vAll["IPP"]), eur(vA["IPP"]), eur(vB["IPP"])],
+                ["PME", "bon marché × trop cher", "haut de la zone", eur(vAll["PME"]), eur(vA["PME"]), eur(vB["PME"])]]))
+
 vwlegend = f"""<ul class="keys"><li><b>Début de la zone</b> (PMC) : en dessous, on doute de la qualité.</li>
 <li><b>Fin de la zone</b> (PME) : au-dessus, c'est trop cher.</li>
 <li><b>Point noir</b> (OPP) : le prix qui fait le moins de rejets.</li>
@@ -218,9 +226,11 @@ CH = [
          f"échelles de mesure : {L('valeurs, Karahanna et al.', 'karahanna')}, {L('image naturelle, Becker-Olsen et al.', 'becker')}, {L('confiance, Chaudhuri et Holbrook', 'chaudhuri')}, {L('qualité, Dodds et al.', 'dodds')} ({L('détail des échelles', 'sources_echelles')})")],
      "Les répondants ont bien vu la différence. Le végétal est un argument d'image, pas un argument de prix.",
      "Alors, quel prix le client accepte-t-il ?"),
-    (5, "client", "Le client", "Le verdict", "Au programme : nos deux méthodes, la zone de prix acceptable, et combien achèteraient.", [
+    (5, "client", "Le client", "Le verdict", "Au programme : nos deux méthodes, les courbes de Van Westendorp, la zone de prix acceptable, et combien achèteraient.", [
         ("Nous avons mesuré le prix accepté de deux façons.", methods,
          "La première dit quels prix sont acceptables. La seconde dit combien de personnes achèteraient, ce qui permet de calculer une marge.", ""),
+        ("Quatre courbes, quatre croisements : les points de prix du client.", vwcurves,
+         f"Quand le prix monte, ceux qui le trouvent bon marché diminuent et ceux qui le trouvent cher augmentent. Chaque croisement de deux courbes donne un point de prix ; la zone grisée va du PMC ({eur(vAll['PMC'])}) au PME ({eur(vAll['PME'])}) pour l'ensemble des {nS} répondants.", ""),
         (f"Prix acceptable : de {eur(vA['PMC'])} à {eur(vA['PME'])} pour le végétal.", c.vwzone_svg() + vwlegend,
          "Les zones des deux versions se recouvrent presque entièrement. Comparés personne par personne, les seuils ne diffèrent pas entre A et B.", ""),
         (f"À {eur(P)}, près de 9 personnes sur 10 achèteraient.", c.gg_svg(),
@@ -397,6 +407,7 @@ html.essentiel .claim{font-size:clamp(21px,2.6vw,28px)}
  .pair,.tiles,.cost2,.m2,.why{grid-template-columns:1fr}.chain .arr{transform:rotate(90deg);width:100%;text-align:center}.say{font-size:17px}.ck-p{font-size:52px}.rung b{min-width:90px;font-size:28px}}
 @media print{.comfort,.topnav,.hero-media,.river{display:none}}
 
+.evidence figure.vwc{margin:0 0 10px}.evidence figure.vwc .cw{border:0;padding:0}
 /* ===== Illustrations des chapitres ===== */
 .opener{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;column-gap:36px}
 .ot{display:grid;gap:12px}
