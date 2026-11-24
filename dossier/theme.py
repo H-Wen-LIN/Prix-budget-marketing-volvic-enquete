@@ -400,7 +400,7 @@ table.hyp td:nth-child(2){min-width:220px}
 .comfort input{width:20px;height:20px;accent-color:var(--accent);margin:2px 0 0}
 .ess-note{display:none}
 html.essentiel .ess-note{display:block;color:var(--muted);font-size:15px;font-style:normal}
-html.essentiel section>:not(.sh):not(.answer):not(.key):not(.next):not(.ess-note){display:none}
+
 
 /* Police adaptée dys */
 html.dys{--display:"Atkinson Hyperlegible",Verdana,sans-serif;--body:"Atkinson Hyperlegible",Verdana,sans-serif;--mono:"Atkinson Hyperlegible",Verdana,sans-serif;--hand:"Atkinson Hyperlegible",Verdana,sans-serif}
