@@ -500,3 +500,96 @@ JS = """
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&family=Figtree:wght@400;500;600&'
          'family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..700,100,1&family=JetBrains+Mono:wght@500&display=swap">')
+
+
+# ---------- Illustrations aquarelle des chapitres (animées au défilement, figées en mode « sans animations ») ----------
+def _bottle(cx, yb, w, h):
+    nw, nh, sh = w * 0.38, h * 0.2, h * 0.13
+    x0, x1, top = cx - w / 2, cx + w / 2, yb - h
+    return (f"M{x0:.1f},{yb - 9:.1f} Q{x0:.1f},{yb:.1f} {x0 + 9:.1f},{yb:.1f} L{x1 - 9:.1f},{yb:.1f} Q{x1:.1f},{yb:.1f} {x1:.1f},{yb - 9:.1f} "
+            f"L{x1:.1f},{top + nh + sh:.1f} Q{x1:.1f},{top + nh:.1f} {cx + nw / 2:.1f},{top + nh:.1f} L{cx + nw / 2:.1f},{top + 7:.1f} "
+            f"L{cx - nw / 2:.1f},{top + 7:.1f} L{cx - nw / 2:.1f},{top + nh:.1f} Q{x0:.1f},{top + nh:.1f} {x0:.1f},{top + nh + sh:.1f} Z")
+
+
+def _bottle_g(cx, yb, w, h, body_cls, band_cls, extra=""):
+    top = yb - h; nw = w * 0.38
+    return (f'<g class="btl {extra}"><path d="{_bottle(cx, yb, w, h)}" class="glass"/>'
+            f'<rect x="{cx - w / 2 + 3:.1f}" y="{yb - h * 0.55:.1f}" width="{w - 6:.1f}" height="{h * 0.24:.1f}" rx="4" class="{band_cls}" filter="url(#wc-soft)"/>'
+            f'<rect x="{cx - nw / 2 - 2:.1f}" y="{top:.1f}" width="{nw + 4:.1f}" height="9" rx="3" class="{body_cls}"/></g>')
+
+
+def _drop(x, y, s=1.0, cls="drop"):
+    return (f'<path class="{cls}" transform="translate({x},{y}) scale({s})" '
+            f'd="M0,-10 C6,-2 8,2 8,5 A8,8 0 0 1 -8,5 C-8,2 -6,-2 0,-10 Z"/>')
+
+
+def _person(x, y, cls):
+    return f'<g class="{cls}"><circle cx="{x}" cy="{y - 15}" r="7"/><path d="M{x - 11},{y + 8} C{x - 11},{y - 6} {x + 11},{y - 6} {x + 11},{y + 8} Z"/></g>'
+
+
+def vignette(kind):
+    sky = '<ellipse cx="180" cy="118" rx="172" ry="112" class="v-sky" filter="url(#wc-blob)"/>'
+    ground = '<path d="M0,214 Q90,196 180,206 T360,204 L360,240 L0,240 Z" class="m-near" opacity=".75" filter="url(#wc)"/>'
+    if kind == "source":
+        body = (sky + '<circle cx="292" cy="62" r="24" class="v-sun" filter="url(#wc-blob)"/>'
+                '<path d="M-10,212 Q70,128 150,206 Z" class="m-far" opacity=".7" filter="url(#wc)"/>'
+                '<path d="M40,214 L138,98 Q158,86 178,98 L292,214 Z" class="m-mid" opacity=".9" filter="url(#wc)"/>'
+                '<path d="M138,98 Q158,114 178,98" class="v-line"/>'
+                + ground +
+                '<path d="M170,150 C196,166 222,176 250,196 S318,222 372,224" class="v-river"/>'
+                '<path d="M170,150 C196,166 222,176 250,196 S318,222 372,224" class="v-flow"/>'
+                + _drop(166, 140, .8, "drop v-drip d1") + _drop(178, 132, .6, "drop v-drip d2") + _drop(156, 128, .5, "drop v-drip d3"))
+    elif kind == "vallee":
+        prices = [(70, .50, "v-glassA", "0,50 €"), (140, 1.17, "v-glassA", "1,17 €"), (214, 2.55, "v-glassA", "2,55 €"), (290, 2.99, "fb", "2,99 €")]
+        bs = "".join(
+            f'<g class="grow" style="--dl:{i * 0.15:.2f}s">{_bottle_g(x, 206, 40, 36 + p * 40, "v-cap", cls)}'
+            f'<text x="{x}" y="{206 - 44 - p * 40}" class="v-t" text-anchor="middle">{lab}</text></g>'
+            for i, (x, p, cls, lab) in enumerate(prices))
+        body = (sky + '<path d="M-10,200 Q90,120 190,196 Q270,130 370,190 L370,240 L-10,240 Z" class="m-far" opacity=".55" filter="url(#wc)"/>'
+                + ground + bs +
+                '<line x1="250" y1="50" x2="350" y2="50" class="v-ceil"/><text x="350" y="66" class="v-t s" text-anchor="end">plafond</text>')
+    elif kind == "idee":
+        helix = "".join(
+            f'<path d="M{226 + 0},{70 + k * 9} q10,-8 20,0 t20,0 t20,0" class="v-hx h{k}"/>' for k in range(3))
+        body = (sky + ground +
+                _bottle_g(120, 212, 64, 160, "v-cap", "fa", "tilt-l") + _bottle_g(246, 212, 64, 160, "v-cap", "fb", "tilt-r") +
+                '<g class="v-leaf"><path d="M122,60 C92,52 82,22 96,8 C122,14 134,40 122,60 Z" class="v-leafc" filter="url(#wc-soft)"/>'
+                '<path d="M122,60 C112,42 104,28 96,10" class="v-vein"/></g>' + f'<g class="v-helix">{helix}</g>'
+                '<text x="120" y="232" class="v-t b" text-anchor="middle">A · végétal</text><text x="246" y="232" class="v-t b" text-anchor="middle">B · animal</text>')
+    elif kind == "test":
+        ga = "".join(_person(250 + dx, 82 + dy, "v-pa") for dx, dy in ((0, 0), (30, 6), (60, -2)))
+        gb = "".join(_person(250 + dx, 186 + dy, "v-pb") for dx, dy in ((0, 0), (30, -6), (60, 2)))
+        body = (sky + _person(46, 136, "v-p0") +
+                '<path d="M66,128 L118,128" class="v-arrow"/><path d="M176,118 C206,98 214,84 236,80" class="v-arrow"/>'
+                '<path d="M176,140 C206,160 214,176 236,182" class="v-arrow"/>'
+                '<g class="v-dice"><rect x="124" y="104" width="46" height="46" rx="10" class="v-dicer"/>'
+                + "".join(f'<circle cx="{124 + dx}" cy="{104 + dy}" r="4" class="v-pip"/>' for dx, dy in ((13, 13), (33, 13), (23, 23), (13, 33), (33, 33)))
+                + '</g>' + ga + gb +
+                '<text x="280" y="36" class="v-t b" text-anchor="middle">groupe A</text><text x="280" y="228" class="v-t b" text-anchor="middle">groupe B</text>')
+    elif kind == "verdict":
+        body = (sky + ground +
+                '<rect x="40" y="186" width="280" height="12" rx="6" class="v-scale"/>'
+                '<rect x="110" y="186" width="140" height="12" rx="6" class="v-zone"/>'
+                '<text x="110" y="216" class="v-t" text-anchor="middle">1,20 €</text><text x="250" y="216" class="v-t" text-anchor="middle">1,80 €</text>'
+                '<line x1="180" y1="22" x2="180" y2="186" class="v-string"/>'
+                '<g class="v-tag"><path d="M118,60 L242,60 L242,130 L180,158 L118,130 Z" class="v-tagb" filter="url(#wc-soft)"/>'
+                '<circle cx="180" cy="74" r="5" class="v-hole"/><text x="180" y="116" class="v-price" text-anchor="middle">1,50 €</text></g>')
+    else:  # bouteille
+        bp = _bottle(180, 214, 104, 196)
+        body = (sky + '<path d="M-10,214 Q70,150 150,200 Q230,140 370,206 L370,240 L-10,240 Z" class="m-mid" opacity=".55" filter="url(#wc)"/>'
+                + ground +
+                f'<clipPath id="bclip"><path d="{bp}"/></clipPath>'
+                f'<g clip-path="url(#bclip)"><rect x="120" y="18" width="120" height="200" class="v-water"/>'
+                '<path d="M120,100 q15,-8 30,0 t30,0 t30,0 t30,0 V220 H120 Z" class="v-wave"/></g>'
+                f'<path d="{bp}" class="glass2"/>'
+                '<rect x="157" y="14" width="46" height="12" rx="4" class="fa"/>'
+                '<rect x="133" y="120" width="94" height="44" rx="6" class="fa" opacity=".9" filter="url(#wc-soft)"/>'
+                '<text x="180" y="148" class="v-lab" text-anchor="middle">1,50 €</text>'
+                + "".join(f'<circle cx="{x}" cy="{y}" r="{r}" class="v-bub b{i}"/>' for i, (x, y, r) in enumerate(((160, 196, 4), (196, 204, 3), (176, 206, 5)))))
+    return f'<svg class="vg vg-{kind}" viewBox="0 0 360 240" role="img" aria-hidden="true">{body}</svg>'
+
+
+def ripple():
+    return ('<svg class="ripple" viewBox="0 0 200 120" aria-hidden="true">'
+            + "".join(f'<ellipse cx="100" cy="60" rx="{24 + 26 * i}" ry="{10 + 11 * i}" class="rp r{i}"/>' for i in range(3))
+            + _drop(100, 44, 1.3, "drop rpd") + '</svg>')

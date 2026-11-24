@@ -3,3 +3,6 @@ sources/
 
 # Cache Python
 __pycache__/
+
+# Annexe du dossier : générée en local, jamais publiée sur le site
+dossier/hors-site/

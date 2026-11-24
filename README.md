@@ -2,8 +2,8 @@
 
 **Questionnaire en ligne :** https://h-wen-lin.github.io/Prix-budget-marketing-volvic-enquete/
 
-**Dossier Prix (site, en récit) :** https://h-wen-lin.github.io/Prix-budget-marketing-volvic-enquete/dossier/ · **Annexes (tout le détail, PDF) :** https://h-wen-lin.github.io/Prix-budget-marketing-volvic-enquete/dossier/annexes.pdf
-Produits par `python3 dossier/build.py` puis `node dossier/pdf.mjs` (calculs dans `dossier/analyse.py`, contenu détaillé et graphiques dans `dossier/contenu.py`).
+**Dossier Prix (site, en récit) :** https://h-wen-lin.github.io/Prix-budget-marketing-volvic-enquete/dossier/
+Produit par `python3 dossier/build.py` (l'annexe PDF, non publiée, par `node dossier/pdf.mjs`) (calculs dans `dossier/analyse.py`, contenu détaillé et graphiques dans `dossier/contenu.py`).
 
 - `QUESTIONNAIRE.md` : questionnaire complet et plan d'analyse.
 - `index.html` : version interactive (ouvrir dans un navigateur). Attribution aléatoire A/B par blocs de 4 (équilibre exact 50/50 sur un même appareil), filtres de fin, Van Westendorp sur curseurs 0,50–10 € avec contrôle de cohérence, Gabor-Granger descendant sur une seule page (Oui/Non, 3,50 → 1,50 €, arrêt au premier Oui), contrôle de manipulation (`controle_ok`), Likert facultatif, profil. Les réponses sont stockées localement et exportables en CSV (séparateur `;`), triées par résultat au contrôle Q5 (colonne `groupe_controle`).
