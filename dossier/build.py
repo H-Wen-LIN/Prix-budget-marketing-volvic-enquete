@@ -7,6 +7,7 @@ Tout ce qui est retiré du récit (tableaux, calculs, tests, sources) est dans l
 (dossier/hors-site/ est ignoré par Git).
 """
 import pathlib
+import re
 import contenu as c
 import analyse as an
 import theme as th
@@ -240,7 +241,7 @@ CH = [
     (6, "decision", "La décision", "La bouteille", "Au programme : notre prix, ce qu'il rapporte, et quand le plan ne tient plus.", [
         (f"Notre prix : {eur(P)}, version végétale.", converge,
          f"Quatre indicateurs différents pointent vers le même prix. Limite : le prix qui fait le moins de rejets ({eur(vA['OPP'])}) suggère que le meilleur prix pourrait être un peu plus bas.", ""),
-        (f"Sur {eur(P)}, il reste {eur(c.cmA)} à Volvic en végétal, {eur(c.cmB)} en animal.", c.cost_svg(P) + c.calc_dec().replace("<details class='calc'>", "<details class='calc' open>"),
+        (f"Sur {eur(P)}, il reste {eur(c.cmA)} à Volvic en végétal, {eur(c.cmB)} en animal.", c.cost_svg(P) + re.sub(r"<ul class='terms'>.*?</ul>", "", c.calc_dec(), flags=re.S),
          f"On retire la TVA (5,5 %), la part du distributeur (30 %, notre hypothèse) et le coût de la bouteille. À prix égal, le végétal rapporte {eur(c.cmA - c.cmB)} de plus : la variation se paie par le coût, pas par le prix.",
          f"{L('TVA, BOFiP', 'tva')}"),
         ("Le plan tient… sauf dans trois cas.", breaks,
