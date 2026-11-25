@@ -72,14 +72,17 @@ def dumbbell(rows, lo, hi, ticks, unit, label, title):
     return c.svg(yb + 8, "".join(out), label)
 
 
-perc_rows = [("Conforme à mes valeurs", "écart réel ✓", v7["ma"], v7["mb"], True),
-             ("Cohérent avec une eau naturelle", "écart réel ✓", v8["ma"], v8["mb"], True),
-             ("Confiance dans l'efficacité", "écart réel ✓ (inverse de l'attendu)", v9["ma"], v9["mb"], True),
-             ("Qualité perçue", "pas d'écart", v10["ma"], v10["mb"], False)]
-price_rows = [(f"Trop cher (on n'achète pas)", "pas d'écart", an.prix[0]["ma"], an.prix[0]["mb"], False),
-              ("Cher", "pas d'écart", an.prix[1]["ma"], an.prix[1]["mb"], False),
-              ("Bonne affaire", "pas d'écart", an.prix[2]["ma"], an.prix[2]["mb"], False),
-              ("Trop bon marché (on doute)", "pas d'écart", an.prix[3]["ma"], an.prix[3]["mb"], False)]
+def fp(p): return "p < 0,001" if p < 0.001 else f"p = {fr(p, 3)}"
+perc_rows = [("Conforme à mes valeurs", f"écart réel ✓ · {fp(v7['p'])}", v7["ma"], v7["mb"], True),
+             ("Cohérent avec une eau naturelle", f"écart réel ✓ · {fp(v8['p'])}", v8["ma"], v8["mb"], True),
+             ("Confiance dans l'efficacité", f"inverse de l'attendu ✓ · {fp(v9['p2'])}", v9["ma"], v9["mb"], True),
+             ("Qualité perçue", f"pas d'écart · {fp(v10['p'])}", v10["ma"], v10["mb"], False)]
+price_rows = [(lab, f"pas d'écart · {fp(an.prix[i]['p'])}", an.prix[i]["ma"], an.prix[i]["mb"], False)
+              for i, lab in enumerate(["Trop cher (on n'achète pas)", "Cher", "Bonne affaire", "Trop bon marché (on doute)"])]
+p_rand = min(r[2] for r in an.rand if not r[0].startswith("Dépense"))
+p_dep = [r[2] for r in an.rand if r[0].startswith("Dépense")][0]
+p_prix = sorted(r["p"] for r in an.prix)
+p_buy15 = [r for r in an.buy if r["price"] == 1.5][0]["p"]
 legend = "<p class='lg'><span class='dot a'></span>Version A · végétal <span class='dot b'></span>Version B · animal</p>"
 image_vs_prix = (legend +
                  dumbbell(perc_rows, 1, 7, range(1, 8), "", "Perceptions moyennes par version, de 1 à 7", "Ce que les répondants pensent (note moyenne de 1 à 7)") +
@@ -218,12 +221,12 @@ CH = [
          "Du 20 octobre au 12 novembre 2026, chaque personne a reçu au hasard la version A ou B, puis a répondu aux mêmes questions. Seule l'origine change : un écart entre les groupes vient donc de l'origine.",
          L("notre questionnaire", "questionnaire")),
         (f"{nS} vraies réponses, surtout de jeunes adultes.", equation,
-         "Les deux groupes se ressemblent (âge, genre, régime, habitudes), sauf sur un point : il y a plus de petits budgets en version B. L'échantillon est jeune : il sert à comparer A et B, pas à représenter tous les acheteurs d'eau.",
+         f"Les deux groupes se ressemblent (âge, genre, régime, habitudes : toutes les p ≥ {fr(p_rand, 3)}), sauf sur un point : il y a plus de petits budgets en version B (chi², {fp(p_dep)}). L'échantillon est jeune : il sert à comparer A et B, pas à représenter tous les acheteurs d'eau.",
          L("nos données brutes", "donnees")),
         (f"Ils ont vu la différence : 9 sur 10 retiennent la bonne origine.", manip,
-         f"{pct(c1['A'][0] / nA)} des répondants A retiennent « végétal », {pct(c1['B'][1] / nB)} des B « animal ». Un test du chi² confirme un lien très fort (V de Cramer = {fr(an.manip['v'])} sur 1) : notre test a bien testé quelque chose.", ""),
+         f"{pct(c1['A'][0] / nA)} des répondants A retiennent « végétal », {pct(c1['B'][1] / nB)} des B « animal ». Un test du chi² confirme un lien très fort (chi² = {fr(an.manip['chi'])}, {fp(an.manip['p'])} ; V de Cramer = {fr(an.manip['v'])} sur 1) : notre test a bien testé quelque chose.", ""),
         ("Le végétal change l'image… mais pas le prix.", image_vs_prix,
-         "Le végétal paraît plus conforme aux valeurs, plus cohérent avec une eau naturelle et, contre notre attente, plus digne de confiance. Les quatre seuils de prix, eux, sont presque identiques (tests de Welch).",
+         f"Le végétal paraît plus conforme aux valeurs, plus cohérent avec une eau naturelle et, contre notre attente, plus digne de confiance. Les quatre seuils de prix, eux, sont presque identiques (tests de Welch, p de {fr(p_prix[0], 3)} à {fr(p_prix[-1], 3)}). Un écart est réel quand p est sous 0,05.",
          f"échelles de mesure : {L('valeurs, Karahanna et al.', 'karahanna')}, {L('image naturelle, Becker-Olsen et al.', 'becker')}, {L('confiance, Chaudhuri et Holbrook', 'chaudhuri')}, {L('qualité, Dodds et al.', 'dodds')} ({L('détail des échelles', 'sources_echelles')})")],
      "Les répondants ont bien vu la différence. Le végétal est un argument d'image, pas un argument de prix.",
      "Alors, quel prix le client accepte-t-il ?"),
@@ -233,9 +236,9 @@ CH = [
         ("Quatre courbes, quatre croisements : les points de prix du client.", vwcurves,
          f"Quand le prix monte, ceux qui le trouvent bon marché diminuent et ceux qui le trouvent cher augmentent. Chaque croisement de deux courbes donne un point de prix ; la zone grisée va du PMC ({eur(vAll['PMC'])}) au PME ({eur(vAll['PME'])}) pour l'ensemble des {nS} répondants.", ""),
         (f"Prix acceptable : de {eur(vA['PMC'])} à {eur(vA['PME'])} pour le végétal.", c.vwzone_svg() + vwlegend,
-         "Les zones des deux versions se recouvrent presque entièrement. Comparés personne par personne, les seuils ne diffèrent pas entre A et B.", ""),
+         f"Les zones des deux versions se recouvrent presque entièrement. Comparés personne par personne, les seuils ne diffèrent pas entre A et B (tests de Welch, toutes les p ≥ {fr(p_prix[0], 3)}).", ""),
         (f"À {eur(P)}, près de 9 personnes sur 10 achèteraient.", c.gg_svg(),
-         f"{pct(gA[P]['part'])} en version végétale, {pct(gB[P]['part'])} en animale : l'écart n'est pas significatif. À 1,90 €, on tombe à {pct(gA[1.9]['part'])} et {pct(gB[1.9]['part'])}. 1,50 € est le prix le plus bas que nous avons proposé.", "")],
+         f"{pct(gA[P]['part'])} en version végétale, {pct(gB[P]['part'])} en animale : l'écart n'est pas significatif (chi², {fp(p_buy15)}). À 1,90 €, on tombe à {pct(gA[1.9]['part'])} et {pct(gB[1.9]['part'])}. 1,50 € est le prix le plus bas que nous avons proposé.", "")],
      f"Le client accepte environ {eur(P)}, que le collagène soit végétal ou animal.",
      "À ce prix, que gagne Volvic, et quelle version choisir ?"),
     (6, "decision", "La décision", "La bouteille", "Au programme : notre prix, ce qu'il rapporte, et quand le plan ne tient plus.", [
