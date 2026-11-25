@@ -240,7 +240,7 @@ CH = [
     (6, "decision", "La décision", "La bouteille", "Au programme : notre prix, ce qu'il rapporte, et quand le plan ne tient plus.", [
         (f"Notre prix : {eur(P)}, version végétale.", converge,
          f"Quatre indicateurs différents pointent vers le même prix. Limite : le prix qui fait le moins de rejets ({eur(vA['OPP'])}) suggère que le meilleur prix pourrait être un peu plus bas.", ""),
-        (f"Sur {eur(P)}, il reste {eur(c.cmA)} à Volvic en végétal, {eur(c.cmB)} en animal.", c.cost_svg(P),
+        (f"Sur {eur(P)}, il reste {eur(c.cmA)} à Volvic en végétal, {eur(c.cmB)} en animal.", c.cost_svg(P) + c.calc_dec().replace("<details class='calc'>", "<details class='calc' open>"),
          f"On retire la TVA (5,5 %), la part du distributeur (30 %, notre hypothèse) et le coût de la bouteille. À prix égal, le végétal rapporte {eur(c.cmA - c.cmB)} de plus : la variation se paie par le coût, pas par le prix.",
          f"{L('TVA, BOFiP', 'tva')}"),
         ("Le plan tient… sauf dans trois cas.", breaks,
@@ -407,7 +407,7 @@ html.essentiel .claim{font-size:clamp(21px,2.6vw,28px)}
  .pair,.tiles,.cost2,.m2,.why{grid-template-columns:1fr}.chain .arr{transform:rotate(90deg);width:100%;text-align:center}.say{font-size:17px}.ck-p{font-size:52px}.rung b{min-width:90px;font-size:28px}}
 @media print{.comfort,.topnav,.hero-media,.river{display:none}}
 
-.evidence figure.vwc{margin:0 0 10px}.evidence figure.vwc .cw{border:0;padding:0}
+.evidence figure.vwc{margin:0 0 10px}.evidence .calc{margin:14px 0 0}.evidence figure.vwc .cw{border:0;padding:0}
 /* ===== Illustrations des chapitres ===== */
 .opener{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;column-gap:36px}
 .ot{display:grid;gap:12px}

@@ -311,21 +311,23 @@ def calc_dec():
             f"<li><strong>TVA</strong> : taxe reversée à l'État, {L('5,5 % sur l\'eau', 'tva')}. Elle est comprise dans le prix en rayon.</li>"
             "<li><strong>Part du distributeur</strong> : ce que garde le supermarché qui revend la bouteille. Hypothèse : 30 % du prix hors taxe.</li>"
             "<li><strong>Prix net producteur</strong> : ce qui arrive réellement chez Volvic pour une bouteille.</li>"
-            "<li><strong>Coût variable</strong> : ce que coûte la fabrication d'une bouteille (bouteille, bouchon, eau, transport et actif). Il diffère entre A et B à cause de l'actif.</li>"
+            "<li><strong>Produit de base</strong> : la bouteille, le bouchon, l'eau et le transport ; identique pour A et B.</li>"
+            "<li><strong>Actif</strong> : ce qui apporte le « collagène » ; c'est le seul coût qui diffère entre A et B. Produit de base + actif = coût variable de la bouteille.</li>"
             "<li><strong>Contribution</strong> : ce qui reste à Volvic une fois la bouteille payée. Elle sert d'abord à couvrir les coûts fixes (publicité, usine), puis devient du bénéfice.</li></ul>")
     rows = [("Prix en rayon", eur(P_REC), eur(P_REC)),
             ("− TVA (5,5 %)", "− " + eur(P_REC - ht), "− " + eur(P_REC - ht)),
             ("= Prix hors taxe", eur(ht), eur(ht)),
             ("− Part du distributeur (30 %)", "− " + eur(ht - net), "− " + eur(ht - net)),
             ("<strong>= Prix net producteur</strong>", f"<strong>{eur(net)}</strong>", f"<strong>{eur(net)}</strong>"),
-            ("− Coût variable", f"− {fr(an.CVU['A'], 3)} €", f"− {fr(an.CVU['B'], 3)} €"),
+            ("− Produit de base (bouteille, bouchon, eau, transport)", f"− {fr(an.base_cost, 3)} €", f"− {fr(an.base_cost, 3)} €"),
+            ("− Actif (A : vitamine C et bambou · B : collagène bovin)", f"− {fr(an.var_A, 3)} €", f"− {fr(an.var_B, 3)} €"),
             ("<strong>= Contribution par bouteille</strong>", f"<strong>{eur(cmA)}</strong>", f"<strong>{eur(cmB)}</strong>"),
             ("Taux de contribution (contribution ÷ prix net)", pct(cmA / net), pct(cmB / net)),
             ("Bouteilles pour couvrir 100 000 € de coûts fixes", fr(100000 / cmA, 0), fr(100000 / cmB, 0))]
     tr = "".join(f"<tr><td>{a}</td><td class='num ca'>{b}</td><td class='num cb'>{c}</td></tr>" for a, b, c in rows)
     return (f"<details class='calc'><summary>Construction du calcul · contribution par bouteille vendue 1,50 €</summary>{defs}"
             f"<div class='tw'><table class='wf'><thead><tr><th></th><th class='ca'>A · végétal</th><th class='cb'>B · animal</th></tr></thead><tbody>{tr}</tbody></table></div>"
-            f"<p class='cnote'>Les deux versions se vendent au même prix ; seule la ligne « coût variable » diffère. A garde donc {fr(cmA - cmB, 3)} € de plus par bouteille. Les coûts fixes de Danone ne sont pas publics : le seuil est donné pour 100 000 €.</p></details>")
+            f"<p class='cnote'>Les deux versions se vendent au même prix ; seule la ligne « actif » diffère. A garde donc {fr(cmA - cmB, 3)} € de plus par bouteille. Les coûts fixes de Danone ne sont pas publics : le seuil est donné pour 100 000 €.</p></details>")
 
 def calc(title, rows, note="", head=("Terme", "D'où il vient", "Valeur")):
     tr = "".join(f"<tr><td>{a}</td><td>{b}</td><td class='num'>{c}</td></tr>" for a, b, c in rows)
